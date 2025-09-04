@@ -12,10 +12,11 @@
         <nav>
             <ul>
                 <li><a href="{% url 'index' %}">Inicio</a></li>
-                <li><a href="{% url 'usuarios_lista' %}">Usuarios</a></li>
                 <li><a href="{% url 'accesos_historial' %}">Accesos</a></li>
-                <li><a href="{% url 'laboratorio_sistemas' %}">Lab. Sistemas</a></li>
-                <li><a href="{% url 'laboratorio_minerales' %}">Lab. Minerales</a></li>
+                {#Descomentar cuando usuarios y laboratorios esten implementados#}
+                {#<li><a href="{% url 'usuarios_lista' %}">Usuarios</a></li>#}
+                {#<li><a href="{% url 'laboratorio_sistemas' %}">Lab. Sistemas</a></li>#}
+                {#<li><a href="{% url 'laboratorio_minerales' %}">Lab. Minerales</a></li>#}
             </ul>
         </nav>
     </header>
