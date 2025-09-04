@@ -16,9 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('laboratorio/', include('laboratorio.urls')),
-    
+
+    # URLs de tu app de laboratorios
+    path('laboratorios/', include('laboratorios.urls', namespace='laboratorios')),
+    path('', include('laboratorios.urls')),  # Esto hará que '/' vaya al index
+
+    # Login / Logout
+    path('accounts/login/', auth_views.LoginView.as_view(template_name='laboratorios/login.html'), name='login'),
+    path('accounts/logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
 ]
+

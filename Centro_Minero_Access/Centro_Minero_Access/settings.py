@@ -83,6 +83,10 @@ DATABASES = {
 }
 
 
+LOGIN_URL = '/accounts/login/'        # A dónde redirige si no hay sesión
+LOGIN_REDIRECT_URL = '/'              # Después de login, redirige al index
+LOGOUT_REDIRECT_URL = '/'             # Después de logout, redirige al index
+
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 

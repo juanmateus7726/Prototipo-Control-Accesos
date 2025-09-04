@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Laboratorios{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="bg-gray-800 p-4 flex justify-between items-center">
+        <div class="font-bold text-xl">
+            Centro Minero Access
+        </div>
+        <div class="flex items-center space-x-4">
+            <a href="{% url 'laboratorios:index' %}" class="hover:underline">Inicio</a>
+            <a href="{% url 'laboratorios:seleccionar' %}" class="hover:underline">Seleccionar laboratorio</a>
+            <a href="{% url 'laboratorios:historial' %}" class="hover:underline">Historial</a>
+
+            {% if user.is_authenticated %}
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded">
+                    Cerrar sesión
+                </button>
+            </form>
+            {% else %}
+            <a href="{% url 'login' %}" class="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded">
+                Iniciar sesión
+            </a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="flex-grow container mx-auto p-6">
+        {% block content %}
+        <!-- Aquí irá el contenido de cada página -->
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-center py-4 mt-8">
+        &copy; 2025 Centro Minero Access
+    </footer>
+
+</body>
+</html>

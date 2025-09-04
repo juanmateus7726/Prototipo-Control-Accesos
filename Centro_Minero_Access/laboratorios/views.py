@@ -1,28 +1,32 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Laboratorio, AccesoLaboratorio
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+
 
 # ==============================
-# Vista para seleccionar laboratorio
+# Página de inicio / index
+# ==============================
+@login_required
+def index(request):
+    return render(request, 'laboratorios/index.html')
+
+
+# ==============================
+# Selección de laboratorio
 # ==============================
 @login_required
 def seleccionar_laboratorio(request):
     laboratorios = Laboratorio.objects.all()
-    
-    if request.method == 'POST':
-        lab_id = request.POST.get('laboratorio')
-        if not lab_id:
-            # Manejo de error si no se selecciona ningún laboratorio
-            return render(request, 'laboratorio/seleccion.html', {
-                'laboratorios': laboratorios,
-                'error': "Debes seleccionar un laboratorio."
-            })
 
+    if request.method == 'POST':
+        lab_id = request.POST.get('laboratorios')
         lab = get_object_or_404(Laboratorio, id=lab_id)
         usuario = request.user
         autorizado = lab in usuario.laboratorios_permitidos.all()
 
-        # Crear registro de acceso
+        # Registrar acceso
         AccesoLaboratorio.objects.create(
             usuario=usuario,
             laboratorio=lab,
@@ -30,14 +34,13 @@ def seleccionar_laboratorio(request):
             motivo_denegado=None if autorizado else "No tiene permisos"
         )
 
-        # Redirigir a la sala del laboratorio
-        return redirect('sala_laboratorio', lab_id=lab.id)
-    
-    return render(request, 'laboratorio/seleccion.html', {'laboratorios': laboratorios})
+        return redirect('laboratorio:sala', lab_id=lab.id)
+
+    return render(request, 'laboratorios/seleccion.html', {'laboratorios': laboratorios})
 
 
 # ==============================
-# Vista para la sala de laboratorio
+# Sala del laboratorio
 # ==============================
 @login_required
 def sala_laboratorio(request, lab_id):
@@ -45,26 +48,31 @@ def sala_laboratorio(request, lab_id):
     usuario = request.user
     autorizado = lab in usuario.laboratorios_permitidos.all()
 
-    context = {
+    return render(request, 'laboratorios/sala.html', {
         'laboratorio': lab,
         'autorizado': autorizado
-    }
-
-    # Opcional: registrar acceso automático si se desea
-    # AccesoLaboratorio.objects.create(
-    #     usuario=usuario,
-    #     laboratorio=lab,
-    #     autorizado=autorizado,
-    #     motivo_denegado=None if autorizado else "No tiene permisos"
-    # )
-
-    return render(request, 'laboratorio/sala.html', context)
+    })
 
 
 # ==============================
-# Vista para historial de accesos
+# Historial de accesos
 # ==============================
 @login_required
 def historial_accesos(request):
     registros = AccesoLaboratorio.objects.filter(usuario=request.user).order_by('-fecha_hora')
-    return render(request, 'laboratorio/historial.html', {'registros': registros})
+    return render(request, 'laboratorios/historial.html', {'registros': registros})
+
+
+# ==============================
+# Página de acceso (acceso.html)
+# ==============================
+@login_required
+def acceso(request):
+    return render(request, 'laboratorios/acceso.html')
+
+
+
+
+def cerrar_sesion(request):
+    logout(request)
+    return redirect('login')  # o a la página que quieras
