@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Laboratorios - SENA Minero</title>
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center">
+
+    <header class="w-full bg-gray-800 py-4 text-center text-xl font-bold">
+        Acceso a Laboratorios - Centro Minero SENA
+    </header>
+
+    <main class="mt-10 w-full max-w-md px-4">
+        <div class="bg-gray-800 p-6 rounded-2xl shadow-lg">
+            <label for="ambienteSelect" class="block mb-2 font-semibold">Selecciona el laboratorio:</label>
+            <select id="ambienteSelect" onchange="cambiarAmbiente()" class="w-full p-3 rounded-lg text-gray-900">
+                <option value="sistemas">💻 Laboratorio de Sistemas</option>
+                <option value="quimica">🧪 Laboratorio de Química Aplicada</option>
+                <option value="carbones">⚫ Laboratorio de Carbones</option>
+                <option value="biotecnologia">🧬 Laboratorio de Biotecnología</option>
+                <option value="beneficios">⛏️ Lab. Beneficios Minerales</option>
+                <option value="aguas">💧 Laboratorio de Aguas</option>
+                <option value="suelos">🌱 Laboratorio de Suelos</option>
+                <option value="abc_maquinaria">🚜 Ambiente ABC - Maquinaria Pesada</option>
+                <option value="bilinguismo">🗣️ Ambiente de Bilingüismo</option>
+                <option value="minas_didacticas">⛏️ Minas Didácticas</option>
+            </select>
+
+            <button class="mt-4 w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-lg font-semibold transition">
+                Ingresar
+            </button>
+        </div>
+    </main>
+
+    <script>
+        function cambiarAmbiente() {
+            const select = document.getElementById('ambienteSelect');
+            alert('Seleccionaste: ' + select.options[select.selectedIndex].text);
+        }
+    </script>
+
+</body>
+</html>
