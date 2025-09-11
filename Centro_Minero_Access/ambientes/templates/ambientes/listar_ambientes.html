@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Ambientes</title>
+</head>
+<body>
+    <h1>Lista de Ambientes</h1>
+    <a href="{% url 'crear_ambiente' %}">Crear Nuevo Ambiente</a>
+    <ul>
+        {% for ambiente in ambientes %}
+            <li>
+                {{ ambiente.nombre }} - Riesgo: {{ ambiente.riesgo }}
+                <a href="{% url 'editar_ambiente' ambiente.pk %}">Editar</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

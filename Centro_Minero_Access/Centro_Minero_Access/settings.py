@@ -38,8 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'accesos',
-    'laboratorios',
     'usuarios',
+    'ambientes',
 ]
 
 MIDDLEWARE = [
@@ -90,7 +90,6 @@ LOGOUT_REDIRECT_URL = '/'             # Después de logout, redirige al index
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
-AUTH_USER_MODEL = 'laboratorios.Usuario'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
