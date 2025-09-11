@@ -4,9 +4,9 @@ from .forms import AccesoForm
 
 
 def index(request):
-    accesos = Acceso.objects.all()
+    accesos_lista = Acceso.objects.all().order_by("-fecha_hora")[:10]
     form = AccesoForm()
-    return render(request, 'index.html', {'accesos': accesos, 'form': form})
+    return render(request, 'index.html', {'accesos_lista': accesos_lista, 'form': form})
 
 def accesos(request):
     if request.method == "POST":
