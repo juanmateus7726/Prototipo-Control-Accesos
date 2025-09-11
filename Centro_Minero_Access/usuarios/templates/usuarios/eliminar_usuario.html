@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Eliminar Usuario</title>
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        @keyframes gradientBG {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+
+        /* Tarjeta estilo glass */
+        .card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(12px);
+            border-radius: 18px;
+            padding: 2.5rem 2rem;
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            animation: fadeIn 0.6s ease;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        }
+
+        /* Icono */
+        .icon {
+            font-size: 3rem;
+            color: #ff1744;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 12px #ff1744, 0 0 24px #ff1744;
+            animation: pulse 1.8s infinite;
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            color: #fff;
+            margin-bottom: 0.8rem;
+        }
+
+        p {
+            color: #ddd;
+            margin-bottom: 2rem;
+            font-size: 1.05rem;
+        }
+
+        strong {
+            color: #ff5252;
+        }
+
+        /* Acciones */
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        button, a {
+            padding: 0.9rem 1.6rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        /* Botón eliminar */
+        button {
+            background: linear-gradient(135deg, #ff1744, #ff5252);
+            color: #fff;
+            box-shadow: 0 0 10px rgba(255,23,68,0.6);
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #d50000, #ff1744);
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(255,23,68,0.9);
+        }
+
+        /* Botón cancelar */
+        a {
+            background: linear-gradient(135deg, #00e5ff, #00bcd4);
+            color: #111;
+            text-decoration: none;
+            box-shadow: 0 0 10px rgba(0,229,255,0.5);
+        }
+
+        a:hover {
+            background: linear-gradient(135deg, #00bcd4, #008ba3);
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0,229,255,0.8);
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.9; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">⚠️</div>
+        <h1>Eliminar Usuario</h1>
+        <p>¿Seguro que deseas eliminar a <strong>{{ usuario.nombre }}</strong>? Esta acción no se puede deshacer.</p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="actions">
+                <button type="submit">Eliminar</button>
+                <a href="{% url 'listar_usuarios' %}">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

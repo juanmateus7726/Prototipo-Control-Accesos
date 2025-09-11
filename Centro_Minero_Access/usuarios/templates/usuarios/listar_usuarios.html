@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Usuarios</title>
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            padding: 50px 15px;
+            color: #f0f0f0;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border-radius: 15px;
+            box-shadow: 0px 8px 25px rgba(0,0,0,0.4);
+            width: 100%;
+            max-width: 950px;
+            animation: fadeIn 0.8s ease-in-out;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        /* Encabezado */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            color: #00e5ff;
+            text-shadow: 0 0 6px #00e5ff;
+        }
+
+        .create-btn {
+            background: linear-gradient(135deg, #00ff99, #00ccff);
+            color: #111;
+            padding: 0.7rem 1.3rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 8px #00e5ff;
+        }
+
+        .create-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px #00e5ff, 0 0 25px #00ff99;
+        }
+
+        /* Tabla */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            background: rgba(0, 229, 255, 0.2);
+            color: #00e5ff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        tbody td {
+            padding: 14px 16px;
+            color: #eaeaea;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        tbody tr:nth-child(even) {
+            background: rgba(255,255,255,0.05);
+        }
+
+        tbody tr:hover {
+            background: rgba(0,229,255,0.08);
+            transform: scale(1.005);
+            transition: all 0.3s ease;
+        }
+
+        /* Acciones */
+        .action-links {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-links a {
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .edit {
+            background: linear-gradient(135deg, #ffdd00, #ff9900);
+            color: #111;
+            box-shadow: 0 0 6px #ffb300;
+        }
+
+        .edit:hover {
+            box-shadow: 0 0 15px #ffdd00, 0 0 25px #ff9900;
+            transform: translateY(-2px);
+        }
+
+        .delete {
+            background: linear-gradient(135deg, #ff0040, #ff4d6d);
+            color: #fff;
+            box-shadow: 0 0 6px #ff0040;
+        }
+
+        .delete:hover {
+            box-shadow: 0 0 15px #ff0040, 0 0 25px #ff4d6d;
+            transform: translateY(-2px);
+        }
+
+        /* Responsivo */
+        @media (max-width: 700px) {
+            table thead {
+                display: none;
+            }
+
+            table, table tbody, table tr, table td {
+                display: block;
+                width: 100%;
+            }
+
+            table tr {
+                margin-bottom: 1rem;
+                border-radius: 8px;
+                background: rgba(255,255,255,0.05);
+                overflow: hidden;
+            }
+
+            table td {
+                padding: 12px;
+                text-align: right;
+                position: relative;
+            }
+
+            table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 12px;
+                font-weight: bold;
+                color: #00e5ff;
+            }
+        }
+
+        /* Animación */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👾 Lista de Usuarios</h1>
+            <a href="{% url 'crear_usuario' %}" class="create-btn">+ Crear Usuario</a>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Carnet</th>
+                    <th>Tipo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for usuario in usuarios %}
+                    <tr>
+                        <td data-label="Nombre">{{ usuario.nombre }}</td>
+                        <td data-label="Carnet">{{ usuario.carnet }}</td>
+                        <td data-label="Tipo">{{ usuario.tipo }}</td>
+                        <td data-label="Acciones" class="action-links">
+                            <a href="{% url 'editar_usuario' usuario.pk %}" class="edit">✏ Editar</a>
+                            <a href="{% url 'eliminar_usuario' usuario.pk %}" class="delete">🗑 Eliminar</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" style="text-align:center; color: #aaa; padding: 20px;">
+                            ⚠ No hay usuarios registrados.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
