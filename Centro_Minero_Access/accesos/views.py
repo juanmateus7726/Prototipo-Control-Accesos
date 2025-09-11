@@ -1,24 +1,27 @@
 from django.shortcuts import render, redirect
-from .models import Acceso
+from .models import Acceso, Usuario
+from .forms import AccesoForm
 
-# Create your views here.
 
 def index(request):
-    return render(request, 'accesos/index.html')
+    accesos = Acceso.objects.all()
+    form = AccesoForm()
+    return render(request, 'index.html', {'accesos': accesos, 'form': form})
 
-def registrar_acceso(request):
+def accesos(request):
     if request.method == "POST":
-        usuario = request.POST['usuario']
-        tipo = request.POST['tipo']
-        laboratorio = request.POST['laboratorio']
-        Acceso.objects.create(usuario=usuario, tipo=tipo, laboratorio=laboratorio)
-        return redirect('historial_accesos')
-    return render(request, 'accesos/registrar.html')
+        form = AccesoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("accesos")  # redirige a la misma página
+    else:
+        form = AccesoForm()
 
-def historial_accesos(request):
-    # Obtener todos los accesos registrados
-    accesos = Acceso.objects.all().order_by('-fecha_hora') 
-    return render(request, 'accesos/historial.html', {'accesos': accesos})
+    # Para la tabla / listado de accesos
+    accesos_lista = Acceso.objects.all().order_by("-fecha_hora")
 
-def detector_view(request):
-    return render(request, 'accesos/detector.html')
+    context = {
+        "form": form,
+        "accesos_lista": accesos_lista
+    }
+    return render(request, "accesos/index.html", context)
