@@ -5,8 +5,15 @@ from .forms import AccesoForm
 
 def index(request):
     accesos_lista = Acceso.objects.all().order_by("-fecha_hora")[:10]
+    usuarios = Usuario.objects.all() # Aqui se obtiene los usuarios
     form = AccesoForm()
-    return render(request, 'accesos/index.html', {'accesos_lista': accesos_lista, 'form': form})
+
+    context = {
+        'accesos_lista': accesos_lista,
+        'usuarios': usuarios,
+        'form': form,
+    }
+    return render(request, 'accesos/index.html', context)
 
 def accesos(request):
     if request.method == "POST":
