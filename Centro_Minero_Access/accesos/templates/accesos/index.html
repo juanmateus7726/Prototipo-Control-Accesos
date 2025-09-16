@@ -465,6 +465,55 @@
             0%, 100% { border-color: #00b894; }
             50% { border-color: #55a3ff; }
         }
+
+
+        /* Mejoras para los selects */
+.form-control {
+    border: 2px solid #e0e6ed;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.form-control:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* Estilo para opciones de select */
+.form-control option {
+    padding: 10px;
+    font-size: 1rem;
+}
+
+/* Iconos en las opciones (usando pseudoelementos) */
+#laboratorio-select option[value="sistemas"]::before {
+    content: "💻 ";
+}
+
+#laboratorio-select option[value="quimica"]::before {
+    content: "🧪 ";
+}
+
+#metodo-select option[value="carnet_manual"]::before {
+    content: "🎫 ";
+}
+
+#metodo-select option[value="reconocimiento_facial"]::before {
+    content: "📷 ";
+}
+
+
     </style>
 </head>
 <body>
@@ -541,11 +590,57 @@
                 <!-- Acceso Manual -->
                 <div class="manual-access">
                     <h4 style="margin-bottom: 15px; color: #2c3e50;">🎫 Acceso Manual por Carnet</h4>
-                    <input type="text" id="carnetInput" placeholder="Ingrese número de carnet" 
-                           onkeypress="handleKeyPress(event)" maxlength="8">
-                    <button class="btn btn-danger" onclick="verificarCarnetManual()" style="width: 100%;">
-                        Verificar Acceso
-                    </button>
+
+                    <form method="post" id ="accesoForm">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label class="form-label">👤 Usuario:</label>
+                            {{ form.usuario }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">📍 Laboratorio:</label>
+                            {{ form.laboratorio }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">🔧 Método de Acceso:</label>
+                            {{ form.metodo }}
+                        </div>
+
+                        <button type="submit" class="btn btn-danger w-100">
+                            ✅ Registrar Acceso
+                        </button>
+
+                    </form>
+
+                </div>
+
+                    <!--  Tabla de accesos recientes -->
+                    <div style="margin-top: 20px;">
+                        <h5>📋 Accesos recientes</h5>
+                        <table class="table table-striped" style="width:100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #3498db; color: white;">
+                                    <th>Usuario</th>
+                                    <th>Ambiente</th>
+                                    <th>Método</th>
+                                    <th>Fecha / Hora</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for Accesos in accesos_lista %}
+                                <tr>
+                                    <td>{{ acceso.usuario.nombre }}</td>
+                                    <td>{{ acceso.ambiente }}</td>
+                                    <td>{{ acceso.metodo }}</td>
+                                    <td>{{ acceso.fecha_hora }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
                 </div>
             </div>
 
@@ -711,18 +806,32 @@
             Object.entries(usuarios).forEach(([carnet, user]) => {
                 const userCard = document.createElement('div');
                 userCard.className = `user-card ${user.tipo}`;
-                userCard.onclick = () => probarUsuario(carnet);
-                
+                userCard.onclick = () => probarUsuarioDesdeGrid(carnet);
+        
                 const estado = user.activo ? '✅' : '❌';
-                const areas = user.areas_permitidas.includes('todos') ? 'Todas' : user.areas_permitidas.join(', ');
-                
+                const areas = user.areas_permitidas.includes('todos') ? 
+                    'Todas' : user.areas_permitidas.join(', ');
+        
                 userCard.innerHTML = `
-                    <div style="font-weight: 600; color: #2c3e50;">${estado} ${user.nombre}</div>
-                    <div style="color: #7f8c8d; font-size: 0.9rem;">🎫 ${carnet}</div>
-                    <div style="color: #7f8c8d; font-size: 0.9rem;">👤 ${user.tipo}</div>
-                    <div style="color: #7f8c8d; font-size: 0.8rem;">📍 ${areas}</div>
+                    <div style="font-weight: 600; color: #2c3e50;">
+                        ${estado} ${user.nombre}
+                    </div>
+                    <div style="color: #7f8c8d; font-size: 0.9rem;">
+                        🎫 ${carnet}
+                    </div>
+                    <div style="color: #7f8c8d; font-size: 0.9rem;">
+                        👤 ${user.tipo}
+                    </div>
+                    <div style="color: #7f8c8d; font-size: 0.8rem;">
+                        📍 ${areas}
+                    </div>
+                    <div style="margin-top: 8px;">
+                        <small style="color: #3498db; cursor: pointer;">
+                            👆 Seleccionar para prueba
+                        </small>
+                    </div>
                 `;
-                
+        
                 grid.appendChild(userCard);
             });
         }
@@ -876,7 +985,7 @@
 
         function tienePermiso(usuario, ambiente) {
             return usuario.areas_permitidas.includes("todos") || 
-                   usuario.areas_permitidas.includes(ambiente);
+                    usuario.areas_permitidas.includes(ambiente);
         }
 
         function permitirAcceso(usuario, carnet, metodo) {
@@ -903,9 +1012,9 @@
             
             // Log detallado
             const logEntry = `✅ ${timestamp} - ACCESO PERMITIDO
-   ${usuario.nombre} (${carnet}) - ${usuario.tipo}
-   Ambiente: ${ambiente.nombre}
-   Método: ${metodo.replace('_', ' ')}`;
+    ${usuario.nombre} (${carnet}) - ${usuario.tipo}
+    Ambiente: ${ambiente.nombre}
+    Método: ${metodo.replace('_', ' ')}`;
             
             agregarLog(logEntry);
             
@@ -942,10 +1051,10 @@
             
             // Log
             const logEntry = `❌ ${timestamp} - ACCESO DENEGADO
-   Carnet: ${carnet}
-   Razón: ${razon}
-   Ambiente: ${ambientes[ambienteActual].nombre}
-   Método: ${metodo.replace('_', ' ')}`;
+    Carnet: ${carnet}
+    Razón: ${razon}
+    Ambiente: ${ambientes[ambienteActual].nombre}
+    Método: ${metodo.replace('_', ' ')}`;
             
             agregarLog(logEntry);
             
@@ -1016,6 +1125,44 @@
                 cerrarProtocolo();
             }
         });
+
+
+
+        // Mejorar la experiencia de usuario
+document.addEventListener('DOMContentLoaded', function() {
+    // Actualizar el formulario cuando cambie el ambiente seleccionado
+    document.getElementById('ambienteSelect').addEventListener('change', function() {
+        const laboratorioSelect = document.getElementById('laboratorio-select');
+        laboratorioSelect.value = this.value;
+    });
+    
+    // Validación del formulario
+    document.getElementById('accesoForm').addEventListener('submit', function(e) {
+        const usuario = document.getElementById('usuario-select').value;
+        const laboratorio = document.getElementById('laboratorio-select').value;
+        const metodo = document.getElementById('metodo-select').value;
+        
+        if (!usuario || !laboratorio || !metodo) {
+            e.preventDefault();
+            mostrarNotificacion('Por favor complete todos los campos', 'error');
+        }
+    });
+    
+    // Cargar usuarios en el grid de prueba
+    cargarUsuariosPrueba();
+});
+
+// Función para probar usuario desde el grid
+function probarUsuarioDesdeGrid(usuarioId) {
+    const select = document.getElementById('usuario-select');
+    select.value = usuarioId;
+    
+    // Simular verificación de acceso
+    const usuario = select.options[select.selectedIndex];
+    const carnet = usuario.textContent.match(/\((\d+)\)/)[1];
+    verificarAcceso(carnet, 'seleccion_manual');
+}
+
     </script>
 </body>
 </html>

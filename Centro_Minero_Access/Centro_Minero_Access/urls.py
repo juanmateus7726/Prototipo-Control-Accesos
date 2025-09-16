@@ -16,11 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from accesos.views import home  # Importa la vista home
+from accesos.views import index  # Importa la vista index
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', home, name='home'),  # Ruta raíz que redirige a la vista home
+    path('', index, name='index'),  # Ruta raíz que redirige a la vista index
     path('accesos/', include('accesos.urls')),
     path('ambientes/', include('ambientes.urls')),
     path('usuarios/', include('usuarios.urls')),
