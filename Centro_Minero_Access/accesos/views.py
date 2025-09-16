@@ -43,3 +43,9 @@ def registrar_acceso(request):
         "usuarios": usuarios,
     }
     return render(request, "accesos/index.html", context)
+
+
+def listar_accesos(request):
+    accesos = Acceso.objects.all()
+    return render(request, "accesos/listar.html", {"accesos": accesos})
+

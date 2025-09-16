@@ -1,6 +1,9 @@
 from django.urls import path
 from .views import listar_usuarios, crear_usuario, editar_usuario, eliminar_usuario
 
+app_name = 'usuarios'
+
+
 urlpatterns = [
     path('', listar_usuarios, name='listar_usuarios'),
     path('crear/', crear_usuario, name='crear_usuario'),
