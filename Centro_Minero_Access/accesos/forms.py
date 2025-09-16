@@ -1,5 +1,6 @@
 from django import forms 
-from .models import Acceso, Usuario
+from .models import Acceso
+from usuarios.models import  Usuario
 
 class AccesoForm(forms.ModelForm):
     # Cambiar a ModelChoiceField para seleccionar usuario

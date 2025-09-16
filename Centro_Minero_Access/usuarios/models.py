@@ -15,4 +15,5 @@ class Usuario(models.Model):
     activo = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.nombre
+        # 🔹 Mostrará "Nombre (Carnet)"
+        return f"{self.nombre} ({self.carnet})"
