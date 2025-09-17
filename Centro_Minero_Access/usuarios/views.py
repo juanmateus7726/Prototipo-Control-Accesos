@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Usuario
+from .models import Usuario, Registro
 from .forms import UsuarioForm
 
 def listar_usuarios(request):
@@ -33,3 +33,10 @@ def eliminar_usuario(request, pk):
         usuario.delete()
         return redirect('listar_usuarios')
     return render(request, 'usuarios/eliminar_usuario.html', {'usuario': usuario})
+
+def listar_registros(request):
+    registros = Registro.objects.all().order_by('-fecha_hora')
+    context = {
+        'registros': registros
+    }
+    return render(request, 'usuarios/listar_registros.html', context)

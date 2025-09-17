@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Registros - Sistema SENA</title>
+    <style>
+        /* Estilos CSS (puedes copiar los estilos del archivo de listar_usuarios para mantener la consistencia) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --sena-green: #39A900;
+            --sena-green-dark: #2B8000;
+            --sena-blue: #005DA8;
+            --sena-blue-dark: #004880;
+            --sena-gray: #F3F3F3;
+            --sena-text: #333333;
+            --sena-border: #DDDDDD;
+            --sena-shadow: rgba(0, 0, 0, 0.08);
+            --sena-success: #28a745;
+            --sena-danger: #dc3545;
+            --sena-warning: #ffc107;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            color: var(--sena-text);
+            line-height: 1.6;
+        }
+
+        /* ===== HEADER & NAVBAR ===== */
+        .top-header {
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 0.8rem 2rem;
+            box-shadow: 0 2px 10px var(--sena-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--sena-green);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo .icon {
+            font-size: 2.2rem;
+            color: var(--sena-green);
+        }
+
+        .logo .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--sena-blue);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo .brand span {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: var(--sena-text);
+            margin-top: -3px;
+        }
+
+        .nav-bar {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--sena-text);
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 8px 0;
+        }
+
+        .nav-link:hover {
+            color: var(--sena-green);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 3px;
+            background-color: var(--sena-green);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-link.active {
+            color: var(--sena-green);
+        }
+
+        .nav-link.active::after {
+            width: 100%;
+        }
+        
+        /* Contenido principal */
+        .main-container {
+            flex: 1;
+            padding: 40px;
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header-section h1 {
+            font-size: 2.5rem;
+            color: var(--sena-blue);
+            margin-bottom: 5px;
+        }
+
+        .table-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px var(--sena-shadow);
+            border: 1px solid var(--sena-border);
+            animation: fadeIn 0.8s ease;
+        }
+
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .user-table th, .user-table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--sena-border);
+        }
+
+        .user-table th {
+            font-size: 1rem;
+            color: var(--sena-blue-dark);
+            background-color: var(--sena-gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .user-table tbody tr:hover {
+            background-color: rgba(0, 93, 168, 0.05);
+        }
+        
+        /* Botones de acción */
+        .actions-btn {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: white;
+            border: none;
+        }
+
+        .status-entrada {
+            background-color: var(--sena-success);
+        }
+
+        .status-salida {
+            background-color: var(--sena-danger);
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, var(--sena-blue), var(--sena-blue-dark));
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            margin-top: auto;
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--sena-green);
+        }
+
+        .footer p {
+            margin: 8px 0;
+            font-weight: 300;
+        }
+
+        .footer-links {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 400;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .footer-links a:hover {
+            color: #a8e6cf;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-header">
+        <div class="logo">
+            <div class="icon">⚙️</div>
+            <div class="brand">
+                Control de Accesos
+                <span>SENA - Centro de Formación</span>
+            </div>
+        </div>
+        <div class="nav-bar">
+            <a href="{% url 'index' %}" class="nav-link">Inicio</a>
+            <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link">Usuarios</a>
+            <a href="{% url 'usuarios:listar_registros' %}" class="nav-link active">Registros</a>
+            <a href="#" class="nav-link">Configuración</a>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="header-section">
+            <h1>📄 Historial de Registros</h1>
+        </div>
+
+        <div class="table-container">
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario</th>
+                        <th>Fecha y Hora</th>
+                        <th>Tipo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for registro in registros %}
+                    <tr>
+                        <td>{{ registro.id }}</td>
+                        <td>{{ registro.usuario.nombre }}</td>
+                        <td>{{ registro.fecha_hora|date:"Y-m-d H:i" }}</td>
+                        <td>
+                            <span class="btn-status {% if registro.tipo == 'Entrada' %}status-entrada{% else %}status-salida{% endif %}">{{ registro.tipo }}</span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">No hay registros de acceso.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Sistema de Control de Accesos - SENA</p>
+        <p>© 2023 Todos los derechos reservados</p>
+        <div class="footer-links">
+            <a href="#">Políticas de Privacidad</a>
+            <a href="#">Términos de Uso</a>
+            <a href="#">Soporte Técnico</a>
+        </div>
+    </div>
+</body>
+</html>

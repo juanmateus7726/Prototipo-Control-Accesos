@@ -17,3 +17,12 @@ class Usuario(models.Model):
     def __str__(self):
         # 🔹 Mostrará "Nombre (Carnet)"
         return f"{self.nombre} ({self.carnet})"
+
+class Registro(models.Model):
+    """Modelo para registrar los accesos de los usuarios."""
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    fecha_hora = models.DateTimeField(auto_now_add=True)
+    tipo = models.CharField(max_length=10, choices=[('Entrada', 'Entrada'), ('Salida', 'Salida')])
+
+    def __str__(self):
+        return f"{self.usuario.nombre} - {self.tipo} ({self.fecha_hora})"
