@@ -181,7 +181,7 @@
     <div class="container">
         <div class="header">
             <h1>👾 Lista de Usuarios</h1>
-            <a href="{% url 'crear_usuario' %}" class="create-btn">+ Crear Usuario</a>
+            <a href="{% url 'usuarios:crear_usuario' %}" class="create-btn">+ Crear Usuario</a>
         </div>
 
         <table>
@@ -200,8 +200,8 @@
                         <td data-label="Carnet">{{ usuario.carnet }}</td>
                         <td data-label="Tipo">{{ usuario.tipo }}</td>
                         <td data-label="Acciones" class="action-links">
-                            <a href="{% url 'editar_usuario' usuario.pk %}" class="edit">✏ Editar</a>
-                            <a href="{% url 'eliminar_usuario' usuario.pk %}" class="delete">🗑 Eliminar</a>
+                            <a href="{% url 'usuarios:editar_usuario' usuario.pk %}" class="edit">✏ Editar</a>
+                            <a href="{% url 'usuarios:eliminar_usuario' usuario.pk %}" class="delete">🗑 Eliminar</a>
                         </td>
                     </tr>
                 {% empty %}

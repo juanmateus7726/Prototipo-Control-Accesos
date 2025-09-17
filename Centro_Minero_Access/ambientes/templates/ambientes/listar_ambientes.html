@@ -138,7 +138,7 @@
         <h1>🌍 Lista de Ambientes</h1>
 
         <div class="top-bar">
-            <a href="{% url 'crear_ambiente' %}" class="btn-create">➕ Crear Nuevo</a>
+            <a href="{% url 'ambientes:crear_ambiente' %}" class="btn-create">➕ Crear Nuevo</a>
         </div>
 
         <table>
@@ -156,8 +156,8 @@
                     <td>{{ ambiente.riesgo }}</td>
                     <td>
                         <div class="actions">
-                            <a href="{% url 'editar_ambiente' ambiente.pk %}" class="btn btn-edit">✏ Editar</a>
-                            <a href="{% url 'eliminar_ambiente' ambiente.pk %}" class="btn btn-delete">🗑 Eliminar</a>
+                            <a href="{% url 'ambientes:editar_ambiente' ambiente.pk %}" class="btn btn-edit">✏ Editar</a>
+                            <a href="{% url 'ambientes:eliminar_ambiente' ambiente.pk %}" class="btn btn-delete">🗑 Eliminar</a>
                         </div>
                     </td>
                 </tr>

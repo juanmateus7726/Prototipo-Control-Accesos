@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Control de Acceso - Centro Minero SENA</title>
-    <link rel="stylesheet" href="{% static 'css/control.css' %}">
+    <link rel="stylesheet" href="{% static 'css/control.css' %}?v=1.1">
+    
 </head>
 <body>
 
@@ -18,7 +19,7 @@
     <nav class="nav-bar">
         <a href="{% url 'index' %}" class="nav-link">Inicio</a>
         <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link">Usuarios</a>
-        <a href="{% url 'accesos:lista' %}" class="nav-link">Accesos</a>
+        <a href="{% url 'ambientes:listar_ambientes' %}" class="nav-link">Ambientes</a>
         <a href="#" class="nav-link">Reportes</a>
         <a href="#" class="nav-link">Configuración</a>
     </nav>
