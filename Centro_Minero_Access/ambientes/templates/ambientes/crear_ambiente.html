@@ -1,144 +1,281 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Crear Ambiente</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Ambiente - Sistema SENA</title>
+    <link rel="icon" href="https://www.sena.edu.co/favicon.ico" type="image/x-icon">
     <style>
-        /* Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        /* ===== Variables y Reset ===== */
+        :root {
+            --sena-green: #39A900;
+            --sena-green-dark: #2B8000;
+            --sena-blue: #005DA8;
+            --sena-blue-dark: #004880;
+            --sena-gray: #F3F3F3;
+            --text-color: #333;
+            --border-color: #ddd;
+            --shadow: rgba(0,0,0,0.1);
+            --card-bg: #fff;
+            --bg-gradient: linear-gradient(135deg, #f5f7fa, #e4e8f0);
         }
-
+        body.dark-mode {
+            --text-color: #e0e0e0;
+            --border-color: #444;
+            --card-bg: #2b2b2b;
+            --bg-gradient: linear-gradient(135deg, #121212, #1e1e1e);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
         body {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            background-size: 300% 300%;
-            animation: gradientBG 12s ease infinite;
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            display:flex;
+            flex-direction:column;
+            min-height:100vh;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* ===== Header ===== */
+        .top-header {
+            background: #fff;
+            border-bottom: 3px solid var(--sena-green);
+            box-shadow: 0 2px 8px var(--shadow);
+            padding: .8rem 2rem;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            position:sticky; top:0;
+            z-index:10;
+        }
+        body.dark-mode .top-header { background:#2b2b2b; }
+        .logo { display:flex; gap:12px; align-items:center; }
+        .logo .icon { font-size:2rem; color:var(--sena-green); }
+        .logo .brand { display:flex; flex-direction:column; font-weight:700; color:var(--sena-blue); }
+        .nav-bar { display:flex; gap:25px; }
+        .nav-link {
+            color:var(--text-color);
+            text-decoration:none;
+            font-weight:500;
+            padding-bottom:5px;
+            position:relative;
+        }
+        .nav-link:hover { color:var(--sena-green); }
+        .nav-link.active::after,
+        .nav-link:hover::after {
+            content:'';
+            position:absolute;
+            bottom:-3px; left:0;
+            width:100%; height:3px;
+            background:var(--sena-green);
         }
 
-        .card {
-            background: rgba(255, 255, 255, 0.08);
-            padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-            width: 420px;
-            backdrop-filter: blur(12px);
-            text-align: center;
-            animation: fadeIn 1s ease;
+        /* ===== Config Panel ===== */
+        .overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.5); display:none; z-index:9;}
+        .overlay.show { display:block; }
+        .config-panel {
+            position:absolute; top:100%; right:0;
+            width:300px; background:var(--card-bg);
+            border:1px solid var(--border-color);
+            border-radius:10px; padding:20px;
+            box-shadow:0 6px 18px var(--shadow);
+            display:none; z-index:11;
         }
-
-        h1 {
-            margin-bottom: 1.5rem;
-            color: #fff;
-            font-size: 1.8rem;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(0,210,255,0.6);
+        .config-panel.show { display:block; }
+        .config-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+        .close-config { background:none; border:none; font-size:1.4rem; cursor:pointer; }
+        .config-option { margin-bottom:12px; }
+        .config-option label { font-weight:600; display:block; margin-bottom:5px; }
+        .config-option select, .config-option input {
+            width:100%; padding:8px;
+            border:1px solid var(--border-color);
+            border-radius:6px; background:var(--sena-gray);
         }
+        body.dark-mode .config-option select,
+        body.dark-mode .config-option input { background:#3b3b3b; color:var(--text-color); }
 
-        form p {
-            margin-bottom: 1rem;
-            text-align: left;
-            color: #ddd;
-            font-size: 0.9rem;
+        .config-buttons { display:flex; gap:10px; justify-content:flex-end; margin-top:10px; }
+        .config-btn {
+            padding:8px 14px; border:none; border-radius:6px;
+            font-weight:600; cursor:pointer;
         }
+        .config-btn.save { background:var(--sena-green); color:#fff; }
+        .config-btn.cancel { background:#eee; }
+        body.dark-mode .config-btn.cancel { background:#555; color:#fff; }
 
-        input, select, textarea {
-            width: 100%;
-            padding: 0.9rem;
-            margin-top: 0.4rem;
-            border: none;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.15);
-            color: #fff;
-            outline: none;
-            transition: 0.3s;
+        /* ===== Contenido ===== */
+        .main-container { width:100%; max-width:1100px; margin:30px auto; padding:0 20px; flex:1; }
+        .page-header {
+            display:flex; justify-content:space-between;
+            align-items:center; border-bottom:2px solid var(--border-color);
+            padding-bottom:12px; margin-bottom:25px;
         }
-
-        input::placeholder, textarea::placeholder {
-            color: #bbb;
+        .page-title { font-size:1.8rem; color:var(--sena-blue); }
+        .create-btn {
+            background:linear-gradient(135deg, var(--sena-green), var(--sena-green-dark));
+            color:white; padding:10px 20px;
+            border-radius:6px; text-decoration:none;
+            font-weight:600;
         }
-
-        input:focus, select:focus, textarea:focus {
-            background: rgba(255, 255, 255, 0.25);
-            box-shadow: 0 0 12px #00d2ff;
-            border: 1px solid #00d2ff;
+        .form-container {
+            background:var(--card-bg);
+            border:1px solid var(--border-color);
+            border-radius:12px;
+            padding:25px;
+            box-shadow:0 6px 20px var(--shadow);
+            position:relative;
         }
-
-        /* Select personalizado */
-        select {
-            appearance: none;
-            cursor: pointer;
+        .form-container::before {
+            content:''; position:absolute; top:0; left:0;
+            width:100%; height:5px;
+            background:linear-gradient(90deg, var(--sena-green), var(--sena-blue));
         }
-
-        option {
-            background: #1b2735;
-            color: #fff;
-            padding: 0.8rem;
+        form p { margin-bottom:1rem; }
+        label { font-weight:600; }
+        input, select {
+            width:100%; padding:10px;
+            border:1px solid var(--border-color);
+            border-radius:6px; background:var(--sena-gray);
+            margin-bottom:12px;
         }
-
-        button {
-            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
-            color: #fff;
-            padding: 1rem 1.5rem;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: 0.3s;
-            margin-top: 1rem;
-            width: 100%;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        input:focus { border-color:var(--sena-green); outline:none; }
+        .btn-success {
+            background:linear-gradient(135deg, var(--sena-green), var(--sena-green-dark));
+            color:#fff; padding:10px 16px;
+            border:none; border-radius:6px;
+            font-weight:600; cursor:pointer;
         }
+        .back-link { text-decoration:none; color:var(--sena-blue); margin-left:15px; }
 
-        button:hover {
-            background: linear-gradient(135deg, #3a7bd5, #00d2ff);
-            transform: translateY(-3px);
-            box-shadow: 0 0 15px rgba(0,210,255,0.7);
+        /* ===== Footer ===== */
+        .footer {
+            background:linear-gradient(135deg, var(--sena-blue), var(--sena-blue-dark));
+            color:#fff; text-align:center;
+            padding:20px; margin-top:40px;
+            position:relative;
         }
-
-        a {
-            display: inline-block;
-            margin-top: 1.3rem;
-            color: #00d2ff;
-            text-decoration: none;
-            font-weight: 500;
-            transition: 0.3s;
+        .footer::before {
+            content:''; position:absolute; top:0; left:0;
+            width:100%; height:5px; background:var(--sena-green);
         }
-
-        a:hover {
-            color: #3a7bd5;
-            text-shadow: 0 0 8px #00d2ff;
+        .footer-links {
+            margin-top:10px; display:flex;
+            justify-content:center; gap:20px; flex-wrap:wrap;
         }
+        .footer-links a { color:white; text-decoration:none; }
+        .footer-links a:hover { text-decoration:underline; color:#a8e6cf; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
+        @media (max-width:768px){
+            .page-header{flex-direction:column; gap:15px; text-align:center;}
         }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>🌌 Crear Nuevo Ambiente</h1>
+<div class="overlay" id="configOverlay"></div>
+
+<header class="top-header">
+    <div class="logo">
+        <div class="icon">🏫</div>
+        <div class="brand">
+            <span id="brandTitle">Control de Ambientes</span>
+            <span id="brandSubtitle">SENA - Centro de Formación</span>
+        </div>
+    </div>
+    <nav class="nav-bar">
+        <a href="{% url 'index' %}" class="nav-link" id="navInicio">Inicio</a>
+        <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link" id="navUsuarios">Usuarios</a>
+        <a href="{% url 'ambientes:listar_ambientes' %}" class="nav-link active" id="navAmbientes">Ambientes</a>
+        <a href="#" id="configLink" class="nav-link">Configuración</a>
+        <div id="configPanel" class="config-panel">
+            <div class="config-header">
+                <h3 id="panelTitle">Configuración</h3>
+                <button id="closeConfig" class="close-config">&times;</button>
+            </div>
+            <div class="config-option">
+                <label for="theme">Tema</label>
+                <select id="theme">
+                    <option value="light">Claro</option>
+                    <option value="dark">Oscuro</option>
+                </select>
+            </div>
+            <div class="config-option">
+                <label for="language">Idioma</label>
+                <select id="language">
+                    <option value="es">Español</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+            <div class="config-buttons">
+                <button class="config-btn cancel" id="cancelConfig">Cancelar</button>
+                <button class="config-btn save" id="saveConfig">Guardar</button>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main class="main-container">
+    <div class="page-header">
+        <h1 class="page-title">➕ Crear Ambiente</h1>
+        <a href="{% url 'ambientes:listar_ambientes' %}" class="create-btn">← Volver a la lista</a>
+    </div>
+    <div class="form-container">
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit">💾 Guardar</button>
+            
+            <hr style="border: 1px solid var(--border-color); margin: 30px 0;">
+            
+            <div style="display:flex;justify-content:flex-end;gap:10px; margin-top: 20px;">
+                <button type="submit" class="btn-success">💾 Guardar</button>
+                <a href="{% url 'ambientes:listar_ambientes' %}" class="back-link">⬅️ Volver</a>
+            </div>
         </form>
-        <a href="{% url 'listar_ambientes' %}">⬅ Volver a la lista</a>
     </div>
+</main>
+
+<footer class="footer">
+    <p>Sistema de Control de Ambientes - SENA</p>
+    <p>© 2025 Todos los derechos reservados</p>
+    <div class="footer-links">
+        <a href="#">Políticas de Privacidad</a>
+        <a href="#">Términos de Uso</a>
+        <a href="#">Soporte Técnico</a>
+    </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+    // Lógica de configuración de tema e idioma
+    const overlay=document.getElementById('configOverlay');
+    const panel=document.getElementById('configPanel');
+    const link=document.getElementById('configLink');
+    const close=document.getElementById('closeConfig');
+    const cancel=document.getElementById('cancelConfig');
+    const save=document.getElementById('saveConfig');
+    const theme=document.getElementById('theme');
+    const lang=document.getElementById('language');
+
+    function togglePanel(){ panel.classList.toggle('show'); overlay.classList.toggle('show'); }
+    function applyTheme(t){ document.body.classList.toggle('dark-mode', t==='dark'); }
+    function saveSettings(){
+        const s={theme:theme.value,lang:lang.value};
+        localStorage.setItem('settings',JSON.stringify(s));
+        applyTheme(s.theme);
+        togglePanel();
+    }
+    function load(){
+        const s=JSON.parse(localStorage.getItem('settings')||'{}');
+        if(s.theme){theme.value=s.theme;applyTheme(s.theme);}
+        if(s.lang){lang.value=s.lang;}
+    }
+
+    link.addEventListener('click',e=>{e.preventDefault();togglePanel();load();});
+    close.addEventListener('click',togglePanel);
+    cancel.addEventListener('click',togglePanel);
+    save.addEventListener('click',saveSettings);
+    overlay.addEventListener('click',togglePanel);
+    load();
+});
+</script>
 </body>
 </html>
