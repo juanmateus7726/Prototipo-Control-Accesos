@@ -1,17 +1,20 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Eliminar Usuario - Sistema SENA</title>
     <link rel="icon" href="https://www.sena.edu.co/favicon.ico" type="image/x-icon">
+
+    <!-- Todo el CSS es el mismo que en editar_usuario -->
     <style>
         /* Reset */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            transition: background-color 0.3s, color 0.3s; /* Transición suave para el modo oscuro */
+            transition: background-color 0.3s, color 0.3s;
         }
 
         :root {
@@ -293,6 +296,12 @@
             font-size: 0.9rem;
             animation: fadeIn 0.5s ease;
         }
+        
+        body.dark-mode .config-message {
+            background-color: #1a361f;
+            color: #d4edda;
+            border-color: #2b5130;
+        }
 
         /* Overlay para cuando el panel está abierto */
         .overlay {
@@ -312,25 +321,62 @@
 
         /* ===== CONTENIDO PRINCIPAL ===== */
         .main-container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 30px auto;
+            padding: 0 20px;
             flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
         }
 
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .page-title {
+            font-size: 2rem;
+            color: var(--sena-blue);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .create-btn {
+            background: linear-gradient(135deg, var(--sena-green), var(--sena-green-dark));
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(57, 169, 0, 0.3);
+        }
+
+        .create-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(57, 169, 0, 0.4);
+        }
+
+        /* Reutilizamos estilos de tabla para la caja del formulario */
+        .table-container,
         .form-container {
-            max-width: 500px;
-            width: 100%;
             background: var(--card-background);
             border-radius: 16px;
-            padding: 40px;
+            padding: 25px;
             box-shadow: 0 10px 30px var(--sena-shadow);
             border: 1px solid var(--border-color);
-            animation: fadeIn 0.8s ease;
+            overflow: hidden;
             position: relative;
         }
 
+        .table-container::before,
         .form-container::before {
             content: '';
             position: absolute;
@@ -339,21 +385,10 @@
             width: 100%;
             height: 5px;
             background: linear-gradient(90deg, var(--sena-green), var(--sena-blue));
-            border-top-left-radius: 16px;
-            border-top-right-radius: 16px;
         }
 
-        .form-title {
-            font-size: 2rem;
-            color: var(--sena-blue);
-            text-align: center;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 15px;
-        }
-        
         form p {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         form label {
@@ -372,6 +407,7 @@
             font-size: 1rem;
             color: var(--sena-text);
             transition: border-color 0.3s, box-shadow 0.3s;
+            margin-bottom: 12px;
         }
 
         input:focus, select:focus, textarea:focus {
@@ -380,35 +416,30 @@
             outline: none;
         }
 
-        .btn-primary {
-            width: 100%;
-            padding: 15px;
+        .btn-primary, .btn-danger {
+            width: auto;
+            padding: 10px 18px;
             border: none;
             border-radius: 8px;
-            background: linear-gradient(135deg, var(--sena-danger), #dc3545);
-            color: white;
-            font-size: 1.1rem;
-            font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-            text-transform: uppercase;
-        }
-        
-        body.dark-mode .btn-primary {
-            background: linear-gradient(135deg, #cc2c3c, #b02330);
-            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2);
+            font-weight: 700;
         }
 
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(220, 53, 69, 0.4);
+        .btn-success {
+            background: linear-gradient(135deg, var(--sena-green), var(--sena-green-dark));
+            color: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-shadow: 0 4px 12px rgba(57, 169, 0, 0.25);
         }
+
+        .btn-success:hover { transform: translateY(-3px); }
 
         .back-link {
             display: block;
             text-align: center;
-            margin-top: 25px;
+            margin-top: 15px;
             color: var(--sena-blue);
             text-decoration: none;
             font-weight: 500;
@@ -420,7 +451,7 @@
             text-decoration: underline;
             color: var(--sena-green);
         }
-        
+
         .confirmation-message {
             color: var(--sena-danger);
             background-color: #f8d7da;
@@ -430,29 +461,101 @@
             margin-bottom: 1.5rem;
             text-align: center;
         }
-        
+
         body.dark-mode .confirmation-message {
             color: #ffb3b3;
             background-color: #5d262c;
             border-color: #8c3b44;
         }
-        
-        /* Animaciones */
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: linear-gradient(135deg, var(--sena-blue), var(--sena-blue-dark));
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            margin-top: 40px;
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--sena-green);
+        }
+
+        .footer p {
+            margin: 8px 0;
+            font-weight: 300;
+        }
+
+        .footer-links {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 400;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .footer-links a:hover {
+            color: #a8e6cf;
+            text-decoration: underline;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .top-header {
+                flex-direction: column;
+                padding: 1rem;
+                text-align: center;
+            }
+
+            .logo {
+                margin-bottom: 15px;
+            }
+
+            .nav-bar {
+                flex-direction: row;
+                gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+        }
+
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
     <div class="overlay" id="configOverlay"></div>
 
+    <!-- HEADER (igual que editar_usuario) -->
     <div class="top-header">
         <div class="logo">
             <div class="icon">⚙️</div>
@@ -466,13 +569,14 @@
             <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link active" id="navUsuarios">Usuarios</a>
             <a href="{% url 'usuarios:listar_registros' %}" class="nav-link" id="navRegistros">Registros</a>
             <a class="nav-link" id="configLink"><span id="navConfiguracion">Configuración</span></a>
-            
+
+            <!-- PANEL DE CONFIGURACIÓN -->
             <div class="config-panel" id="configPanel">
                 <div class="config-header">
                     <h3 id="panelTitle">Configuración del Sistema</h3>
                     <button class="close-config" id="closeConfig">&times;</button>
                 </div>
-                
+
                 <div class="config-message" id="configMessage">¡Configuración guardada!</div>
 
                 <div class="config-option">
@@ -483,7 +587,7 @@
                         <option value="auto" id="optAuto">Automático</option>
                     </select>
                 </div>
-                
+
                 <div class="config-option">
                     <label for="notifications" id="labelNotifications">Notificaciones</label>
                     <select id="notifications">
@@ -491,7 +595,7 @@
                         <option value="disabled" id="optDisabled">Desactivadas</option>
                     </select>
                 </div>
-                
+
                 <div class="config-option">
                     <label for="language" id="labelLanguage">Idioma</label>
                     <select id="language">
@@ -499,12 +603,12 @@
                         <option value="en">English</option>
                     </select>
                 </div>
-                
+
                 <div class="config-option">
                     <label for="resultsPerPage" id="labelResults">Resultados por página</label>
                     <input type="number" id="resultsPerPage" min="5" max="50" value="10">
                 </div>
-                
+
                 <div class="config-buttons">
                     <button class="config-btn cancel" id="cancelConfig"><span id="btnCancel">Cancelar</span></button>
                     <button class="config-btn save" id="saveConfig"><span id="btnSave">Guardar</span></button>
@@ -513,36 +617,49 @@
         </div>
     </div>
 
+    <!-- CONTENIDO PRINCIPAL -->
     <div class="main-container">
+        <div class="page-header">
+            <h1 class="page-title" id="pageTitle">🗑️ Eliminar Usuario</h1>
+            <a href="{% url 'usuarios:listar_usuarios' %}" class="create-btn" id="createBtn">← Volver a la lista</a>
+        </div>
+
         <div class="form-container">
-            <h1 class="form-title" id="formTitle">🗑️ Eliminar Usuario</h1>
-            <form method="post">
+            <form method="post" id="formEliminar">
                 {% csrf_token %}
-                <p class="confirmation-message" id="confirmationMessage">
-                    ¿Estás seguro de que deseas eliminar a este usuario?
-                </p>
-                <p>
-                    <label for="id_usuario" id="labelUsuarioID">ID del Usuario a Eliminar</label>
-                    <input type="text" name="id_usuario" id="id_usuario" required>
-                </p>
-                <button type="submit" class="btn-primary" id="btnSubmit">💀 Eliminar</button>
+                <div class="confirmation-message">
+                    ¿Estás seguro de que deseas eliminar al usuario
+                    <strong>{{ usuario.nombre }}</strong>?
+                    <br>Esta acción no se puede deshacer.
+                </div>
+
+                <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:8px;">
+                    <button type="submit" class="btn-success" style="background:#dc3545;">
+                        🗑️ Sí, eliminar
+                    </button>
+                    <a href="{% url 'usuarios:listar_usuarios' %}" class="back-link" style="align-self:center;">
+                        ⬅️ Cancelar
+                    </a>
+                </div>
             </form>
-            <a href="{% url 'usuarios:listar_usuarios' %}" class="back-link" id="backLink">⬅️ Volver a la lista</a>
         </div>
     </div>
 
+    <!-- FOOTER (idéntico al de editar_usuario) -->
     <div class="footer">
         <p><span id="footerText1">Sistema de Control de Accesos - SENA</span></p>
-        <p>© 2023 <span id="footerText2">Todos los derechos reservados</span></p>
+        <p>© 2025 <span id="footerText2">Todos los derechos reservados</span></p>
         <div class="footer-links">
             <a href="#" id="linkPrivacy">Políticas de Privacidad</a>
             <a href="#" id="linkTerms">Términos de Uso</a>
             <a href="#" id="linkSupport">Soporte Técnico</a>
         </div>
     </div>
-    
+
+    <!-- JS (igual que editar_usuario, + confirmación de borrado) -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // === Script del panel de configuración (igual al de editar_usuario) ===
             const configLink = document.getElementById('configLink');
             const configPanel = document.getElementById('configPanel');
             const closeConfigBtn = document.getElementById('closeConfig');
@@ -551,13 +668,11 @@
             const configOverlay = document.getElementById('configOverlay');
             const configMessage = document.getElementById('configMessage');
             
-            // Elementos de configuración
             const themeSelect = document.getElementById('theme');
             const notificationsSelect = document.getElementById('notifications');
             const languageSelect = document.getElementById('language');
             const resultsInput = document.getElementById('resultsPerPage');
 
-            // Mapeo de traducciones
             const translations = {
                 es: {
                     brandTitle: 'Control de Accesos',
@@ -578,9 +693,6 @@
                     labelResults: 'Resultados por página',
                     btnCancel: 'Cancelar',
                     btnSave: 'Guardar',
-                    formTitle: '🗑️ Eliminar Usuario',
-                    btnSubmit: '💀 Eliminar',
-                    backLink: '⬅️ Volver a la lista',
                     footerText1: 'Sistema de Control de Accesos - SENA',
                     footerText2: 'Todos los derechos reservados',
                     linkPrivacy: 'Políticas de Privacidad',
@@ -607,9 +719,6 @@
                     labelResults: 'Results per page',
                     btnCancel: 'Cancel',
                     btnSave: 'Save',
-                    formTitle: '🗑️ Delete User',
-                    btnSubmit: '💀 Delete',
-                    backLink: '⬅️ Back to list',
                     footerText1: 'Access Control System - SENA',
                     footerText2: 'All rights reserved',
                     linkPrivacy: 'Privacy Policy',
@@ -634,84 +743,53 @@
 
             function applyLanguage(lang) {
                 const currentLang = translations[lang] || translations.es;
-                document.querySelectorAll('[id]').forEach(element => {
-                    const translationKey = element.id;
-                    if (currentLang[translationKey]) {
-                        element.textContent = currentLang[translationKey];
-                    }
+                document.querySelectorAll('[id]').forEach(el => {
+                    if (currentLang[el.id]) el.textContent = currentLang[el.id];
                 });
                 configMessage.textContent = currentLang.message;
             }
 
-            // Función para cargar la configuración desde localStorage
             function loadSettings() {
-                const savedSettings = localStorage.getItem('userSettings');
-                if (savedSettings) {
-                    const settings = JSON.parse(savedSettings);
-                    themeSelect.value = settings.theme || 'light';
-                    notificationsSelect.value = settings.notifications || 'enabled';
-                    languageSelect.value = settings.language || 'es';
-                    resultsInput.value = settings.resultsPerPage || 10;
-                    
-                    // Aplicar la configuración al cargar la página
-                    applySettings(settings);
+                const saved = localStorage.getItem('userSettings');
+                if (saved) {
+                    const s = JSON.parse(saved);
+                    themeSelect.value = s.theme || 'light';
+                    notificationsSelect.value = s.notifications || 'enabled';
+                    languageSelect.value = s.language || 'es';
+                    resultsInput.value = s.resultsPerPage || 10;
+                    applyTheme(s.theme);
+                    applyLanguage(s.language);
                 }
             }
-            
-            function applySettings(settings) {
-                applyTheme(settings.theme);
-                applyLanguage(settings.language);
-                // Aquí podrías agregar más lógica para Notificaciones, Resultados por página, etc.
-                // Como no hay backend, no habrá un efecto visible en estas opciones.
-            }
 
-            // Función para guardar la configuración en localStorage
             function saveSettings() {
-                const settings = {
+                const s = {
                     theme: themeSelect.value,
                     notifications: notificationsSelect.value,
                     language: languageSelect.value,
                     resultsPerPage: resultsInput.value
                 };
-                localStorage.setItem('userSettings', JSON.stringify(settings));
-
-                // Aplicar la configuración al momento de guardar
-                applySettings(settings);
-
-                // Mostrar mensaje de éxito
+                localStorage.setItem('userSettings', JSON.stringify(s));
+                applyTheme(s.theme);
+                applyLanguage(s.language);
                 configMessage.style.display = 'block';
-                setTimeout(() => {
-                    configMessage.style.display = 'none';
-                    toggleConfigPanel();
-                }, 1500); // Ocultar después de 1.5 segundos
+                setTimeout(() => { configMessage.style.display='none'; toggleConfigPanel(); },1500);
             }
 
-            // Event Listeners
-            configLink.addEventListener('click', function(event) {
-                event.preventDefault();
-                loadSettings(); // Cargar la configuración actual antes de mostrar
-                toggleConfigPanel();
-            });
-
-            closeConfigBtn.addEventListener('click', function() {
-                loadSettings(); // Revertir a la configuración guardada
-                toggleConfigPanel();
-            });
-
-            cancelConfigBtn.addEventListener('click', function() {
-                loadSettings(); // Revertir a la configuración guardada
-                toggleConfigPanel();
-            });
-
+            configLink.addEventListener('click', e => { e.preventDefault(); loadSettings(); toggleConfigPanel(); });
+            closeConfigBtn.addEventListener('click', () => { loadSettings(); toggleConfigPanel(); });
+            cancelConfigBtn.addEventListener('click', () => { loadSettings(); toggleConfigPanel(); });
             saveConfigBtn.addEventListener('click', saveSettings);
+            configOverlay.addEventListener('click', () => { loadSettings(); toggleConfigPanel(); });
 
-            configOverlay.addEventListener('click', function() {
-                loadSettings(); // Revertir a la configuración guardada
-                toggleConfigPanel();
-            });
-            
-            // Cargar la configuración al iniciar la página por primera vez
             loadSettings();
+
+            // === Confirmación de eliminación ===
+            document.getElementById('formEliminar').addEventListener('submit', function(e) {
+                if (!confirm('¿Seguro que deseas eliminar este usuario?')) {
+                    e.preventDefault();
+                }
+            });
         });
     </script>
 </body>

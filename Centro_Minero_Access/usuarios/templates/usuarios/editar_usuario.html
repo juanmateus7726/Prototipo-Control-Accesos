@@ -1,15 +1,19 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Editar Usuario - Sistema SENA</title>
+    <link rel="icon" href="https://www.sena.edu.co/favicon.ico" type="image/x-icon">
+
     <style>
         /* Reset */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         :root {
@@ -24,22 +28,39 @@
             --sena-success: #28a745;
             --sena-danger: #dc3545;
             --sena-warning: #ffc107;
+            --background-color: #f5f7fa;
+            --main-background: #e4e8f0;
+            --card-background: white;
+            --text-color: var(--sena-text);
+            --header-background: white;
+            --border-color: var(--sena-border);
+        }
+
+        /* Tema Oscuro */
+        body.dark-mode {
+            --background-color: #121212;
+            --main-background: #1e1e1e;
+            --card-background: #2b2b2b;
+            --text-color: #e0e0e0;
+            --header-background: #2b2b2b;
+            --border-color: #444444;
+            --sena-text: #e0e0e0;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            background: linear-gradient(135deg, var(--background-color) 0%, var(--main-background) 100%);
             min-height: 100vh;
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
-            color: var(--sena-text);
+            color: var(--text-color);
             line-height: 1.6;
         }
 
         /* ===== HEADER & NAVBAR ===== */
         .top-header {
-            background: white;
+            background: var(--header-background);
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -126,7 +147,7 @@
             position: absolute;
             top: 100%;
             right: 0;
-            background: white;
+            background: var(--card-background);
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
             padding: 20px;
@@ -134,7 +155,7 @@
             z-index: 1001;
             display: none;
             margin-top: 10px;
-            border: 1px solid var(--sena-border);
+            border: 1px solid var(--border-color);
             animation: fadeIn 0.3s ease;
         }
 
@@ -145,10 +166,10 @@
             right: 20px;
             width: 20px;
             height: 20px;
-            background: white;
+            background: var(--card-background);
             transform: rotate(45deg);
-            border-top: 1px solid var(--sena-border);
-            border-left: 1px solid var(--sena-border);
+            border-top: 1px solid var(--border-color);
+            border-left: 1px solid var(--border-color);
         }
 
         .config-panel.show {
@@ -161,7 +182,7 @@
             align-items: center;
             margin-bottom: 20px;
             padding-bottom: 15px;
-            border-bottom: 1px solid var(--sena-border);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .config-header h3 {
@@ -196,12 +217,21 @@
         .config-option select, .config-option input {
             width: 100%;
             padding: 10px 12px;
-            border: 2px solid var(--sena-border);
+            border: 2px solid var(--border-color);
             border-radius: 8px;
+            background: var(--sena-gray);
             font-size: 1rem;
+            color: var(--sena-text);
             transition: all 0.3s ease;
         }
-
+        
+        body.dark-mode .config-option select,
+        body.dark-mode .config-option input {
+            background-color: #3b3b3b;
+            color: var(--text-color);
+            border-color: #555555;
+        }
+        
         .config-option select:focus, .config-option input:focus {
             border-color: var(--sena-green);
             outline: none;
@@ -234,6 +264,12 @@
             color: #6c757d;
             border: 1px solid #dee2e6;
         }
+        
+        body.dark-mode .config-btn.cancel {
+            background-color: #444444;
+            color: var(--text-color);
+            border-color: #555555;
+        }
 
         .config-btn.save:hover {
             background: var(--sena-green-dark);
@@ -241,6 +277,29 @@
 
         .config-btn.cancel:hover {
             background: #e9ecef;
+        }
+        
+        body.dark-mode .config-btn.cancel:hover {
+            background: #555555;
+        }
+
+        .config-message {
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: none;
+            font-size: 0.9rem;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        body.dark-mode .config-message {
+            background-color: #1a361f;
+            color: #d4edda;
+            border-color: #2b5130;
         }
 
         /* Overlay para cuando el panel está abierto */
@@ -274,7 +333,7 @@
             align-items: center;
             margin-bottom: 30px;
             padding-bottom: 15px;
-            border-bottom: 2px solid var(--sena-border);
+            border-bottom: 2px solid var(--border-color);
         }
 
         .page-title {
@@ -285,8 +344,8 @@
             gap: 15px;
         }
 
-        .back-btn {
-            background: linear-gradient(135deg, var(--sena-blue), var(--sena-blue-dark));
+        .create-btn {
+            background: linear-gradient(135deg, var(--sena-green), var(--sena-green-dark));
             color: white;
             padding: 12px 24px;
             border-radius: 8px;
@@ -296,90 +355,116 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 4px 12px rgba(0, 93, 168, 0.3);
+            box-shadow: 0 4px 12px rgba(57, 169, 0, 0.3);
         }
 
-        .back-btn:hover {
+        .create-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0, 93, 168, 0.4);
+            box-shadow: 0 6px 15px rgba(57, 169, 0, 0.4);
         }
 
-        /* Formulario de Edición */
+        /* Reutilizamos estilos de tabla para la caja del formulario */
+        .table-container,
         .form-container {
-            background: white;
+            background: var(--card-background);
             border-radius: 16px;
-            padding: 30px;
+            padding: 25px;
             box-shadow: 0 10px 30px var(--sena-shadow);
-            border: 1px solid var(--sena-border);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            position: relative;
         }
 
-        .form-container h2 {
-            font-size: 1.5rem;
-            color: var(--sena-blue);
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--sena-border);
+        .table-container::before,
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--sena-green), var(--sena-blue));
         }
 
-        .form-group {
-            margin-bottom: 20px;
+        form p {
+            margin-bottom: 1rem;
         }
 
-        .form-group label {
+        form label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             font-weight: 600;
-            color: var(--sena-blue);
+            color: var(--sena-text);
         }
 
-        .form-group input, .form-group select {
+        input, select, textarea {
             width: 100%;
             padding: 12px;
-            border: 2px solid var(--sena-border);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
+            background: var(--sena-gray);
             font-size: 1rem;
-            transition: all 0.3s ease;
+            color: var(--sena-text);
+            transition: border-color 0.3s, box-shadow 0.3s;
+            margin-bottom: 12px;
         }
 
-        .form-group input:focus, .form-group select:focus {
+        input:focus, select:focus, textarea:focus {
             border-color: var(--sena-green);
+            box-shadow: 0 0 5px rgba(57, 169, 0, 0.4);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(57, 169, 0, 0.1);
         }
 
-        .form-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .form-btn {
-            padding: 12px 25px;
+        .btn-primary, .btn-danger {
+            width: auto;
+            padding: 10px 18px;
             border: none;
             border-radius: 8px;
-            font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s ease;
+            font-weight: 700;
         }
 
-        .form-btn.save {
-            background: var(--sena-green);
+        .btn-success {
+            background: linear-gradient(135deg, var(--sena-green), var(--sena-green-dark));
             color: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-shadow: 0 4px 12px rgba(57, 169, 0, 0.25);
         }
 
-        .form-btn.cancel {
-            background: #f8f9fa;
-            color: #6c757d;
-            border: 1px solid #dee2e6;
+        .btn-success:hover { transform: translateY(-3px); }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: var(--sena-blue);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
         }
 
-        .form-btn.save:hover {
-            background: var(--sena-green-dark);
+        .back-link:hover {
+            text-decoration: underline;
+            color: var(--sena-green);
         }
 
-        .form-btn.cancel:hover {
-            background: #e9ecef;
+        .confirmation-message {
+            color: var(--sena-danger);
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        body.dark-mode .confirmation-message {
+            color: #ffb3b3;
+            background-color: #5d262c;
+            border-color: #8c3b44;
         }
 
         /* ===== FOOTER ===== */
@@ -449,19 +534,6 @@
                 justify-content: center;
             }
 
-            .config-panel {
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: 90%;
-                max-width: 320px;
-            }
-
-            .config-panel::before {
-                display: none;
-            }
-
             .page-header {
                 flex-direction: column;
                 gap: 20px;
@@ -471,18 +543,8 @@
             .form-container {
                 padding: 20px;
             }
-
-            .form-buttons {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .form-btn {
-                width: 100%;
-            }
         }
 
-        /* Animación */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -496,55 +558,57 @@
         <div class="logo">
             <div class="icon">⚙️</div>
             <div class="brand">
-                Control de Accesos
-                <span>SENA - Centro de Formación</span>
+                <span id="brandTitle">Control de Accesos</span>
+                <span id="brandSubtitle">SENA - Centro de Formación</span>
             </div>
         </div>
         <div class="nav-bar">
-            <a href="{% url 'index' %}" class="nav-link">Inicio</a>
-            <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link active">Usuarios</a>
-            <a href="{% url 'usuarios:listar_registros' %}" class="nav-link">Registros</a>
-            <a class="nav-link" id="configLink">Configuración</a>
-            
+            <a href="{% url 'index' %}" class="nav-link" id="navInicio">Inicio</a>
+            <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link active" id="navUsuarios">Usuarios</a>
+            <a href="{% url 'usuarios:listar_registros' %}" class="nav-link" id="navRegistros">Registros</a>
+            <a class="nav-link" id="configLink"><span id="navConfiguracion">Configuración</span></a>
+
             <div class="config-panel" id="configPanel">
                 <div class="config-header">
-                    <h3>Configuración del Sistema</h3>
+                    <h3 id="panelTitle">Configuración del Sistema</h3>
                     <button class="close-config" id="closeConfig">&times;</button>
                 </div>
-                
+
+                <div class="config-message" id="configMessage">¡Configuración guardada!</div>
+
                 <div class="config-option">
-                    <label for="theme">Tema de la interfaz</label>
+                    <label for="theme" id="labelTheme">Tema de la interfaz</label>
                     <select id="theme">
-                        <option value="light">Claro</option>
-                        <option value="dark">Oscuro</option>
-                        <option value="auto">Automático</option>
+                        <option value="light" id="optLight">Claro</option>
+                        <option value="dark" id="optDark">Oscuro</option>
+                        <option value="auto" id="optAuto">Automático</option>
                     </select>
                 </div>
-                
+
                 <div class="config-option">
-                    <label for="notifications">Notificaciones</label>
+                    <label for="notifications" id="labelNotifications">Notificaciones</label>
                     <select id="notifications">
-                        <option value="enabled">Activadas</option>
-                        <option value="disabled">Desactivadas</option>
+                        <option value="enabled" id="optEnabled">Activadas</option>
+                        <option value="disabled" id="optDisabled">Desactivadas</option>
                     </select>
                 </div>
-                
+
                 <div class="config-option">
-                    <label for="language">Idioma</label>
+                    <label for="language" id="labelLanguage">Idioma</label>
                     <select id="language">
                         <option value="es">Español</option>
                         <option value="en">English</option>
                     </select>
                 </div>
-                
+
                 <div class="config-option">
-                    <label for="resultsPerPage">Resultados por página</label>
+                    <label for="resultsPerPage" id="labelResults">Resultados por página</label>
                     <input type="number" id="resultsPerPage" min="5" max="50" value="10">
                 </div>
-                
+
                 <div class="config-buttons">
-                    <button class="config-btn cancel" id="cancelConfig">Cancelar</button>
-                    <button class="config-btn save" id="saveConfig">Guardar</button>
+                    <button class="config-btn cancel" id="cancelConfig"><span id="btnCancel">Cancelar</span></button>
+                    <button class="config-btn save" id="saveConfig"><span id="btnSave">Guardar</span></button>
                 </div>
             </div>
         </div>
@@ -552,44 +616,30 @@
 
     <div class="main-container">
         <div class="page-header">
-            <h1 class="page-title">✏️ Editar Usuario</h1>
-            <a href="{% url 'usuarios:listar_usuarios' %}" class="back-btn">← Volver a la Lista</a>
+            <h1 class="page-title" id="pageTitle">✏️ Editar Usuario</h1>
+            <a href="{% url 'usuarios:listar_usuarios' %}" class="create-btn" id="createBtn">← Volver a la lista</a>
         </div>
 
         <div class="form-container">
-            <form method="POST">
+            <form method="post">
                 {% csrf_token %}
-                <div class="form-group">
-                    <label for="id_nombre">Nombre completo</label>
-                    <input type="text" id="id_nombre" name="nombre" value="{{ usuario.nombre }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="id_carnet">Número de Carnet</label>
-                    <input type="text" id="id_carnet" name="carnet" value="{{ usuario.carnet }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="id_tipo">Tipo de usuario</label>
-                    <select id="id_tipo" name="tipo">
-                        <option value="Aprendiz" {% if usuario.tipo == 'Aprendiz' %}selected{% endif %}>Aprendiz</option>
-                        <option value="Instructor" {% if usuario.tipo == 'Instructor' %}selected{% endif %}>Instructor</option>
-                        <option value="Administrativo" {% if usuario.tipo == 'Administrativo' %}selected{% endif %}>Administrativo</option>
-                    </select>
-                </div>
-                <div class="form-buttons">
-                    <button type="submit" class="form-btn save">Guardar Cambios</button>
-                    <a href="{% url 'usuarios:listar_usuarios' %}" class="form-btn cancel">Cancelar</a>
+                {{ form.as_p }}
+                <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:8px;">
+                    <button type="submit" class="btn-success">💾 Guardar cambios</button>
+                    <a href="{% url 'usuarios:listar_usuarios' %}" class="back-link" style="align-self:center;">⬅️ Volver a la lista</a>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- FOOTER: idéntico a listar_usuarios -->
     <div class="footer">
-        <p>Sistema de Control de Accesos - SENA</p>
-        <p>© 2023 Todos los derechos reservados</p>
+        <p><span id="footerText1">Sistema de Control de Accesos - SENA</span></p>
+        <p>© 2025 <span id="footerText2">Todos los derechos reservados</span></p>
         <div class="footer-links">
-            <a href="#">Políticas de Privacidad</a>
-            <a href="#">Términos de Uso</a>
-            <a href="#">Soporte Técnico</a>
+            <a href="#" id="linkPrivacy">Políticas de Privacidad</a>
+            <a href="#" id="linkTerms">Términos de Uso</a>
+            <a href="#" id="linkSupport">Soporte Técnico</a>
         </div>
     </div>
 
@@ -599,33 +649,186 @@
             const configPanel = document.getElementById('configPanel');
             const closeConfigBtn = document.getElementById('closeConfig');
             const cancelConfigBtn = document.getElementById('cancelConfig');
+            const saveConfigBtn = document.getElementById('saveConfig');
             const configOverlay = document.getElementById('configOverlay');
+            const configMessage = document.getElementById('configMessage');
+            
+            // Elementos de configuración
+            const themeSelect = document.getElementById('theme');
+            const notificationsSelect = document.getElementById('notifications');
+            const languageSelect = document.getElementById('language');
+            const resultsInput = document.getElementById('resultsPerPage');
+
+            // Mapeo de traducciones (igual que listar_usuarios)
+            const translations = {
+                es: {
+                    brandTitle: 'Control de Accesos',
+                    brandSubtitle: 'SENA - Centro de Formación',
+                    navInicio: 'Inicio',
+                    navUsuarios: 'Usuarios',
+                    navRegistros: 'Registros',
+                    navConfiguracion: 'Configuración',
+                    panelTitle: 'Configuración del Sistema',
+                    labelTheme: 'Tema de la interfaz',
+                    optLight: 'Claro',
+                    optDark: 'Oscuro',
+                    optAuto: 'Automático',
+                    labelNotifications: 'Notificaciones',
+                    optEnabled: 'Activadas',
+                    optDisabled: 'Desactivadas',
+                    labelLanguage: 'Idioma',
+                    labelResults: 'Resultados por página',
+                    btnCancel: 'Cancelar',
+                    btnSave: 'Guardar',
+                    pageTitle: '👥 Lista de Usuarios',
+                    createBtn: '+ Crear Usuario',
+                    thNombre: 'Nombre',
+                    thCarnet: 'Carnet',
+                    thTipo: 'Tipo',
+                    thAcciones: 'Acciones',
+                    emptyStateText: 'No hay usuarios registrados en el sistema.',
+                    actionEdit: 'Editar',
+                    actionDelete: 'Eliminar',
+                    footerText1: 'Sistema de Control de Accesos - SENA',
+                    footerText2: 'Todos los derechos reservados',
+                    linkPrivacy: 'Políticas de Privacidad',
+                    linkTerms: 'Términos de Uso',
+                    linkSupport: 'Soporte Técnico',
+                    message: '¡Configuración guardada!'
+                },
+                en: {
+                    brandTitle: 'Access Control',
+                    brandSubtitle: 'SENA - Training Center',
+                    navInicio: 'Home',
+                    navUsuarios: 'Users',
+                    navRegistros: 'Logs',
+                    navConfiguracion: 'Settings',
+                    panelTitle: 'System Settings',
+                    labelTheme: 'Interface Theme',
+                    optLight: 'Light',
+                    optDark: 'Dark',
+                    optAuto: 'Auto',
+                    labelNotifications: 'Notifications',
+                    optEnabled: 'Enabled',
+                    optDisabled: 'Disabled',
+                    labelLanguage: 'Language',
+                    labelResults: 'Results per page',
+                    btnCancel: 'Cancel',
+                    btnSave: 'Save',
+                    pageTitle: '👥 User List',
+                    createBtn: '+ Create User',
+                    thNombre: 'Name',
+                    thCarnet: 'ID Number',
+                    thTipo: 'Type',
+                    thAcciones: 'Actions',
+                    emptyStateText: 'No users are registered in the system.',
+                    actionEdit: 'Edit',
+                    actionDelete: 'Delete',
+                    footerText1: 'Access Control System - SENA',
+                    footerText2: 'All rights reserved',
+                    linkPrivacy: 'Privacy Policy',
+                    linkTerms: 'Terms of Use',
+                    linkSupport: 'Technical Support',
+                    message: 'Settings saved!'
+                }
+            };
 
             function toggleConfigPanel() {
                 configPanel.classList.toggle('show');
-                configOverlay.classList.toggle('show');
+                // overlay available as #configOverlay if needed; listing used overlay.show class
+                const overlayEl = document.querySelector('.overlay');
+                if (overlayEl) overlayEl.classList.toggle('show');
             }
 
-            // Muestra u oculta el panel al hacer clic en "Configuración"
+            function applyTheme(theme) {
+                if (theme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                }
+            }
+
+            function applyLanguage(lang) {
+                const currentLang = translations[lang] || translations.es;
+                document.querySelectorAll('[id]').forEach(element => {
+                    const translationKey = element.id;
+                    if (currentLang[translationKey]) {
+                        element.textContent = currentLang[translationKey];
+                    }
+                });
+                configMessage.textContent = currentLang.message;
+            }
+
+            // Función para cargar la configuración desde localStorage
+            function loadSettings() {
+                const savedSettings = localStorage.getItem('userSettings');
+                if (savedSettings) {
+                    const settings = JSON.parse(savedSettings);
+                    themeSelect.value = settings.theme || 'light';
+                    notificationsSelect.value = settings.notifications || 'enabled';
+                    languageSelect.value = settings.language || 'es';
+                    resultsInput.value = settings.resultsPerPage || 10;
+                    
+                    // Aplicar la configuración al cargar la página
+                    applySettings(settings);
+                }
+            }
+            
+            function applySettings(settings) {
+                applyTheme(settings.theme);
+                applyLanguage(settings.language);
+            }
+
+            // Función para guardar la configuración en localStorage
+            function saveSettings() {
+                const settings = {
+                    theme: themeSelect.value,
+                    notifications: notificationsSelect.value,
+                    language: languageSelect.value,
+                    resultsPerPage: resultsInput.value
+                };
+                localStorage.setItem('userSettings', JSON.stringify(settings));
+
+                // Aplicar la configuración al momento de guardar
+                applySettings(settings);
+
+                // Mostrar mensaje de éxito
+                configMessage.style.display = 'block';
+                setTimeout(() => {
+                    configMessage.style.display = 'none';
+                    toggleConfigPanel();
+                }, 1500); // Ocultar después de 1.5 segundos
+            }
+
+            // Event Listeners
             configLink.addEventListener('click', function(event) {
                 event.preventDefault();
+                loadSettings(); // Cargar la configuración actual antes de mostrar
                 toggleConfigPanel();
             });
 
-            // Oculta el panel al hacer clic en el botón de cerrar
             closeConfigBtn.addEventListener('click', function() {
+                loadSettings();
                 toggleConfigPanel();
             });
 
-            // Oculta el panel al hacer clic en el botón "Cancelar"
             cancelConfigBtn.addEventListener('click', function() {
+                loadSettings();
                 toggleConfigPanel();
             });
 
-            // Oculta el panel al hacer clic fuera de él (en el overlay)
-            configOverlay.addEventListener('click', function() {
-                toggleConfigPanel();
-            });
+            saveConfigBtn.addEventListener('click', saveSettings);
+
+            const overlay = document.querySelector('.overlay');
+            if (overlay) {
+                overlay.addEventListener('click', function() {
+                    loadSettings();
+                    toggleConfigPanel();
+                });
+            }
+
+            // Cargar la configuración al iniciar la página por primera vez
+            loadSettings();
         });
     </script>
 </body>
