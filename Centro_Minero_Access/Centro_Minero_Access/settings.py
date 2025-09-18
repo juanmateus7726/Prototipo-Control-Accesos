@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'accesos',
     'usuarios',
     'ambientes',
+    'reportes',
 ]
 
 MIDDLEWARE = [

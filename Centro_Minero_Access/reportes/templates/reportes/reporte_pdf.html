@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Accesos</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h1 { text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #333; padding: 6px; font-size: 12px; }
+        th { background: #eee; }
+    </style>
+</head>
+<body>
+    <h1>Reporte de Accesos</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Aprendiz</th>
+                <th>Aula/Laboratorio</th>
+                <th>Método</th>
+                <th>Fecha y Hora</th>
+                <th>Permitido</th>
+                <th>Razón Denegación</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for acceso in accesos %}
+            <tr>
+                <td>{{ acceso.usuario.nombre }}</td>
+                <td>{{ acceso.get_laboratorio_display }}</td>
+                <td>{{ acceso.get_metodo_display }}</td>
+                <td>{{ acceso.fecha_hora|date:"d/m/Y H:i" }}</td>
+                <td>{{ acceso.acceso_permitido|yesno:"Sí,No" }}</td>
+                <td>{{ acceso.razon_denegacion }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
