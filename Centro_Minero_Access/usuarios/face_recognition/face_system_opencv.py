@@ -35,7 +35,7 @@ class OpenCVFaceRecognitionSystem:
         faces = self.face_cascade.detectMultiScale(
             gray,
             scaleFactor=1.1,
-            minNeigbhors=5,
+            minNeighbors=5,
             minSize=(50, 50),
             flags=cv2.CASCADE_SCALE_IMAGE
         )
