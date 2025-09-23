@@ -9,12 +9,16 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+# Para imagenes de rostros
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -25,7 +29,7 @@ SECRET_KEY = 'django-insecure-ot($_0i=&5$43&pn_g25pwe&bl1yk^lcu5bnv)^a*aj0&yi^ke
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -38,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'accesos',
+    'usuarios',
+    'ambientes',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +61,7 @@ ROOT_URLCONF = 'Centro_Minero_Access.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -81,8 +87,13 @@ DATABASES = {
 }
 
 
+LOGIN_URL = '/accounts/login/'        # A dónde redirige si no hay sesión
+LOGIN_REDIRECT_URL = '/'              # Después de login, redirige al index
+LOGOUT_REDIRECT_URL = '/'             # Después de logout, redirige al index
+
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -115,7 +126,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+# URL para servir los archivos estáticos
+STATIC_URL = '/static/'
+
+# Carpetas donde buscar archivos estáticos durante el desarrollo
+STATICFILES_DIRS = [
+    BASE_DIR / "Centro_Minero_Access" / "static", # carpeta para los archivos de desarrollo
+]
+
+# (Opcional) Carpeta donde Django recopila los archivos cuando usas collectstatic
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

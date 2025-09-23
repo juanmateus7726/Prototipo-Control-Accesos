@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Registros - Sistema SENA</title>
+    <link rel="stylesheet" href="{% static 'css/listar_registros.css' %}?v=1.1">
+</head>
+<body>
+    <div class="top-header">
+        <div class="logo">
+            <div class="icon">⚙️</div>
+            <div class="brand">
+                Control de Accesos
+                <span>SENA - Centro de Formación</span>
+            </div>
+        </div>
+        <div class="nav-bar">
+            <a href="{% url 'index' %}" class="nav-link">Inicio</a>
+            <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link">Usuarios</a>
+            <a href="{% url 'ambientes:listar_ambientes' %}" class="nav-link active" id="navAmbientes">Ambientes</a>
+            <a href="{% url 'usuarios:listar_registros' %}" class="nav-link active">Registros</a>
+            <a href="#" class="nav-link">Configuración</a>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="header-section">
+            <h1>📄 Historial de Registros</h1>
+        </div>
+
+        <div class="table-container">
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario</th>
+                        <th>Fecha y Hora</th>
+                        <th>Tipo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for registro in registros %}
+                    <tr>
+                        <td>{{ registro.id }}</td>
+                        <td>{{ registro.usuario.nombre }}</td>
+                        <td>{{ registro.fecha_hora|date:"Y-m-d H:i" }}</td>
+                        <td>
+                            <span class="btn-status {% if registro.tipo == 'Entrada' %}status-entrada{% else %}status-salida{% endif %}">{{ registro.tipo }}</span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">No hay registros de acceso.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Sistema de Control de Accesos - SENA</p>
+        <p>© 2023 Todos los derechos reservados</p>
+        <div class="footer-links">
+            <a href="#">Políticas de Privacidad</a>
+            <a href="#">Términos de Uso</a>
+            <a href="#">Soporte Técnico</a>
+        </div>
+    </div>
+<script src="{% static 'js/listar_registros.js' %}"></script> 
+</body>
+</html>

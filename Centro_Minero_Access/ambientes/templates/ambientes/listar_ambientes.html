@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Ambientes - Sistema SENA</title>
+    <link rel="icon" href="https://www.sena.edu.co/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/listar_ambiente.css' %}?v=1.1">
+</head>
+<body>
+    <div class="overlay" id="configOverlay"></div>
+
+    <!-- ===== HEADER ===== -->
+    <div class="top-header">
+        <div class="logo">
+            <div class="icon">🏫</div>
+            <div class="brand">
+                <span id="brandTitle">Control de Ambientes</span>
+                <span id="brandSubtitle">SENA - Centro de Formación</span>
+            </div>
+        </div>
+        <div class="nav-bar">
+            <a href="{% url 'index' %}" class="nav-link" id="navInicio">Inicio</a>
+            <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link" id="navUsuarios">Usuarios</a>
+            <a href="{% url 'ambientes:listar_ambientes' %}" class="nav-link active" id="navAmbientes">Ambientes</a>
+            <a class="nav-link" id="configLink"><span id="navConfiguracion">Configuración</span></a>
+
+            <!-- Panel de Configuración -->
+            <div class="config-panel" id="configPanel">
+                <div class="config-header">
+                    <h3 id="panelTitle">Configuración del Sistema</h3>
+                    <button class="close-config" id="closeConfig">&times;</button>
+                </div>
+
+                <div class="config-message" id="configMessage">¡Configuración guardada!</div>
+
+                <div class="config-option">
+                    <label for="theme" id="labelTheme">Tema de la interfaz</label>
+                    <select id="theme">
+                        <option value="light" id="optLight">Claro</option>
+                        <option value="dark" id="optDark">Oscuro</option>
+                        <option value="auto" id="optAuto">Automático</option>
+                    </select>
+                </div>
+
+                <div class="config-option">
+                    <label for="notifications" id="labelNotifications">Notificaciones</label>
+                    <select id="notifications">
+                        <option value="enabled" id="optEnabled">Activadas</option>
+                        <option value="disabled" id="optDisabled">Desactivadas</option>
+                    </select>
+                </div>
+
+                <div class="config-option">
+                    <label for="language" id="labelLanguage">Idioma</label>
+                    <select id="language">
+                        <option value="es">Español</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+
+                <div class="config-option">
+                    <label for="resultsPerPage" id="labelResults">Resultados por página</label>
+                    <input type="number" id="resultsPerPage" min="5" max="50" value="10">
+                </div>
+
+                <div class="config-buttons">
+                    <button class="config-btn cancel" id="cancelConfig"><span id="btnCancel">Cancelar</span></button>
+                    <button class="config-btn save" id="saveConfig"><span id="btnSave">Guardar</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CONTENIDO ===== -->
+    <div class="main-container">
+        <div class="page-header">
+            <h1 class="page-title" id="pageTitle">🏫 Lista de Ambientes</h1>
+            <a href="{% url 'ambientes:crear_ambiente' %}" class="create-btn" id="createBtn">+ Crear Ambiente</a>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th id="thNombre">Nombre</th>
+                        <th id="thCodigo">Código</th>
+                        <th id="thEstado">Estado</th>
+                        <th id="thCapacidad">Capacidad</th>
+                        <th id="thAcciones">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ambiente in ambientes %}
+                        <tr>
+                            <td data-label="Nombre">{{ ambiente.nombre }}</td>
+                            <td data-label="Código">{{ ambiente.codigo }}</td>
+                            <td data-label="Estado">{{ ambiente.estado }}</td>
+                            <td data-label="Capacidad">{{ ambiente.capacidad }}</td>
+                            <td data-label="Acciones" class="action-links">
+                                <a href="{% url 'ambientes:editar_ambiente' ambiente.pk %}" class="edit">
+                                    ✏️ <span class="action-text">Editar</span>
+                                </a>
+                                <a href="{% url 'ambientes:eliminar_ambiente' ambiente.pk %}" class="delete">
+                                    🗑️ <span class="action-text">Eliminar</span>
+                                </a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-state">
+                                    <i>🏫</i>
+                                    <p id="emptyStateText">No hay ambientes registrados en el sistema.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <div class="footer">
+        <p><span id="footerText1">Sistema de Control de Ambientes - SENA</span></p>
+        <p>© 2025 <span id="footerText2">Todos los derechos reservados</span></p>
+        <div class="footer-links">
+            <a href="#" id="linkPrivacy">Políticas de Privacidad</a>
+            <a href="#" id="linkTerms">Términos de Uso</a>
+            <a href="#" id="linkSupport">Soporte Técnico</a>
+        </div>
+    </div>
+<script src="{% static 'js/listar_ambientes.js' %}"></script>    
+</body>
+</html>

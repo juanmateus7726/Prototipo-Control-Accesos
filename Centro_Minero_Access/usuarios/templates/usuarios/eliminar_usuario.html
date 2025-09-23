@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Eliminar Usuario - Sistema SENA</title>
+    <link rel="icon" href="https://www.sena.edu.co/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/eliminar_usuario.css' %}?v=1.1">
+</head>
+<body>
+    <div class="overlay" id="configOverlay"></div>
+
+    <!-- HEADER (igual que editar_usuario) -->
+    <div class="top-header">
+        <div class="logo">
+            <div class="icon">⚙️</div>
+            <div class="brand">
+                <span id="brandTitle">Control de Accesos</span>
+                <span id="brandSubtitle">SENA - Centro de Formación</span>
+            </div>
+        </div>
+        <div class="nav-bar">
+            <a href="{% url 'index' %}" class="nav-link" id="navInicio">Inicio</a>
+            <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link active" id="navUsuarios">Usuarios</a>
+            <a href="{% url 'ambientes:listar_ambientes' %}" class="nav-link active" id="navAmbientes">Ambientes</a>
+            <a href="{% url 'usuarios:listar_registros' %}" class="nav-link" id="navRegistros">Registros</a>
+            <a class="nav-link" id="configLink"><span id="navConfiguracion">Configuración</span></a>
+
+            <!-- PANEL DE CONFIGURACIÓN -->
+            <div class="config-panel" id="configPanel">
+                <div class="config-header">
+                    <h3 id="panelTitle">Configuración del Sistema</h3>
+                    <button class="close-config" id="closeConfig">&times;</button>
+                </div>
+
+                <div class="config-message" id="configMessage">¡Configuración guardada!</div>
+
+                <div class="config-option">
+                    <label for="theme" id="labelTheme">Tema de la interfaz</label>
+                    <select id="theme">
+                        <option value="light" id="optLight">Claro</option>
+                        <option value="dark" id="optDark">Oscuro</option>
+                        <option value="auto" id="optAuto">Automático</option>
+                    </select>
+                </div>
+
+                <div class="config-option">
+                    <label for="notifications" id="labelNotifications">Notificaciones</label>
+                    <select id="notifications">
+                        <option value="enabled" id="optEnabled">Activadas</option>
+                        <option value="disabled" id="optDisabled">Desactivadas</option>
+                    </select>
+                </div>
+
+                <div class="config-option">
+                    <label for="language" id="labelLanguage">Idioma</label>
+                    <select id="language">
+                        <option value="es">Español</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+
+                <div class="config-option">
+                    <label for="resultsPerPage" id="labelResults">Resultados por página</label>
+                    <input type="number" id="resultsPerPage" min="5" max="50" value="10">
+                </div>
+
+                <div class="config-buttons">
+                    <button class="config-btn cancel" id="cancelConfig"><span id="btnCancel">Cancelar</span></button>
+                    <button class="config-btn save" id="saveConfig"><span id="btnSave">Guardar</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="main-container">
+        <div class="page-header">
+            <h1 class="page-title" id="pageTitle">🗑️ Eliminar Usuario</h1>
+            <a href="{% url 'usuarios:listar_usuarios' %}" class="create-btn" id="createBtn">← Volver a la lista</a>
+        </div>
+
+        <div class="form-container">
+            <form method="post" id="formEliminar">
+                {% csrf_token %}
+                <div class="confirmation-message">
+                    ¿Estás seguro de que deseas eliminar al usuario
+                    <strong>{{ usuario.nombre }}</strong>?
+                    <br>Esta acción no se puede deshacer.
+                </div>
+
+                <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:8px;">
+                    <button type="submit" class="btn-success" style="background:#dc3545;">
+                        🗑️ Sí, eliminar
+                    </button>
+                    <a href="{% url 'usuarios:listar_usuarios' %}" class="back-link" style="align-self:center;">
+                        ⬅️ Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- FOOTER (idéntico al de editar_usuario) -->
+    <div class="footer">
+        <p><span id="footerText1">Sistema de Control de Accesos - SENA</span></p>
+        <p>© 2025 <span id="footerText2">Todos los derechos reservados</span></p>
+        <div class="footer-links">
+            <a href="#" id="linkPrivacy">Políticas de Privacidad</a>
+            <a href="#" id="linkTerms">Términos de Uso</a>
+            <a href="#" id="linkSupport">Soporte Técnico</a>
+        </div>
+    </div>
+<script src="{% static 'js/eliminar_usuario.js' %}"></script> 
+</body>
+</html>

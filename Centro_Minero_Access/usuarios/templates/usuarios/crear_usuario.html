@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Usuario - Sistema SENA</title>
+    <link rel="icon" href="https://www.sena.edu.co/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/crear_usuario.css' %}?v=1.1">
+</head>
+</head>
+<body>
+<div class="overlay" id="configOverlay"></div>
+
+<header class="top-header">
+    <div class="logo">
+        <div class="icon">⚙️</div>
+        <div class="brand">
+            <span id="brandTitle">Control de Accesos</span>
+            <span id="brandSubtitle">SENA - Centro de Formación</span>
+        </div>
+    </div>
+    <nav class="nav-bar">
+        <a href="{% url 'index' %}" class="nav-link" id="navInicio">Inicio</a>
+        <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link active" id="navUsuarios">Usuarios</a>
+        <a href="{% url 'ambientes:listar_ambientes' %}" class="nav-link active" id="navAmbientes">Ambientes</a>
+        <a href="{% url 'usuarios:listar_registros' %}" class="nav-link" id="navRegistros">Registros</a>
+        <a href="#" id="configLink" class="nav-link">Configuración</a>
+        <div id="configPanel" class="config-panel">
+            <div class="config-header">
+                <h3 id="panelTitle">Configuración</h3>
+                <button id="closeConfig" class="close-config">&times;</button>
+            </div>
+            <div class="config-option">
+                <label for="theme">Tema</label>
+                <select id="theme">
+                    <option value="light">Claro</option>
+                    <option value="dark">Oscuro</option>
+                </select>
+            </div>
+            <div class="config-option">
+                <label for="language">Idioma</label>
+                <select id="language">
+                    <option value="es">Español</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+            <div class="config-buttons">
+                <button class="config-btn cancel" id="cancelConfig">Cancelar</button>
+                <button class="config-btn save" id="saveConfig">Guardar</button>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main class="main-container">
+    <div class="page-header">
+        <h1 class="page-title">➕ Crear Usuario</h1>
+        <a href="{% url 'usuarios:listar_usuarios' %}" class="create-btn">← Volver a la lista</a>
+    </div>
+    <div class="form-container">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div style="display:flex;justify-content:flex-end;gap:10px;">
+                <button type="submit" class="btn-success">💾 Guardar</button>
+                <a href="{% url 'usuarios:listar_usuarios' %}" class="back-link">⬅️ Volver</a>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>Sistema de Control de Accesos - SENA</p>
+    <p>© 2025 Todos los derechos reservados</p>
+    <div class="footer-links">
+        <a href="#">Políticas de Privacidad</a>
+        <a href="#">Términos de Uso</a>
+        <a href="#">Soporte Técnico</a>
+    </div>
+</footer>
+<script src="{% static 'js/crear_usuario.js' %}"></script> 
+</body>
+</html>

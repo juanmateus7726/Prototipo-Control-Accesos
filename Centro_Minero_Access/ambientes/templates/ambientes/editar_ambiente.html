@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Ambiente - Sistema SENA</title>
+    <link rel="icon" href="https://www.sena.edu.co/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/editar_ambiente.css' %}?v=1.1">
+</head>
+<body>
+    <div class="overlay" id="configOverlay"></div>
+    <header class="top-header">
+        <div class="logo">
+            <div class="icon">🏫</div>
+            <div class="brand">
+                <span>Control de Ambientes</span>
+                <span>SENA - Centro de Formación</span>
+            </div>
+        </div>
+        <nav class="nav-bar">
+            <a href="{% url 'index' %}" class="nav-link">Inicio</a>
+            <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link">Usuarios</a>
+            <a href="{% url 'ambientes:listar_ambientes' %}" class="nav-link active">Ambientes</a>
+            <a href="#" id="configLink" class="nav-link">Configuración</a>
+        </nav>
+        <div class="config-panel" id="configPanel">
+            <div class="config-header">
+                <h3>Configuración</h3>
+                <button class="close-config" id="closeConfig">&times;</button>
+            </div>
+            <div class="config-option">
+                <label for="theme">Tema</label>
+                <select id="theme">
+                    <option value="light">Claro</option>
+                    <option value="dark">Oscuro</option>
+                </select>
+            </div>
+            <div class="config-option">
+                <label for="language">Idioma</label>
+                <select id="language">
+                    <option value="es">Español</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+            <div class="config-buttons">
+                <button class="config-btn cancel" id="cancelConfig">Cancelar</button>
+                <button class="config-btn save" id="saveConfig">Guardar</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        
+        <div class="form-card">
+            <h1 id="pageTitle">✍️ Editar Ambiente</h1>
+            <h2 style="color: var(--sena-green);">{{ ambiente.nombre }}</h2>
+            <form method="post">
+                {% csrf_token %}
+                
+                <h3>Información General</h3>
+                <div class="form-grid">
+                    {{ form.as_p }}
+                </div>
+
+                <hr style="border: 1px solid var(--sena-border); margin: 30px 0;">
+
+                <h3>📋 Protocolo de Seguridad</h3>
+                <ul class="checklist-container">
+                    {% for protocolo in protocolos %}
+                        <li class="checklist-item">
+                            <div>
+                                <label for="id_protocolo_{{ protocolo.id }}" class="checklist-label">{{ protocolo.tarea.descripcion }}</label>
+                                {% if protocolo.completado %}
+                                    <span class="completion-date">Completado el: {{ protocolo.fecha_completado|date:"Y-m-d H:i" }}</span>
+                                {% endif %}
+                            </div>
+                            <input type="checkbox" name="protocolo_{{ protocolo.id }}" id="id_protocolo_{{ protocolo.id }}" {% if protocolo.completado %}checked{% endif %}>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-save" id="btnSave">💾 Guardar Cambios</button>
+                    <a href="{% url 'ambientes:listar_ambientes' %}" class="btn-cancel">⬅ Volver</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p id="footerText1">Sistema de Control de Ambientes - SENA</p>
+        <p id="footerText2">© 2025 Todos los derechos reservados</p>
+        <div class="footer-links">
+            <a href="#">Políticas de Privacidad</a>
+            <a href="#">Términos de Uso</a>
+            <a href="#">Soporte</a>
+        </div>
+    </footer>
+<script src="{% static 'js/editar_ambiente.js' %}"></script>
+</body>
+</html>
