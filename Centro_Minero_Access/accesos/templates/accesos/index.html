@@ -58,32 +58,52 @@
         <section class="card">
             <div class="card-title">🔐 Control de Acceso</div>
 
-            <!-- Cámara -->
+            <!-- Cámara para Reconocimiento Facial -->
             <div class="camera-container">
                 <div class="camera-view" id="cameraView">
                     <div id="cameraStatus">
-                        📹 CÁMARA DESACTIVADA<br>
-                        <small>Presiona “Activar Cámara” para iniciar</small>
+                        🎭 RECONOCIMIENTO FACIAL<br>
+                        <small>Presiona "Activar Reconocimiento" para iniciar</small>
                     </div>
                     <video id="videoElement" style="display:none;" autoplay></video>
                     <div class="camera-overlay" id="cameraOverlay" style="display:none;">
                         🔍 Buscando rostros...
                     </div>
+                    <div class="face-detection-guide" id="faceGuide" style="display:none;"></div>
                 </div>
 
                 <div class="face-detection-area" id="faceDetection" style="display:none;">
                     <div style="text-align:center; color:#74b9ff;">
-                        👤 Área de Detección Facial Activa
+                        🤖 Sistema de Reconocimiento Facial Activo
                     </div>
                 </div>
 
                 <div class="camera-controls">
-                    <button class="btn btn-success" onclick="toggleCamera()">
-                        <span id="cameraButtonText">Activar Cámara</span>
+                    <button class="btn btn-success" onclick="activarReconocimiento()">
+                        <span id="reconocimientoButtonText">🎭 Activar Reconocimiento</span>
                     </button>
-                    <button class="btn btn-primary" onclick="simularReconocimiento()">
-                        Simular Reconocimiento
+                    <button class="btn btn-warning" onclick="capturarRostro()" id="captureBtn" style="display:none;">
+                        📸 Reconocer Acceso
                     </button>
+                    <button class="btn btn-danger" onclick="detenerReconocimiento()" id="stopBtn" style="display:none;">
+                        ⏹️ Detener
+                    </button>
+                </div>
+            </div>
+
+            <!-- Resultado del Reconocimiento -->
+            <div id="reconocimientoResultado" class="reconocimiento-resultado" style="display:none;">
+                <div class="usuario-reconocido">
+                    <div class="avatar-usuario" id="avatarUsuario">👤</div>
+                    <div class="info-usuario">
+                        <h3 id="nombreUsuario">Usuario Desconocido</h3>
+                        <p id="carnetUsuario">Carnet: ----</p>
+                        <p id="tipoUsuario">Tipo: ----</p>
+                        <p id="confianzaReconocimiento">Confianza: --%</p>
+                    </div>
+                    <div class="acceso-status" id="accesoStatus">
+                        <span class="status-badge status-denied">❌ DENEGADO</span>
+                    </div>
                 </div>
             </div>
 
@@ -105,7 +125,7 @@
                         {{ form.metodo }}
                     </div>
                     <button type="submit" class="btn btn-danger w-100">
-                        ✅ Registrar Acceso
+                        ✅ Registrar Acceso Manual
                     </button>
                 </form>
             </div>
@@ -120,19 +140,27 @@
                             <th>Ambiente</th>
                             <th>Método</th>
                             <th>Fecha / Hora</th>
+                            <th>Confianza</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="accesosRecentesBody">
                         {% for acceso in accesos_lista %}
                         <tr>
                             <td>{{ acceso.usuario.nombre }}</td>
                             <td>{{ acceso.get_laboratorio_display }}</td>
                             <td>{{ acceso.get_metodo_display }}</td>
                             <td>{{ acceso.fecha_hora|date:"Y-m-d H:i" }}</td>
+                            <td>
+                                {% if acceso.confianza %}
+                                    {{ acceso.confianza|floatformat:1 }}%
+                                {% else %}
+                                    --
+                                {% endif %}
+                            </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="4" style="text-align:center; padding:10px; color:#7f8c8d;">
+                            <td colspan="5" style="text-align:center; padding:10px; color:#7f8c8d;">
                                 No hay accesos registrados.
                             </td>
                         </tr>
@@ -157,6 +185,7 @@
             <div class="card-title" style="margin-top:30px;">📋 Log de Accesos</div>
             <div id="logContainer" class="log-container">
                 <div style="color:#74b9ff;">[SISTEMA INICIADO]</div>
+                <div>Sistema de reconocimiento facial disponible...</div>
                 <div>Esperando identificación de usuarios...</div>
             </div>
         </aside>
@@ -165,7 +194,7 @@
 
 <!-- ===== FOOTER ===== -->
 <footer class="footer">
-    <p>💡 Sistema Inteligente de Control de Acceso - Centro Minero SENA © 2025</p>
+    <p>🤖 Sistema Inteligente de Control de Acceso con IA - Centro Minero SENA © 2025</p>
     <p class="footer-links">
         <a href="#">Políticas</a> |
         <a href="#">Soporte</a> |
@@ -183,6 +212,311 @@
 </div>
 
 <div id="notification" class="notification"></div>
-<script src="{% static 'js/control.js' %}"></script>
-</body>
-</html>
+
+<!-- Estilos adicionales para reconocimiento facial -->
+<style>
+.face-detection-guide {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    border: 3px solid #39A900;
+    border-radius: 50%;
+    opacity: 0.7;
+    z-index: 5;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.05); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+.reconocimiento-resultado {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+    border: 2px solid #dee2e6;
+}
+
+.usuario-reconocido {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.avatar-usuario {
+    font-size: 3rem;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #39A900, #2B8000);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.info-usuario {
+    flex: 1;
+}
+
+.info-usuario h3 {
+    color: #2c3e50;
+    font-size: 1.3rem;
+    margin-bottom: 5px;
+}
+
+.info-usuario p {
+    margin: 3px 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.acceso-status {
+    text-align: center;
+}
+
+.status-badge {
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    display: inline-block;
+    animation: statusBlink 1s ease-in-out;
+}
+
+.status-approved {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.status-denied {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+}
+
+@keyframes statusBlink {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.notification-success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    box-shadow: 0 5px 20px rgba(40, 167, 69, 0.3);
+    animation: slideInRight 0.5s ease;
+}
+
+.notification-error {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    box-shadow: 0 5px 20px rgba(220, 53, 69, 0.3);
+    animation: slideInRight 0.5s ease;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+</style>
+
+<script>
+// Variables globales para reconocimiento facial
+let videoStream = null;
+let isRecognitionActive = false;
+let canvas = null;
+
+// Función para activar reconocimiento facial
+async function activarReconocimiento() {
+    try {
+        mostrarNotificacion('Iniciando sistema de reconocimiento facial...', 'warning');
+        
+        const video = document.getElementById('videoElement');
+        const cameraStatus = document.getElementById('cameraStatus');
+        const cameraOverlay = document.getElementById('cameraOverlay');
+        const faceGuide = document.getElementById('faceGuide');
+        const reconocimientoBtn = document.getElementById('reconocimientoButtonText');
+        const captureBtn = document.getElementById('captureBtn');
+        const stopBtn = document.getElementById('stopBtn');
+
+        // Solicitar acceso a la cámara
+        videoStream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                width: { ideal: 640 },
+                height: { ideal: 480 },
+                facingMode: 'user'
+            }
+        });
+
+        video.srcObject = videoStream;
+        
+        video.onloadedmetadata = () => {
+            cameraStatus.style.display = 'none';
+            video.style.display = 'block';
+            cameraOverlay.style.display = 'flex';
+            cameraOverlay.textContent = '🎭 Sistema de reconocimiento activo - Posicione su rostro';
+            faceGuide.style.display = 'block';
+            
+            // Cambiar botones
+            document.querySelector('.btn.btn-success').style.display = 'none';
+            captureBtn.style.display = 'inline-block';
+            stopBtn.style.display = 'inline-block';
+            
+            isRecognitionActive = true;
+            
+            mostrarNotificacion('Sistema de reconocimiento facial activado correctamente', 'success');
+            agregarLog('Sistema de reconocimiento facial activado');
+        };
+
+    } catch (error) {
+        console.error('Error al activar reconocimiento:', error);
+        mostrarNotificacion('Error al acceder a la cámara. Verifique los permisos.', 'error');
+        agregarLog('ERROR: No se pudo acceder a la cámara');
+    }
+}
+
+// Función para capturar y reconocer rostro
+async function capturarRostro() {
+    if (!isRecognitionActive) {
+        mostrarNotificacion('Active primero el sistema de reconocimiento', 'warning');
+        return;
+    }
+
+    try {
+        mostrarNotificacion('Capturando y analizando rostro...', 'warning');
+        agregarLog('Iniciando proceso de reconocimiento...');
+
+        const video = document.getElementById('videoElement');
+        
+        // Crear canvas para capturar imagen
+        if (!canvas) {
+            canvas = document.createElement('canvas');
+        }
+        
+        const ctx = canvas.getContext('2d');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        
+        // Capturar frame actual
+        ctx.drawImage(video, 0, 0);
+        const imageData = canvas.toDataURL('image/jpeg', 0.8);
+        
+        // Obtener ambiente seleccionado
+        const ambienteSelect = document.getElementById('ambienteSelect');
+        const ambienteSeleccionado = ambienteSelect.options[ambienteSelect.selectedIndex].text;
+
+        // Enviar para reconocimiento
+        const response = await fetch('{% url "usuarios:reconocer_rostro" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                image_data: imageData,
+                ambiente: ambienteSeleccionado
+            })
+        });
+
+        const data = await response.json();
+        
+        // Mostrar resultado
+        mostrarResultadoReconocimiento(data);
+        
+        if (data.success && data.acceso_autorizado) {
+            actualizarEstadoSistema('approved', data.usuario.nombre);
+            mostrarNotificacion(data.message, 'success');
+            agregarLog(`ACCESO AUTORIZADO: ${data.usuario.nombre} (${data.confianza}% confianza)`);
+            
+            // Actualizar tabla de accesos recientes
+            actualizarTablaAccesos(data.usuario, ambienteSeleccionado, 'Reconocimiento Facial', data.confianza);
+        } else {
+            actualizarEstadoSistema('denied');
+            mostrarNotificacion(data.message, 'error');
+            agregarLog('ACCESO DENEGADO: Rostro no reconocido');
+        }
+
+    } catch (error) {
+        console.error('Error en reconocimiento:', error);
+        mostrarNotificacion('Error al procesar el reconocimiento facial', 'error');
+        agregarLog('ERROR: Fallo en el sistema de reconocimiento');
+    }
+}
+
+// Función para detener reconocimiento
+function detenerReconocimiento() {
+    if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
+    }
+
+    const video = document.getElementById('videoElement');
+    const cameraStatus = document.getElementById('cameraStatus');
+    const cameraOverlay = document.getElementById('cameraOverlay');
+    const faceGuide = document.getElementById('faceGuide');
+    const captureBtn = document.getElementById('captureBtn');
+    const stopBtn = document.getElementById('stopBtn');
+
+    video.style.display = 'none';
+    video.srcObject = null;
+    cameraStatus.style.display = 'block';
+    cameraOverlay.style.display = 'none';
+    faceGuide.style.display = 'none';
+    
+    // Restaurar botones
+    document.querySelector('.btn.btn-success').style.display = 'inline-block';
+    captureBtn.style.display = 'none';
+    stopBtn.style.display = 'none';
+    
+    isRecognitionActive = false;
+    
+    // Ocultar resultado
+    document.getElementById('reconocimientoResultado').style.display = 'none';
+    
+    mostrarNotificacion('Sistema de reconocimiento desactivado', 'warning');
+    agregarLog('Sistema de reconocimiento desactivado');
+    actualizarEstadoSistema('waiting');
+}
+
+// Función para mostrar resultado del reconocimiento
+function mostrarResultadoReconocimiento(data) {
+    const resultado = document.getElementById('reconocimientoResultado');
+    const avatar = document.getElementById('avatarUsuario');
+    const nombre = document.getElementById('nombreUsuario');
+    const carnet = document.getElementById('carnetUsuario');
+    const tipo = document.getElementById('tipoUsuario');
+    const confianza = document.getElementById('confianzaReconocimiento');
+    const status = document.getElementById('accesoStatus');
+
+    if (data.success && data.acceso_autorizado && data.usuario) {
+        // Usuario reconocido
+        avatar.textContent = '✅';
+        avatar.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+        nombre.textContent = data.usuario.nombre

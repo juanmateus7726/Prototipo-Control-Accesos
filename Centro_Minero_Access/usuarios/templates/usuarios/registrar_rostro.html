@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Rostro - Sistema SENA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --sena-green: #39A900;
+            --sena-green-dark: #2B8000;
+            --sena-blue: #005DA8;
+            --sena-blue-dark: #004880;
+            --sena-gray: #F3F3F3;
+            --sena-text: #333333;
+            --sena-border: #DDDDDD;
+            --sena-shadow: rgba(0, 0, 0, 0.08);
+            --sena-success: #28a745;
+            --sena-danger: #dc3545;
+            --sena-warning: #ffc107;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            color: var(--sena-text);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .face-registration-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 40px var(--sena-shadow);
+            text-align: center;
+            border-top: 5px solid var(--sena-green);
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: var(--sena-blue);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .user-info {
+            background: var(--sena-gray);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--sena-green);
+        }
+
+        .user-info h2 {
+            color: var(--sena-blue);
+            margin-bottom: 5px;
+        }
+
+        .camera-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        #video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            z-index: 10;
+        }
+
+        .face-guide {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            border: 3px solid var(--sena-green);
+            border-radius: 50%;
+            opacity: 0.7;
+            z-index: 5;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--sena-green);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--sena-green-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--sena-success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--sena-danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .instructions {
+            text-align: left;
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--sena-blue);
+        }
+
+        .instructions h3 {
+            color: var(--sena-blue);
+            margin-bottom: 15px;
+        }
+
+        .instructions ul {
+            padding-left: 20px;
+            color: var(--sena-text);
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--sena-blue);
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 20px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .face-registration-card {
+                padding: 20px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="face-registration-card">
+            <div class="header">
+                <h1>🔐 Registro Facial</h1>
+                <p>Configure el reconocimiento facial para el usuario</p>
+            </div>
+
+            <div class="user-info">
+                <h2>{{ usuario.nombre }}</h2>
+                <p><strong>Carnet:</strong> {{ usuario.carnet }}</p>
+                <p><strong>Tipo:</strong> {{ usuario.get_tipo_display }}</p>
+            </div>
+
+            <div class="instructions">
+                <h3>📋 Instrucciones:</h3>
+                <ul>
+                    <li>Asegúrese de estar en un lugar bien iluminado</li>
+                    <li>Mire directamente a la cámara</li>
+                    <li>Mantenga su rostro centrado en el círculo guía</li>
+                    <li>No use gafas oscuras ni objetos que oculten su rostro</li>
+                    <li>Manténgase quieto durante la captura</li>
+                </ul>
+            </div>
+
+            <div class="camera-container">
+                <div class="video-container">
+                    <video id="video" autoplay muted></video>
+                    <div class="video-overlay" id="videoOverlay">
+                        📷 Haga clic en "Activar Cámara" para comenzar
+                    </div>
+                    <div class="face-guide" id="faceGuide" style="display: none;"></div>
+                </div>
+                <canvas id="canvas" style="display: none;"></canvas>
+            </div>
+
+            <div class="status-message" id="statusMessage"></div>
+
+            <div class="controls">
+                <button class="btn btn-primary" id="startCamera">
+                    📷 Activar Cámara
+                </button>
+                <button class="btn btn-success" id="captureBtn" style="display: none;" disabled>
+                    📸 Capturar Rostro
+                </button>
+                <button class="btn btn-danger" id="stopCamera" style="display: none;">
+                    ⏹️ Detener Cámara
+                </button>
+                <button class="btn btn-secondary" id="retakeBtn" style="display: none;">
+                    🔄 Capturar Nuevamente
+                </button>
+            </div>
+
+            <a href="{% url 'usuarios:listar_usuarios' %}" class="back-link">
+                ← Volver a la lista de usuarios
+            </a>
+        </div>
+    </div>
+
+    <script>
+        let video = document.getElementById('video');
+        let canvas = document.getElementById('canvas');
+        let startBtn = document.getElementById('startCamera');
+        let captureBtn = document.getElementById('captureBtn');
+        let stopBtn = document.getElementById('stopCamera');
+        let retakeBtn = document.getElementById('retakeBtn');
+        let overlay = document.getElementById('videoOverlay');
+        let faceGuide = document.getElementById('faceGuide');
+        let statusMessage = document.getElementById('statusMessage');
+        let stream = null;
+        let capturedImage = null;
+
+        // Función para mostrar mensajes de estado
+        function showStatus(message, type = 'success') {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message status-${type}`;
+            statusMessage.style.display = 'block';
+            
+            // Auto-ocultar después de 5 segundos
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        // Función para activar la cámara
+        async function startCamera() {
+            try {
+                showStatus('Iniciando cámara...', 'warning');
+                
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        width: { ideal: 640 },
+                        height: { ideal: 480 },
+                        facingMode: 'user'
+                    },
+                    audio: false
+                });
+
+                video.srcObject = stream;
+                
+                video.onloadedmetadata = () => {
+                    overlay.style.display = 'none';
+                    faceGuide.style.display = 'block';
+                    
+                    startBtn.style.display = 'none';
+                    captureBtn.style.display = 'inline-flex';
+                    stopBtn.style.display = 'inline-flex';
+                    captureBtn.disabled = false;
+                    
+                    showStatus('Cámara activada. Posicione su rostro en el círculo y haga clic en "Capturar Rostro"', 'success');
+                };
+                
+            } catch (error) {
+                console.error('Error al acceder a la cámara:', error);
+                showStatus('Error al acceder a la cámara. Verifique los permisos.', 'error');
+            }
+        }
+
+        // Función para detener la cámara
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            
+            video.srcObject = null;
+            overlay.style.display = 'flex';
+            overlay.textContent = '📷 Haga clic en "Activar Cámara" para comenzar';
+            faceGuide.style.display = 'none';
+            
+            startBtn.style.display = 'inline-flex';
+            captureBtn.style.display = 'none';
+            stopBtn.style.display = 'none';
+            retakeBtn.style.display = 'none';
+            captureBtn.disabled = true;
+        }
+
+        // Función para capturar imagen
+        function captureImage() {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            context.drawImage(video, 0, 0);
+            capturedImage = canvas.toDataURL('image/jpeg', 0.8);
+            
+            showStatus('Imagen capturada. Procesando rostro...', 'warning');
+            
+            // Cambiar botones
+            captureBtn.style.display = 'none';
+            stopBtn.style.display = 'none';
+            retakeBtn.style.display = 'inline-flex';
+            
+            // Procesar el rostro
+            processImage();
+        }
+
+        // Función para procesar la imagen capturada
+        async function processImage() {
+            try {
+                const response = await fetch('{% url "usuarios:procesar_rostro" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        usuario_id: {{ usuario.id }},
+                        image_data: capturedImage
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    showStatus(data.message, 'success');
+                    
+                    // Redirigir después de 3 segundos
+                    setTimeout(() => {
+                        window.location.href = '{% url "usuarios:listar_usuarios" %}';
+                    }, 3000);
+                    
+                } else {
+                    showStatus(data.message, 'error');
+                    retakeBtn.textContent = '🔄 Intentar Nuevamente';
+                }
+                
+            } catch (error) {
+                console.error('Error al procesar imagen:', error);
+                showStatus('Error al procesar la imagen. Intente nuevamente.', 'error');
+            }
+        }
+
+        // Función para volver a capturar
+        function retakeImage() {
+            captureBtn.style.display = 'inline-flex';
+            stopBtn.style.display = 'inline-flex';
+            retakeBtn.style.display = 'none';
+            captureBtn.disabled = false;
+            retakeBtn.textContent = '🔄 Capturar Nuevamente';
+            
+            showStatus('Listo para capturar nuevamente', 'warning');
+        }
+
+        // Event listeners
+        startBtn.addEventListener('click', startCamera);
+        stopBtn.addEventListener('click', stopCamera);
+        captureBtn.addEventListener('click', captureImage);
+        retakeBtn.addEventListener('click', retakeImage);
+
+        // Limpiar al salir de la página
+        window.addEventListener('beforeunload', () => {
+            stopCamera();
+        });
+    </script>
+</body>
+</html>

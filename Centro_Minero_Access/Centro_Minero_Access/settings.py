@@ -16,6 +16,10 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+# Para imagenes de rostros
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -127,7 +131,7 @@ STATIC_URL = '/static/'
 
 # Carpetas donde buscar archivos estáticos durante el desarrollo
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    BASE_DIR / "Centro_Minero_Access" / "static", # carpeta para los archivos de desarrollo
 ]
 
 # (Opcional) Carpeta donde Django recopila los archivos cuando usas collectstatic
