@@ -45,6 +45,9 @@ class Usuario(models.Model):
         default=True,
         verbose_name="Usuario Activo"
     )
+    
+    def is_complete(self):
+        return self.activo and self.face_registered
 
     # --------------------------
     # Reconocimiento Facial
