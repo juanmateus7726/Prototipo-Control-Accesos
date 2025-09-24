@@ -1,4 +1,4 @@
-{% load static %}
+scripts{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Control de Acceso - Centro Minero SENA</title>
     <link rel="stylesheet" href="{% static 'css/control.css' %}?v=1.1">
-    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
@@ -27,12 +27,20 @@
 
 <!-- ===== CONTENIDO PRINCIPAL ===== -->
 <main class="container">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="position: fixed; top: 80px; right: 20px; z-index: 1000; max-width: 400px;">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
 
     <!-- Selector de Ambiente -->
     <section class="card fade-in">
         <div class="card-title">📍 Selección de Ambiente</div>
         <div class="ambiente-selector">
-            <select id="ambienteSelect" onchange="cambiarAmbiente()">
+            <select id="ambienteSelect" name="ambiente" onchange="cambiarAmbiente()">
                 <option value="sistemas">💻 Laboratorio de Sistemas</option>
                 <option value="quimica">🧪 Laboratorio de Química Aplicada</option>
                 <option value="carbones">⚫ Laboratorio de Carbones</option>
@@ -110,24 +118,40 @@
             <!-- Acceso Manual -->
             <div class="manual-access">
                 <h4 style="margin-bottom:15px; color:#2c3e50;">🎫 Acceso Manual por Carnet</h4>
-                <form method="post" id="accesoForm">
+                <form method="post" id="manualForm">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label class="form-label">👤 Usuario:</label>
-                        {{ form.usuario }}
+                        <label class="form-label">👤 Ingrese su Numero de Identificacion:</label>
+                        <input type="text" 
+                                name="numero_identificacion" 
+                                id="numeroIdInput" 
+                                class="form-control" 
+                                placeholder="Ej: 123456789" 
+                                maxlength="10" 
+                                required 
+                                autocomplete="off"
+                                style="font-size: 1.1rem; padding: 12px; border: 2px solid #3498db;">
+                            <small class="form-text text-muted">Escriba su ID y presione Enter o "Acceder". El ambiente se toma del selector superior.</small>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">📍 Ambiente:</label>
-                        {{ form.laboratorio }}
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">🔧 Método de Acceso:</label>
-                        {{ form.metodo }}
-                    </div>
-                    <button type="submit" class="btn btn-danger w-100">
-                        ✅ Registrar Acceso Manual
+                    <button type="submit" class="btn btn-primary w-100">
+                        ✅ Acceder al Ambiente
                     </button>
                 </form>
+                <!-- Mensaje de resultado (se muestra con JS o en render) -->
+                <div id="manualResultado" class="reconocimiento-resultado" style="display:none; margin-top:15px;">
+                    <div class="usuario-reconocido">
+                        <div class="avatar-usuario" id="avatarManual">👤</div>
+                        <div class="info-usuario">
+                            <h3 id="nombreManual">Usuario Desconocido</h3>
+                            <p id="idManual">ID: ----</p>
+                            <p id="tipoManual">Tipo: ----</p>
+                            <p id="bienvenidaManual" style="color: #27ae60; font-weight: bold;"></p>
+                        </div>
+                        <div class="acceso-status" id="accesoStatusManual">
+                            <span class="status-badge status-denied">❌ DENEGADO</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Tabla accesos recientes -->
@@ -147,7 +171,7 @@
                         {% for acceso in accesos_lista %}
                         <tr>
                             <td>{{ acceso.usuario.nombre }}</td>
-                            <td>{{ acceso.get_laboratorio_display }}</td>
+                            <td>{{ acceso.get_ambiente_display }}</td>
                             <td>{{ acceso.get_metodo_display }}</td>
                             <td>{{ acceso.fecha_hora|date:"Y-m-d H:i" }}</td>
                             <td>
@@ -212,7 +236,7 @@
 </div>
 
 <div id="notification" class="notification"></div>
-
+</tbody>
 <!-- Estilos adicionales para reconocimiento facial -->
 <style>
 .face-detection-guide {
@@ -349,6 +373,33 @@
 </style>
 
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('manualForm');
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                const input = document.getElementById('numeroIdInput');
+                const btn = form.querySelector('button[type="submit"]');
+                if (!input.value.trim()) {
+                    e.preventDefault();
+                    alert('⚠️ Ingrese su número de identificación.');
+                    return;
+                }
+                btn.innerHTML = '⏳ Verificando...';
+                btn.disabled = true;
+            });
+        
+           // Permitir Enter en input
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') form.submit();
+            });
+        }
+    });
+</script>
+
+
+
+<script>
+
 // Variables globales para reconocimiento facial
 let videoStream = null;
 let isRecognitionActive = false;

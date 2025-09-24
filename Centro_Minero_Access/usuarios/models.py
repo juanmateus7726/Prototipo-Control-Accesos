@@ -84,6 +84,13 @@ class Usuario(models.Model):
         Retorna True si el usuario tiene rostro registrado (imagen + encoding).
         """
         return self.face_registered and bool(self.face_encoding)
+    
+    ambientes_permitidos = models.TextField(
+        default='sistemas',  # Por defecto, permite solo "sistemas" para prototipo
+        blank=True,
+        verbose_name="Ambientes Permitidos",
+        help_text="Códigos de ambientes separados por coma (ej: sistemas,quimica,carbones). Escribe 'todos' para acceso total."
+    )
 
 
 class Registro(models.Model):
