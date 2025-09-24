@@ -1,10 +1,11 @@
 from django.urls import path 
-from . import views
+from .views import control_acceso_view, listar_accesos
 
 app_name = 'accesos'
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path("lista/", views.listar_accesos, name="lista"),
-
+    # Asegúrate de que esta línea exista y tenga name='control_acceso'
+    path('', control_acceso_view, name='control_acceso'),
+    
+    path("lista/", listar_accesos, name="lista"),
 ]

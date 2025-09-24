@@ -17,12 +17,15 @@
 
             <div class="user-info">
                 <h2>{{ usuario.nombre }}</h2>
-                <p><strong>Carnet:</strong> {{ usuario.carnet }}</p>
+                <p><strong>Numero de Identificacion:</strong> {{ usuario.numero_identificacion }}</p>
                 <p><strong>Tipo:</strong> {{ usuario.get_tipo_display }}</p>
+                {% if not usuario.activo %}
+                    <p class="pending-notice" style="color: orange; font-weight: bold;"> Usuario pendiente: Registre el rostro para activarlo </p>
+                {% endif %}
             </div>
 
             <div class="instructions-card">
-                <h4><img src="{% static 'img/info-icon.png' %}" alt="Icono de información"> Instrucciones:</h4>
+                <h4>❗ Instrucciones:</h4>
                 <ul>
                     <li>Asegúrese de estar en un lugar bien iluminado.</li>
                     <li>Mire directamente a la cámara.</li>
@@ -49,9 +52,12 @@
                 <button class="btn btn-success" id="captureBtn" style="display:none;" disabled>📸 Capturar Rostro</button>
                 <button class="btn btn-danger" id="stopCamera" style="display:none;">⏹️ Detener Cámara</button>
                 <button class="btn btn-secondary" id="retakeBtn" style="display:none;">🔄 Capturar Nuevamente</button>
+            {% if not usuario.activo %}
+                <button class="btn btn-secondary" id="cancelBtn" style="display:inline-flex;">Cancelar Registro (Usuario quedara inactivo)</button>
+            {% endif %}
             </div>
 
-            <a href="{% url 'usuarios:listar_usuarios' %}" class="back-link">← Volver a la lista de usuarios</a>
+            <a href="{% url 'usuarios:listar_usuarios' %}" class="back-link">← Volver a la lista de usuarios (Usuario quedara inactivo si no registra su rostro)</a>
         </div>
     </div>
 

@@ -132,7 +132,9 @@ STATIC_URL = '/static/'
 
 # Carpetas donde buscar archivos estáticos durante el desarrollo
 STATICFILES_DIRS = [
-    BASE_DIR / "Centro_Minero_Access" / "static", # carpeta para los archivos de desarrollo
+    BASE_DIR / "Centro_Minero_Access" / "static",
+    BASE_DIR / "accesos" / "static",              
+    BASE_DIR / "usuarios" / "static",
 ]
 
 # (Opcional) Carpeta donde Django recopila los archivos cuando usas collectstatic

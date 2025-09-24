@@ -13,6 +13,7 @@ from django.utils.timezone import now
 from .models import Usuario, Registro
 from .forms import UsuarioForm
 from .face_recognition.face_system_opencv import opencv_face_system
+from accesos.models import Acceso
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +22,7 @@ logger = logging.getLogger(__name__)
 # -------------------------
 
 def listar_usuarios(request):
-    usuarios = Usuario.objects.all().order_by("nombre")
+    usuarios = Usuario.objects.filter(activo=True).order_by("nombre")
     return render(request, "usuarios/listar_usuarios.html", {"usuarios": usuarios})
 
 
@@ -30,12 +31,10 @@ def crear_usuario(request):
         form = UsuarioForm(request.POST, request.FILES)
         if form.is_valid():
             usuario = form.save(commit=False)
-
-            # Si hay imagen, marcar rostro registrado
-            if usuario.face_image:
-                usuario.face_registered = True
-
+            usuario.activo = False # Inactivo hasta registro facial exitoso
+            usuario.face_registered = False
             usuario.save()
+            
             messages.success(request, f"✅ Usuario {usuario.nombre} creado exitosamente. Ahora registre su rostro.")
             return redirect("usuarios:registrar_rostro", pk=usuario.pk)
         else:
@@ -107,16 +106,20 @@ def procesar_rostro(request):
             return JsonResponse({"success": False, "message": "Datos incompletos"}, status=400)
 
         usuario = get_object_or_404(Usuario, pk=usuario_id)
+        
+        # CAMBIO: Verificar si es un usuario nuevo/inactivo (opcional, para mensaje)
+        if not usuario.activo:
+            messages.info(request, f"Procesando rostro para activar a {usuario.nombre}...")
 
         # 1) Encoding facial
         encoding, message = opencv_face_system.encode_face_from_base64(image_data)
         if encoding is None:
-            return JsonResponse({"success": False, "message": message}, status=400)
+            return JsonResponse({"success": False, "message": message or "No se detecto rostro valido"}, status=400)
 
         # 2) Verificar calidad
         quality_ok, quality_message = opencv_face_system.verify_face_quality(image_data)
         if not quality_ok:
-            return JsonResponse({"success": False, "message": quality_message}, status=400)
+            return JsonResponse({"success": False, "message": quality_message or "Calidad de imagen insuficiente"}, status=400)
 
         # 3) Guardar imagen facial
         try:
@@ -137,8 +140,10 @@ def procesar_rostro(request):
 
         usuario.face_encoding = enc_saved
         usuario.face_registered = True
+        usuario.activo = True # Aqui se activa
         usuario.save()
-
+        
+        messages.success(request, f"Usuario {usuario.nombre} activado y rostro registrado exitosamente.")
         return JsonResponse({
             "success": True,
             "message": f"Rostro registrado exitosamente para {usuario.nombre}"
@@ -183,6 +188,14 @@ def reconocer_rostro(request):
                 ambiente=ambiente,
                 confianza=confidence or 0.0,
                 fecha_hora=now()
+            )
+            
+            Acceso.objects.create(
+                usuario=usuario,
+                ambiente=ambiente,
+                metodo='reconocimiento_facial',
+                acceso_permitido=True,
+                razon_denegacion='Rostro no reconocido'
             )
 
             return JsonResponse({

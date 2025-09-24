@@ -4,29 +4,50 @@ from .models import Usuario, Registro
 
 @admin.register(Usuario)
 class UsuarioAdmin(admin.ModelAdmin):
+    # Campos que se muestran en la lista principal
     list_display = (
-        'tipo_identificacion',  # <-- Agrega esta línea
-        'numero_identificacion',
-        'nombre',
-        'tipo',
-        'activo',
-        'face_registered'
+        'nombre', 
+        'numero_identificacion', 
+        'tipo', 
+        'activo', 
+        'face_registered', 
+        'ambientes_permitidos'  # ← AGREGADO: Para ver rápido en lista
     )
-    list_filter = ('tipo_identificacion', 'tipo', 'activo', 'face_registered')
-    search_fields = ('numero_identificacion', 'nombre')
+    
+    # Filtros en sidebar (derecha)
+    list_filter = (
+        'tipo', 
+        'activo', 
+        'face_registered',
+        'ambientes_permitidos'  # ← AGREGADO: Filtrar por permisos (básico)
+    )
+    
+    # Búsqueda en lista
+    search_fields = ('nombre', 'numero_identificacion')
+    
+    # Ordenamiento por defecto
     ordering = ('nombre',)
-
-    readonly_fields = ('face_registered',)
-
+    
+    # Campos que aparecen al editar/crear (agrupados para claridad)
     fieldsets = (
-        ("Información Personal", {
-            "fields": ('tipo_identificacion', 'numero_identificacion', 'nombre', 'tipo', 'activo')
+        ('Información Personal', {
+            'fields': ('nombre', 'numero_identificacion', 'tipo')
         }),
-        ("Reconocimiento Facial", {
-            "fields": ('face_image', 'face_encoding', 'face_registered'),
-            "classes": ('collapse',),
+        ('Estado y Rostro', {
+            'fields': ('activo', 'face_registered', 'face_image')
+        }),
+        ('Permisos de Acceso', {  # ← NUEVA SECCIÓN: Para el campo nuevo
+            'fields': ('ambientes_permitidos',),
+            'description': 'Códigos de ambientes separados por coma (ej: sistemas,quimica). Usa "todos" para acceso total.'
+        }),
+        ('Encoding Facial (Avanzado)', {
+            'fields': ('face_encoding',),
+            'classes': ('collapse',)  # Oculto por defecto
         }),
     )
+    
+    # Campos de solo lectura (opcional)
+    readonly_fields = ('face_encoding',)
 
 
 @admin.register(Registro)
