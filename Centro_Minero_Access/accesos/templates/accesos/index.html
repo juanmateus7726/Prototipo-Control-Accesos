@@ -34,23 +34,31 @@
         {% endfor %}
     {% endif %}
 
-    <section class="card fade-in">
-        <div class="card-title">📍 Selección de Ambiente</div>
-        <form method="post" id="ambienteForm">
-            {% csrf_token %}
-            <div class="ambiente-selector">
-                <select id="ambienteSelect" name="ambiente" class="form-control" onchange="cambiarAmbiente()">
-                    {% for ambiente in ambientes_list %}
-                        <option value="{{ ambiente.nombre }}">{{ ambiente.nombre }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </form>
-        
-        <div id="ambienteInfo" class="ambiente-info">
-            </div>
-    </section>
-
+    <!-- En tu template, modifica la sección de selección de ambiente -->
+<section class="card fade-in">
+    <div class="card-title">📍 Selección de Ambiente</div>
+    <form method="post" id="ambienteForm">
+        {% csrf_token %}
+        <div class="ambiente-selector">
+            <select id="ambienteSelect" name="ambiente" class="form-control" onchange="cambiarAmbiente()">
+                <option value="">-- Seleccione un ambiente --</option>
+                {% for ambiente in ambientes_list %}
+                    <option value="{{ ambiente.nombre }}" 
+                            data-codigo="{{ ambiente.codigo }}"
+                            data-estado="{{ ambiente.estado }}"
+                            data-capacidad="{{ ambiente.capacidad }}"
+                            data-riesgo="{{ ambiente.riesgo }}">
+                        {{ ambiente.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+    
+    <div id="ambienteInfo" class="ambiente-info">
+        <!-- La información del ambiente se cargará aquí -->
+    </div>
+</section>
     <section class="card fade-in">
         <div class="card-title">🔐 Control de Acceso</div>
         <div class="method-selector-buttons">
