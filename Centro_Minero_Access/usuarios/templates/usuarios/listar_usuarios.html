@@ -7,7 +7,6 @@
     <title>Lista de Usuarios - Sistema SENA</title>
     <link rel="icon" href="https://www.sena.edu.co/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="{% static 'css/listar_usuarios.css' %}?v=1.1">
-
 </head>
 <body>
     <div class="overlay" id="configOverlay"></div>
@@ -84,7 +83,8 @@
                 <thead>
                     <tr>
                         <th id="thNombre">Nombre</th>
-                        <th id="thCarnet">Carnet</th>
+                        <th>Tipo de Identificación</th>
+                        <th>Número de Identificación</th>
                         <th id="thTipo">Tipo</th>
                         <th id="thAcciones">Acciones</th>
                     </tr>
@@ -93,8 +93,9 @@
                     {% for usuario in usuarios %}
                         <tr>
                             <td data-label="Nombre">{{ usuario.nombre }}</td>
-                            <td data-label="Carnet">{{ usuario.carnet }}</td>
-                            <td data-label="Tipo">{{ usuario.tipo }}</td>
+                            <td data-label="Tipo Identificación">{{ usuario.get_tipo_identificacion_display }}</td>
+                            <td data-label="Número Identificación">{{ usuario.numero_identificacion }}</td>
+                            <td data-label="Tipo">{{ usuario.get_tipo_display }}</td>
                             <td data-label="Acciones" class="action-links">
                                 <a href="{% url 'usuarios:editar_usuario' usuario.pk %}" class="edit" id="btnEditar{{ forloop.counter }}">✏️ <span class="action-text">Editar</span></a>
                                 <a href="{% url 'usuarios:eliminar_usuario' usuario.pk %}" class="delete" id="btnEliminar{{ forloop.counter }}">🗑️ <span class="action-text">Eliminar</span></a>
@@ -102,7 +103,7 @@
                         </tr>
                     {% empty %}
                         <tr>
-                            <td colspan="4">
+                            <td colspan="5">
                                 <div class="empty-state">
                                     <i>👥</i>
                                     <p id="emptyStateText">No hay usuarios registrados en el sistema.</p>

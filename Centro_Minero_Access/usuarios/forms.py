@@ -4,11 +4,14 @@ from .models import Usuario, Registro
 class UsuarioForm(forms.ModelForm):
     class Meta:
         model = Usuario
-        fields = ['carnet', 'nombre', 'tipo', 'activo']
+        fields = ['tipo_identificacion', 'numero_identificacion', 'nombre', 'tipo', 'activo']
         widgets = {
-            'carnet': forms.TextInput(attrs={
+            'tipo_identificacion': forms.Select(attrs={
                 'class': 'form-control',
-                'placeholder': 'Ej: 12345678'
+            }),
+            'numero_identificacion': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ej: 1000000000',
             }),
             'nombre': forms.TextInput(attrs={
                 'class': 'form-control',
