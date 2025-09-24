@@ -19,7 +19,7 @@
         <a href="{% url 'accesos:control_acceso' %}" class="nav-link">Inicio</a>
         <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link">Usuarios</a>
         <a href="{% url 'ambientes:listar_ambientes' %}" class="nav-link">Ambientes</a>
-        <a href="#" class="nav-link">Reportes</a>
+        <a href="{% url 'reportes:reporte_accesos_pdf' %}" class="nav-link">Reportes</a>
         <a href="#" class="nav-link">Configuración</a>
     </nav>
 </header>
