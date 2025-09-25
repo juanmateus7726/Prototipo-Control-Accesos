@@ -29,7 +29,8 @@ urlpatterns = [
     # Estas líneas son para tus otras aplicaciones
     path('ambientes/', include('ambientes.urls')),
     path('usuarios/', include('usuarios.urls')),
-]
+    path('reportes/', include(('reportes.urls', 'reportes'), namespace='reportes')),
+    ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

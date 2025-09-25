@@ -10,5 +10,5 @@ urlpatterns = [
     
     path("lista/", listar_accesos, name="lista"),
     path('ambiente/<int:ambiente_id>/', views.ambiente_detalle, name='ambiente_detalle'),
-
+    path('ambiente_detalle/<int:ambiente_id>/', views.ambiente_detalle, name='ambiente_detalle'),
 ]

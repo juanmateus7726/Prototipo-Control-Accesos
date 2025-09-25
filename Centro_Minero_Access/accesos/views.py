@@ -5,7 +5,7 @@ from django.db.models import Q
 from datetime import datetime
 from .models import Acceso
 from usuarios.models import Usuario, Registro
-from ambientes.models import Ambiente  # Importa el modelo Ambiente
+from ambientes.models import Ambiente, ProtocoloAmbiente  # Importa el modelo Ambiente
 
 
 def control_acceso_view(request):
@@ -106,16 +106,33 @@ def listar_accesos(request):
 def ambiente_detalle(request, ambiente_id):
     """
     Devuelve la información completa de un ambiente en formato JSON.
+    Incluye resumen de protocolos para mostrar en el frontend.
     """
     try:
         ambiente = Ambiente.objects.get(id=ambiente_id)
+        
+        # Obtener resumen de protocolos
+        resumen_protocolos = ambiente.resumen_protocolos()
+        
         data = {
             "id": ambiente.id,
             "nombre": ambiente.nombre,
-            "protocolo": ambiente.protocolo,
-            "riesgo": ambiente.riesgo,
-            "descripcion_riesgo": ambiente.get_riesgo_display(),
+            "codigo": ambiente.codigo,
+            "estado": ambiente.get_estado_display(),  # Texto legible: "Disponible"
+            "capacidad": ambiente.capacidad,
+            "riesgo": ambiente.get_riesgo_display(),  # Texto legible: "Bajo"
+            "riesgo_raw": ambiente.riesgo,  # Valor crudo para clases CSS ('bajo', etc.)
+            "protocolos": {
+                "total": resumen_protocolos['total'],
+                "completados": resumen_protocolos['completados'],
+                "pendientes": resumen_protocolos['pendientes'],
+                "tareas_pendientes": resumen_protocolos['tareas_pendientes']
+            }
         }
         return JsonResponse(data)
     except Ambiente.DoesNotExist:
         return JsonResponse({"error": "Ambiente no encontrado"}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": f"Error al obtener detalles: {str(e)}"}, status=500)
+
+        

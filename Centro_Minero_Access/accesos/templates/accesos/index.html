@@ -19,7 +19,7 @@
         <a href="{% url 'accesos:control_acceso' %}" class="nav-link">Inicio</a>
         <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link">Usuarios</a>
         <a href="{% url 'ambientes:listar_ambientes' %}" class="nav-link">Ambientes</a>
-        <a href="#" class="nav-link">Reportes</a>
+        <a href="{% url 'reportes:reporte_accesos_pdf' %}" class="nav-link">Reportes</a>
         <a href="#" class="nav-link">Configuración</a>
     </nav>
 </header>
@@ -47,7 +47,7 @@
                             data-codigo="{{ ambiente.codigo }}"
                             data-estado="{{ ambiente.estado }}"
                             data-capacidad="{{ ambiente.capacidad }}"
-                            data-riesgo="{{ ambiente.riesgo }}">
+                            data-riesgo="{{ ambiente.get_riesgo_display }}">
                         {{ ambiente.nombre }}
                     </option>
                 {% endfor %}
@@ -252,6 +252,18 @@
     opacity: 0.7;
     z-index: 5;
     animation: pulse 2s infinite;
+}
+
+.text-muy-alto {
+    color: #b20000 !important; /* rojo intenso de alerta */
+    font-weight: bold;
+    animation: parpadeo 1s infinite;
+}
+
+@keyframes parpadeo {
+    0%   { opacity: 1; }
+    50%  { opacity: 0.4; }
+    100% { opacity: 1; }
 }
 
 @keyframes pulse {
@@ -697,28 +709,46 @@
     }
     
     // Función para mostrar la información del ambiente
-    async function cambiarAmbiente() {
-        const select = document.getElementById('ambienteSelect');
-        const infoDiv = document.getElementById('ambienteInfo');
-        const ambienteNombre = select.value;
-        
-        try {
-            const response = await fetch(`/accesos/obtener_riesgo/?ambiente_nombre=${ambienteNombre}`);
-            const data = await response.json();
-            
-            if (response.ok) {
-                const riesgoClase = `risk-${data.riesgo.toLowerCase()}`;
-                infoDiv.innerHTML = `
-                    <span class="ambiente-text">${ambienteNombre}</span>
-                    <span class="risk-indicator ${riesgoClase}">Riesgo: ${data.descripcion_riesgo}</span>
-                `;
-            } else {
-                infoDiv.innerHTML = `<span>No se encontró información de riesgo.</span>`;
-            }
-        } catch (error) {
-            console.error('Error fetching ambiente info:', error);
-            infoDiv.innerHTML = `<span>Error al cargar la información del ambiente.</span>`;
-        }
+    function cambiarAmbiente() {
+    const select = document.getElementById('ambienteSelect');
+    const infoDiv = document.getElementById('ambienteInfo');
+
+    const opcionSeleccionada = select.options[select.selectedIndex];
+
+    if (opcionSeleccionada.value === "") {
+        infoDiv.innerHTML = "<p class='text-secondary'>Seleccione un ambiente para ver la información.</p>";
+        return;
     }
+
+    // Obtener atributos del ambiente
+    const codigo = opcionSeleccionada.getAttribute("data-codigo");
+    const estado = opcionSeleccionada.getAttribute("data-estado");
+    const capacidad = opcionSeleccionada.getAttribute("data-capacidad");
+    const riesgo = opcionSeleccionada.getAttribute("data-riesgo");
+
+    // Determinar color de riesgo
+let riesgoClass = "text-secondary";
+if (riesgo.toLowerCase() === "bajo") riesgoClass = "text-success fw-bold";
+if (riesgo.toLowerCase() === "medio") riesgoClass = "text-warning fw-bold";
+if (riesgo.toLowerCase() === "alto") riesgoClass = "text-danger fw-bold";
+if (riesgo.toLowerCase() === "muy alto") riesgoClass = "text-muy-alto";
+
+
+    // Mostrar la información
+    infoDiv.innerHTML = `
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">🏭 ${opcionSeleccionada.text}</h5>
+                <p><strong>Código:</strong> ${codigo}</p>
+                <p><strong>Estado:</strong> ${estado}</p>
+                <p><strong>Capacidad:</strong> ${capacidad} personas</p>
+                <p><strong>Riesgo:</strong> <span class="${riesgoClass}">${riesgo}</span></p>
+            </div>
+        </div>
+    `;
+}
+
+
+
 </script>
 </html>
