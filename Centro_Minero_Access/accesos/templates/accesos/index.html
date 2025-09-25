@@ -12,8 +12,8 @@
 
 <header class="top-header">
     <div class="logo">
-        <span class="icon">🏭</span>
-        <span class="brand">Centro Minero SENA</span>
+        <span class="icon"><a href="{% url 'accesos:control_acceso' %}" class="nav-link">🏭</span>
+        <span class="brand"><a href="{% url 'accesos:control_acceso' %}" class="nav-link">Centro Minero SENA</span>
     </div>
     <nav class="nav-bar">
         <a href="{% url 'accesos:control_acceso' %}" class="nav-link">Inicio</a>
@@ -43,7 +43,7 @@
             <select id="ambienteSelect" name="ambiente" class="form-control" onchange="cambiarAmbiente()">
                 <option value="">-- Seleccione un ambiente --</option>
                 {% for ambiente in ambientes_list %}
-                    <option value="{{ ambiente.nombre }}" 
+                    <option value="{{ ambiente.id }}" 
                             data-codigo="{{ ambiente.codigo }}"
                             data-estado="{{ ambiente.estado }}"
                             data-capacidad="{{ ambiente.capacidad }}"
@@ -138,7 +138,7 @@
                                    style="font-size: 1.1rem; padding: 12px; border: 2px solid #3498db;">
                             <small class="form-text text-muted">Escriba su ID y presione Enter o "Acceder". El ambiente se toma del selector superior.</small>
                         </div>
-                        <input type="hidden" name="ambiente" id="ambienteManualHiddenInput">
+                        <input type="hidden" name="ambiente_id" id="ambienteManualHiddenInput">
                         <button type="submit" class="btn btn-primary w-100">
                             ✅ Acceder al Ambiente
                         </button>
@@ -438,7 +438,7 @@
         if (manualForm) {
             manualForm.addEventListener('submit', (e) => {
                 // Actualizar el valor del campo oculto antes de enviar
-                ambienteManualInput.value = ambienteSelect.value;
+                ambienteManualInput.value = ambienteSelect.value; // <-- Aquí se toma el ID
 
                 const input = document.getElementById('numeroIdInput');
                 const btn = manualForm.querySelector('button[type="submit"]');
@@ -727,11 +727,11 @@
     const riesgo = opcionSeleccionada.getAttribute("data-riesgo");
 
     // Determinar color de riesgo
-let riesgoClass = "text-secondary";
-if (riesgo.toLowerCase() === "bajo") riesgoClass = "text-success fw-bold";
-if (riesgo.toLowerCase() === "medio") riesgoClass = "text-warning fw-bold";
-if (riesgo.toLowerCase() === "alto") riesgoClass = "text-danger fw-bold";
-if (riesgo.toLowerCase() === "muy alto") riesgoClass = "text-muy-alto";
+    let riesgoClass = "text-secondary";
+    if (riesgo.toLowerCase() === "bajo") riesgoClass = "text-success fw-bold";
+    if (riesgo.toLowerCase() === "medio") riesgoClass = "text-warning fw-bold";
+    if (riesgo.toLowerCase() === "alto") riesgoClass = "text-danger fw-bold";
+    if (riesgo.toLowerCase() === "muy alto") riesgoClass = "text-muy-alto";
 
 
     // Mostrar la información
@@ -747,8 +747,5 @@ if (riesgo.toLowerCase() === "muy alto") riesgoClass = "text-muy-alto";
         </div>
     `;
 }
-
-
-
 </script>
 </html>
