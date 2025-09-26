@@ -14,6 +14,7 @@ from .models import Usuario, Registro
 from .forms import UsuarioForm
 from .face_recognition.face_system_opencv import opencv_face_system
 from accesos.models import Acceso
+from ambientes.models import Ambiente
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +28,7 @@ def listar_usuarios(request):
 
 
 def crear_usuario(request):
+    ambientes = Ambiente.objects.all().order_by('nombre')
     if request.method == "POST":
         form = UsuarioForm(request.POST, request.FILES)
         if form.is_valid():
@@ -35,6 +37,11 @@ def crear_usuario(request):
             usuario.face_registered = False
             usuario.save()
             
+            form.save_m2m()
+            
+            if usuario.ambientes_permitidos:
+                usuario.migrar_permisos_automaticamente()
+            
             messages.success(request, f"✅ Usuario {usuario.nombre} creado exitosamente. Ahora registre su rostro.")
             return redirect("usuarios:registrar_rostro", pk=usuario.pk)
         else:
@@ -42,11 +49,12 @@ def crear_usuario(request):
     else:
         form = UsuarioForm()
 
-    return render(request, "usuarios/crear_usuario.html", {"form": form})
+    return render(request, "usuarios/crear_usuario.html", {"form": form, "ambientes": ambientes})
 
 
 def editar_usuario(request, pk):
     usuario = get_object_or_404(Usuario, pk=pk)
+    ambientes = Ambiente.objects.all().order_by('nombre')
 
     if request.method == "POST":
         form = UsuarioForm(request.POST, request.FILES, instance=usuario)
@@ -57,6 +65,12 @@ def editar_usuario(request, pk):
                 usuario.face_registered = True
 
             usuario.save()
+            
+            form.save_m2m()
+            
+            if usuario.ambientes_permitidos and not usuario.ambientes_directos.exists():
+                usuario.migrar_permisos_automaticamente()
+            
             messages.success(request, f"✅ Usuario {usuario.nombre} actualizado correctamente.")
             return redirect("usuarios:listar_usuarios")
         else:
@@ -66,7 +80,8 @@ def editar_usuario(request, pk):
 
     return render(request, "usuarios/editar_usuario.html", {
         "form": form,
-        "usuario": usuario
+        "usuario": usuario,
+        "ambientes": ambientes
     })
 
 def eliminar_usuario(request, pk):

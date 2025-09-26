@@ -57,6 +57,10 @@
         <h1 class="page-title">➕ Crear Usuario</h1>
         <a href="{% url 'usuarios:listar_usuarios' %}" class="create-btn">← Volver a la lista</a>
     </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
     <div class="form-container">
         <form method="post">
             {% csrf_token %}
@@ -85,6 +89,20 @@
                 {{ form.activo }}
                 <label class="form-check-label" for="{{ form.activo.id_for_label }}">Usuario Activo</label>
             </div>
+
+            <div class="form-group">
+                <label class="form-label">📍 Ambientes Permitidos</label>
+                <div class="checkbox-group" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 15px; border-radius: 8px; background: #f9f9f9;">
+                    {{ form.ambientes_directos }}
+                </div>
+                <small class="form-text text-muted">Seleccione los ambientes a los que este usuario puede acceder. El usuario podrá entrar solo a los marcados.</small>
+                {% if form.ambientes_directos.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.ambientes_directos.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
 
             {% if form.errors %}
                 <div class="alert alert-danger">
