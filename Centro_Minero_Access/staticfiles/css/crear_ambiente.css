@@ -159,16 +159,3 @@
         @media (max-width:768px){
             .page-header{flex-direction:column; gap:15px; text-align:center;}
         }
-
-    .checkbox-group { 
-        margin-top: 10px; 
-    }
-    .checkbox-group label { 
-        display: block; margin: 10px 0; padding: 5px; border-radius: 4px; cursor: pointer; 
-    }
-    .checkbox-group label:hover { 
-        background: #e9ecef; 
-    }
-    .checkbox-group input[type="checkbox"] { 
-        margin-right: 10px; transform: scale(1.2); 
-    }

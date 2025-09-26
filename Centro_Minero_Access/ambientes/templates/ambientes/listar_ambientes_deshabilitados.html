@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">🏫 Lista de Ambientes - Sistema SENA</title>
+    <title id="pageTitle">🚫 Ambientes Deshabilitados - Sistema SENA</title>
     <link rel="icon" href="https://www.sena.edu.co/favicon.ico" type="image/x-icon">
 
     <!-- CSS -->
@@ -18,16 +18,16 @@
     <!-- ===== HEADER ===== -->
     <header class="top-header">
         <div class="logo">
-            <div class="icon">🏫</div>
+            <div class="icon">🚫</div>
             <div class="brand">
-                <h1>Control de Ambientes</h1>
+                <h1>Ambientes Deshabilitados</h1>
                 <span>SENA - Centro de Formación</span>
             </div>
         </div>
         <nav class="nav-bar">
             <a href="{% url 'accesos:control_acceso' %}" class="nav-link">Inicio</a>
             <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link">Usuarios</a>
-            <a href="{% url 'ambientes:listar_ambientes' %}" class="nav-link active">Ambientes</a>
+            <a href="{% url 'ambientes:listar_ambientes' %}" class="nav-link">Activos</a>
             <a href="#" id="configLink" class="nav-link">
                 <i class="bi bi-gear"></i> Configuración
             </a>
@@ -37,13 +37,10 @@
     <!-- ===== CONTENIDO PRINCIPAL ===== -->
     <main class="main-container">
         <div class="page-header">
-            <h2 class="page-title" id="pageTitleText">🏫 Lista de Ambientes</h2>
+            <h2 class="page-title" id="pageTitleText">🚫 Ambientes Deshabilitados</h2>
             <div class="header-actions">
-                <a href="{% url 'ambientes:crear_ambiente' %}" class="btn-create" id="createBtn">
-                    <i class="bi bi-plus-circle-fill"></i> + Crear Ambiente
-                </a>
-                <a href="{% url 'ambientes:listar_ambientes_deshabilitados' %}" class="btn-disabled" id="btnViewDisabled">
-                    <i class="bi bi-eye-slash-fill"></i> Ver Deshabilitados
+                <a href="{% url 'ambientes:listar_ambientes' %}" class="btn-create" id="createBtn">
+                    <i class="bi bi-eye-fill"></i> Ver Activos
                 </a>
             </div>
         </div>
@@ -72,15 +69,10 @@
                         </td>
                         <td>{{ ambiente.capacidad }}</td>
                         <td class="action-links">
-                            <a href="{% url 'ambientes:editar_ambiente' ambiente.pk %}" class="btn-edit edit">
-                                <i class="bi bi-pencil-square"></i>
-                                <span class="action-text">Editar</span>
-                            </a>
-                            <form action="{% url 'ambientes:deshabilitar_ambiente' ambiente.pk %}" method="post" style="display:inline;">
+                            <form action="{% url 'ambientes:reactivar_ambiente' ambiente.pk %}" method="post" style="display:inline;">
                                 {% csrf_token %}
-                                <button type="submit" class="btn-disable" onclick="return confirm('¿Seguro que quieres deshabilitar este ambiente?')">
-                                    <i class="bi bi-slash-circle-fill"></i>
-                                    <span class="action-text">Deshabilitar</span>
+                                <button type="submit" class="btn-create" onclick="return confirm('¿Seguro que quieres habilitar este ambiente?')">
+                                    <i class="bi bi-check-circle-fill"></i> Habilitar
                                 </button>
                             </form>
                         </td>
@@ -89,7 +81,7 @@
                     <tr>
                         <td colspan="5" class="empty-state">
                             <i class="bi bi-door-closed"></i>
-                            <p id="emptyStateText">No hay ambientes registrados en el sistema.</p>
+                            <p id="emptyStateText">No hay ambientes deshabilitados.</p>
                         </td>
                     </tr>
                     {% endfor %}

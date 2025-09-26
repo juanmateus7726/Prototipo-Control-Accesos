@@ -1,188 +1,254 @@
-document.addEventListener('DOMContentLoaded', function() {
-            const configLink = document.getElementById('configLink');
-            const configPanel = document.getElementById('configPanel');
-            const closeConfigBtn = document.getElementById('closeConfig');
-            const cancelConfigBtn = document.getElementById('cancelConfig');
-            const saveConfigBtn = document.getElementById('saveConfig');
-            const configOverlay = document.getElementById('configOverlay');
-            const configMessage = document.getElementById('configMessage');
-            
-            // Elementos de configuración
-            const themeSelect = document.getElementById('theme');
-            const notificationsSelect = document.getElementById('notifications');
-            const languageSelect = document.getElementById('language');
-            const resultsInput = document.getElementById('resultsPerPage');
+document.addEventListener('DOMContentLoaded', function () {
+    // =========================
+    // PANEL DE CONFIGURACIÓN
+    // =========================
+    const configLink = document.getElementById('configLink');
+    const configPanel = document.getElementById('configPanel');
+    const cancelConfigBtn = document.getElementById('cancelConfig');
+    const saveConfigBtn = document.getElementById('saveConfig');
+    const configOverlay = document.getElementById('configOverlay');
+    const configMessage = document.getElementById('configMessage');
 
-            // Mapeo de traducciones
-            const translations = {
-                es: {
-                    brandTitle: 'Control de Accesos',
-                    brandSubtitle: 'SENA - Centro de Formación',
-                    navInicio: 'Inicio',
-                    navUsuarios: 'Usuarios',
-                    navRegistros: 'Registros',
-                    navConfiguracion: 'Configuración',
-                    panelTitle: 'Configuración del Sistema',
-                    labelTheme: 'Tema de la interfaz',
-                    optLight: 'Claro',
-                    optDark: 'Oscuro',
-                    optAuto: 'Automático',
-                    labelNotifications: 'Notificaciones',
-                    optEnabled: 'Activadas',
-                    optDisabled: 'Desactivadas',
-                    labelLanguage: 'Idioma',
-                    labelResults: 'Resultados por página',
-                    btnCancel: 'Cancelar',
-                    btnSave: 'Guardar',
-                    pageTitle: '👥 Lista de Usuarios',
-                    createBtn: '+ Crear Usuario',
-                    thNombre: 'Nombre',
-                    thCarnet: 'Carnet',
-                    thTipo: 'Tipo',
-                    thAcciones: 'Acciones',
-                    emptyStateText: 'No hay usuarios registrados en el sistema.',
-                    actionEdit: 'Editar',
-                    actionDelete: 'Eliminar',
-                    footerText1: 'Sistema de Control de Accesos - SENA',
-                    footerText2: 'Todos los derechos reservados',
-                    linkPrivacy: 'Políticas de Privacidad',
-                    linkTerms: 'Términos de Uso',
-                    linkSupport: 'Soporte Técnico',
-                    message: '¡Configuración guardada!'
-                },
-                en: {
-                    brandTitle: 'Access Control',
-                    brandSubtitle: 'SENA - Training Center',
-                    navInicio: 'Home',
-                    navUsuarios: 'Users',
-                    navRegistros: 'Logs',
-                    navConfiguracion: 'Settings',
-                    panelTitle: 'System Settings',
-                    labelTheme: 'Interface Theme',
-                    optLight: 'Light',
-                    optDark: 'Dark',
-                    optAuto: 'Auto',
-                    labelNotifications: 'Notifications',
-                    optEnabled: 'Enabled',
-                    optDisabled: 'Disabled',
-                    labelLanguage: 'Language',
-                    labelResults: 'Results per page',
-                    btnCancel: 'Cancel',
-                    btnSave: 'Save',
-                    pageTitle: '👥 User List',
-                    createBtn: '+ Create User',
-                    thNombre: 'Name',
-                    thCarnet: 'ID Number',
-                    thTipo: 'Type',
-                    thAcciones: 'Actions',
-                    emptyStateText: 'No users are registered in the system.',
-                    actionEdit: 'Edit',
-                    actionDelete: 'Delete',
-                    footerText1: 'Access Control System - SENA',
-                    footerText2: 'All rights reserved',
-                    linkPrivacy: 'Privacy Policy',
-                    linkTerms: 'Terms of Use',
-                    linkSupport: 'Technical Support',
-                    message: 'Settings saved!'
-                }
-            };
+    const themeSelect = document.getElementById('theme');
+    const notificationsSelect = document.getElementById('notifications');
+    const languageSelect = document.getElementById('language');
+    const resultsInput = document.getElementById('resultsPerPage');
 
-            function toggleConfigPanel() {
-                configPanel.classList.toggle('show');
-                configOverlay.classList.toggle('show');
-            }
+    const translations = {
+        es: {
+            pageTitle: '👥 Lista de Usuarios',
+            createBtn: '+ Crear Usuario',
+            thNombre: 'Nombre',
+            thTipoIdentificacion: 'Tipo de Identificación',
+            thNumeroIdentificacion: 'Número de Identificación',
+            thTipo: 'Tipo',
+            thEstado: 'Estado',
+            thAcciones: 'Acciones',
+            emptyStateText: 'No hay usuarios registrados en el sistema.',
+            actionEdit: 'Editar',
+            actionDisable: 'Deshabilitar',
+            actionReactivate: 'Reactivar',
+            footerMainText: 'Lista Central Sistema - SENA',
+            footerSubtext: 'Arte digital sostenible',
+            footerCopyright: '© 2024 Sistema de Control de Usuarios. Todos los derechos reservados.',
+            message: '¡Configuración guardada!',
+            confirmDisableTitle: '¿Deshabilitar Usuario?',
+            confirmDisableText: '¿Seguro que deseas deshabilitar este usuario?',
+            confirmReactivateTitle: '¿Reactivar Usuario?',
+            confirmReactivateText: '¿Seguro que deseas reactivar este usuario?',
+            btnCancel: 'Cancelar',
+            btnConfirmDisable: 'Deshabilitar',
+            btnConfirmReactivate: 'Reactivar'
+        },
+        en: {
+            pageTitle: '👥 User List',
+            createBtn: '+ Create User',
+            thNombre: 'Name',
+            thTipoIdentificacion: 'ID Type',
+            thNumeroIdentificacion: 'ID Number',
+            thTipo: 'Type',
+            thEstado: 'Status',
+            thAcciones: 'Actions',
+            emptyStateText: 'No users registered in the system.',
+            actionEdit: 'Edit',
+            actionDisable: 'Disable',
+            actionReactivate: 'Reactivate',
+            footerMainText: 'Central System List - SENA',
+            footerSubtext: 'Sustainable digital art',
+            footerCopyright: '© 2024 User Control System. All rights reserved.',
+            message: 'Settings saved!',
+            confirmDisableTitle: 'Disable User?',
+            confirmDisableText: 'Are you sure you want to disable this user?',
+            confirmReactivateTitle: 'Reactivate User?',
+            confirmReactivateText: 'Are you sure you want to reactivate this user?',
+            btnCancel: 'Cancel',
+            btnConfirmDisable: 'Disable',
+            btnConfirmReactivate: 'Reactivate'
+        }
+    };
 
-            function applyTheme(theme) {
-                if (theme === 'dark') {
-                    document.body.classList.add('dark-mode');
-                } else {
-                    document.body.classList.remove('dark-mode');
-                }
-            }
+    function togglePanel() {
+        configPanel.classList.toggle('show');
+        configOverlay.classList.toggle('show');
+    }
 
-            function applyLanguage(lang) {
-                const currentLang = translations[lang] || translations.es;
-                document.querySelectorAll('[id]').forEach(element => {
-                    const translationKey = element.id;
-                    if (currentLang[translationKey]) {
-                        if (element.tagName === 'A' && element.classList.contains('create-btn')) {
-                            element.textContent = currentLang[translationKey];
-                        } else {
-                            element.textContent = currentLang[translationKey];
-                        }
-                    }
-                });
-                // Actualizar los textos de los botones de acción en la tabla
-                document.querySelectorAll('.action-text').forEach(actionSpan => {
-                    const parentLink = actionSpan.closest('a');
-                    if (parentLink.classList.contains('edit')) {
-                        actionSpan.textContent = currentLang.actionEdit;
-                    } else if (parentLink.classList.contains('delete')) {
-                        actionSpan.textContent = currentLang.actionDelete;
-                    }
-                });
-                configMessage.textContent = currentLang.message;
-            }
+    function applyTheme(theme) {
+        if (theme === 'dark') {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+    }
 
-            function loadSettings() {
-                const savedSettings = localStorage.getItem('userSettings');
-                if (savedSettings) {
-                    const settings = JSON.parse(savedSettings);
-                    themeSelect.value = settings.theme || 'light';
-                    notificationsSelect.value = settings.notifications || 'enabled';
-                    languageSelect.value = settings.language || 'es';
-                    resultsInput.value = settings.resultsPerPage || 10;
-                    applySettings(settings);
-                }
-            }
-            
-            function applySettings(settings) {
-                applyTheme(settings.theme);
-                applyLanguage(settings.language);
-            }
-
-            function saveSettings() {
-                const settings = {
-                    theme: themeSelect.value,
-                    notifications: notificationsSelect.value,
-                    language: languageSelect.value,
-                    resultsPerPage: resultsInput.value
-                };
-                localStorage.setItem('userSettings', JSON.stringify(settings));
-
-                applySettings(settings);
-
-                configMessage.style.display = 'block';
-                setTimeout(() => {
-                    configMessage.style.display = 'none';
-                    toggleConfigPanel();
-                }, 1500);
-            }
-
-            // Event Listeners
-            configLink.addEventListener('click', function(event) {
-                event.preventDefault();
-                loadSettings();
-                toggleConfigPanel();
-            });
-
-            closeConfigBtn.addEventListener('click', function() {
-                loadSettings();
-                toggleConfigPanel();
-            });
-
-            cancelConfigBtn.addEventListener('click', function() {
-                loadSettings();
-                toggleConfigPanel();
-            });
-
-            saveConfigBtn.addEventListener('click', saveSettings);
-
-            configOverlay.addEventListener('click', function() {
-                loadSettings();
-                toggleConfigPanel();
-            });
-            
-            // Cargar la configuración al iniciar la página por primera vez
-            loadSettings();
+    function applyLanguage(lang) {
+        const t = translations[lang] || translations.es;
+        Object.keys(t).forEach(key => {
+            const el = document.getElementById(key);
+            if (el) el.textContent = t[key];
         });
+        
+        // Actualizar textos de acciones
+        document.querySelectorAll('.action-text').forEach(span => {
+            const parent = span.closest('a, button');
+            if (parent.classList.contains('edit')) {
+                span.textContent = t.actionEdit;
+            } else if (parent.classList.contains('btn-disable')) {
+                span.textContent = t.actionDisable;
+            } else if (parent.classList.contains('btn-reactivate')) {
+                span.textContent = t.actionReactivate;
+            }
+        });
+        
+        // Actualizar textos del footer
+        const footerMainText = document.querySelector('.footer-main-text');
+        const footerSubtext = document.querySelector('.footer-subtext');
+        const footerCopyright = document.querySelector('.footer-copyright p');
+        
+        if (footerMainText) footerMainText.textContent = t.footerMainText;
+        if (footerSubtext) footerSubtext.textContent = t.footerSubtext;
+        if (footerCopyright) footerCopyright.textContent = t.footerCopyright;
+        
+        configMessage.textContent = t.message;
+    }
+
+    function loadSettings() {
+        const saved = JSON.parse(localStorage.getItem('userSettings') || '{}');
+        themeSelect.value = saved.theme || 'light';
+        notificationsSelect.value = saved.notifications || 'enabled';
+        languageSelect.value = saved.language || 'es';
+        resultsInput.value = saved.resultsPerPage || 10;
+        applyTheme(themeSelect.value);
+        applyLanguage(languageSelect.value);
+    }
+
+    function saveSettings() {
+        const settings = {
+            theme: themeSelect.value,
+            notifications: notificationsSelect.value,
+            language: languageSelect.value,
+            resultsPerPage: resultsInput.value
+        };
+        localStorage.setItem('userSettings', JSON.stringify(settings));
+        applyTheme(settings.theme);
+        applyLanguage(settings.language);
+        configMessage.style.display = 'block';
+        setTimeout(() => {
+            configMessage.style.display = 'none';
+            togglePanel();
+        }, 1500);
+    }
+
+    configLink.addEventListener('click', e => {
+        e.preventDefault();
+        loadSettings();
+        togglePanel();
+    });
+    
+    if (cancelConfigBtn) {
+        cancelConfigBtn.addEventListener('click', togglePanel);
+    }
+    
+    if (saveConfigBtn) {
+        saveConfigBtn.addEventListener('click', saveSettings);
+    }
+    
+    if (configOverlay) {
+        configOverlay.addEventListener('click', togglePanel);
+    }
+
+    loadSettings();
+
+    // =========================
+    // MODAL DE CONFIRMACIÓN PARA USUARIOS
+    // =========================
+    const disableForms = document.querySelectorAll('form[action*="deshabilitar_usuario"]');
+    const reactivateForms = document.querySelectorAll('form[action*="reactivar_usuario"]');
+
+    // Crear modal dinámicamente
+    const modal = document.createElement('div');
+    modal.className = 'custom-modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <h3 id="confirmTitle">¿Deshabilitar Usuario?</h3>
+            <p id="confirmText">¿Seguro que deseas deshabilitar este usuario?</p>
+            <div class="modal-buttons">
+                <button id="modalCancel" class="cancel-btn">Cancelar</button>
+                <button id="modalConfirm" class="confirm-btn">Deshabilitar</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    const modalCancel = modal.querySelector('#modalCancel');
+    const modalConfirm = modal.querySelector('#modalConfirm');
+    const confirmTitle = modal.querySelector('#confirmTitle');
+    const confirmText = modal.querySelector('#confirmText');
+
+    let formToSubmit = null;
+    let currentActionType = ''; // 'disable' o 'reactivate'
+
+    // Configurar forms de deshabilitar
+    disableForms.forEach(form => {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            formToSubmit = form;
+            currentActionType = 'disable';
+            
+            const t = translations[languageSelect.value] || translations.es;
+            confirmTitle.textContent = t.confirmDisableTitle;
+            confirmText.textContent = t.confirmDisableText;
+            modalConfirm.textContent = t.btnConfirmDisable;
+            modalConfirm.style.background = '#dc3545';
+            
+            modal.classList.add('show');
+        });
+    });
+
+    // Configurar forms de reactivar
+    reactivateForms.forEach(form => {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            formToSubmit = form;
+            currentActionType = 'reactivate';
+            
+            const t = translations[languageSelect.value] || translations.es;
+            confirmTitle.textContent = t.confirmReactivateTitle;
+            confirmText.textContent = t.confirmReactivateText;
+            modalConfirm.textContent = t.btnConfirmReactivate;
+            modalConfirm.style.background = '#28a745';
+            
+            modal.classList.add('show');
+        });
+    });
+
+    modalCancel.addEventListener('click', () => {
+        modal.classList.remove('show');
+        formToSubmit = null;
+        currentActionType = '';
+    });
+
+    modalConfirm.addEventListener('click', () => {
+        if (formToSubmit) {
+            formToSubmit.submit();
+        }
+        modal.classList.remove('show');
+        formToSubmit = null;
+        currentActionType = '';
+    });
+
+    // Actualizar textos del modal cuando cambie el idioma
+    languageSelect.addEventListener('change', () => {
+        const t = translations[languageSelect.value] || translations.es;
+        modalCancel.textContent = t.btnCancel;
+        
+        if (currentActionType === 'disable') {
+            confirmTitle.textContent = t.confirmDisableTitle;
+            confirmText.textContent = t.confirmDisableText;
+            modalConfirm.textContent = t.btnConfirmDisable;
+        } else if (currentActionType === 'reactivate') {
+            confirmTitle.textContent = t.confirmReactivateTitle;
+            confirmText.textContent = t.confirmReactivateText;
+            modalConfirm.textContent = t.btnConfirmReactivate;
+        }
+    });
+});
