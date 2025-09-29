@@ -8,13 +8,131 @@
     <link rel="icon" href="https://www.sena.edu.co/favicon.ico" type="image/x-icon">
 
     <!-- CSS -->
-    <link rel="stylesheet" href="{% static 'css/listar_usuarios.css' %}?v=3.1">
+    <link rel="stylesheet" href="{% static 'css/listar_usuarios.css' %}?v=3.2">
 
-    <!-- Fuente y Bootstrap Icons -->
+    <!-- Fuentes y Bootstrap Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- ====== CSS EMBEBIDO PARA EL MODAL ====== -->
+    <style>
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .3s ease, visibility .3s ease;
+        }
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: #fff;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 460px;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+            transform: translateY(40px);
+            opacity: 0;
+            transition: transform .3s ease, opacity .3s ease;
+            padding: 32px 32px 24px;
+            position: relative;
+        }
+        .modal.show .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .modal-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 15px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+            color: #fff;
+        }
+        .modal-title-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0;
+        }
+        .modal-body {
+            text-align: center;
+            font-size: 16px;
+            color: #4a5568;
+        }
+        .modal-body strong#usuario-nombre {
+            color: #ff6b6b;
+            background: rgba(255,107,107,.1);
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .btn-secondary, .btn-danger {
+            flex: 1;
+            padding: 12px 0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #2d3748;
+        }
+        .btn-secondary:hover { background: #cbd5e0; }
+        .btn-danger {
+            background: linear-gradient(135deg,#ff6b6b,#ee5a6f);
+            color: #fff;
+            box-shadow: 0 6px 16px rgba(255,107,107,.4);
+        }
+        .btn-danger:hover { box-shadow: 0 8px 20px rgba(255,107,107,.6); }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 26px;
+            cursor: pointer;
+            color: #777;
+        }
+        .close:hover { color: #ff6b6b; }
+
+        @media (max-width:480px) {
+            .modal-content { padding: 24px 20px; }
+            .modal-actions { flex-direction: column-reverse; }
+            .btn-secondary, .btn-danger { width: 100%; }
+        }
+    </style>
 </head>
 <body>
+
+    <!-- URL oculta para JS -->
+    <div id="urlPatterns" data-deshabilitar-url="{% url 'usuarios:deshabilitar_usuario' pk=0 %}" style="display:none;"></div>
+
     <!-- ===== HEADER ===== -->
     <header class="top-header">
         <div class="logo">
@@ -34,42 +152,40 @@
         </nav>
     </header>
 
-    <!-- ===== CONTENIDO PRINCIPAL ===== -->
+    <!-- ===== CONTENIDO ===== -->
     <main class="main-container">
         <div class="page-header">
-            <h2 class="page-title" id="pageTitleText">👥 Lista de Usuarios</h2>
+            <h2 class="page-title">👥 Lista de Usuarios</h2>
             <div class="header-actions">
-                <a href="{% url 'usuarios:crear_usuario' %}" class="btn-create" id="createBtn">
+                <a href="{% url 'usuarios:crear_usuario' %}" class="btn-create">
                     <i class="bi bi-person-plus-fill"></i> + Crear Usuario
                 </a>
-                <a href="{% url 'usuarios:listar_usuarios_deshabilitados' %}" class="btn-disabled" id="btnViewDisabled">
+                <a href="{% url 'usuarios:listar_usuarios_deshabilitados' %}" class="btn-disabled">
                     <i class="bi bi-eye-slash-fill"></i> Ver Deshabilitados
                 </a>
             </div>
         </div>
 
-        <!-- 🔔 MENSAJES DE ALERTA -->
+        <!-- MENSAJES -->
         {% if messages %}
         <div class="messages-container">
             {% for message in messages %}
-                <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
-                    {{ message }}
-                </div>
+            <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</div>
             {% endfor %}
         </div>
         {% endif %}
 
-        <!-- ===== TABLA ===== -->
+        <!-- TABLA -->
         <div class="table-container">
             <table class="usuarios-table">
                 <thead>
                     <tr>
-                        <th id="thNombre">Nombre</th>
-                        <th id="thTipoIdentificacion">Tipo de Identificación</th>
-                        <th id="thNumeroIdentificacion">Número de Identificación</th>
-                        <th id="thTipo">Tipo</th>
-                        <th id="thEstado">Estado</th>
-                        <th id="thAcciones">Acciones</th>
+                        <th>Nombre</th>
+                        <th>Tipo de Identificación</th>
+                        <th>Número</th>
+                        <th>Tipo</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -85,26 +201,27 @@
                             </span>
                         </td>
                         <td class="action-links">
-                            <a href="{% url 'usuarios:editar_usuario' usuario.pk %}" class="btn-edit edit">
+                            <a href="{% url 'usuarios:editar_usuario' usuario.pk %}" class="btn-edit">
                                 <i class="bi bi-pencil-square"></i>
                                 <span class="action-text">Editar</span>
                             </a>
+
                             {% if usuario.activo %}
-                                <form action="{% url 'usuarios:deshabilitar_usuario' usuario.pk %}" method="post" style="display:inline;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn-disable">
-                                        <i class="bi bi-person-dash-fill"></i>
-                                        <span class="action-text">Deshabilitar</span>
-                                    </button>
-                                </form>
+                            <!-- Botón con modal -->
+                            <button type="button" class="btn-disable" 
+                                    data-id="{{ usuario.pk }}" 
+                                    data-nombre="{{ usuario.nombre }}">
+                                <i class="bi bi-person-dash-fill"></i>
+                                <span class="action-text">Deshabilitar</span>
+                            </button>
                             {% else %}
-                                <form action="{% url 'usuarios:reactivar_usuario' usuario.pk %}" method="post" style="display:inline;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn-reactivate">
-                                        <i class="bi bi-person-check-fill"></i>
-                                        <span class="action-text">Reactivar</span>
-                                    </button>
-                                </form>
+                            <form action="{% url 'usuarios:reactivar_usuario' usuario.pk %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-reactivate">
+                                    <i class="bi bi-person-check-fill"></i>
+                                    <span class="action-text">Reactivar</span>
+                                </button>
+                            </form>
                             {% endif %}
                         </td>
                     </tr>
@@ -112,7 +229,7 @@
                     <tr>
                         <td colspan="6" class="empty-state">
                             <i class="bi bi-person-x"></i>
-                            <p id="emptyStateText">No hay usuarios registrados en el sistema.</p>
+                            <p>No hay usuarios registrados en el sistema.</p>
                         </td>
                     </tr>
                     {% endfor %}
@@ -121,42 +238,34 @@
         </div>
     </main>
 
-    <!-- ===== FOOTER CORREGIDO ===== -->
+    <!-- FOOTER -->
     <footer class="footer">
-        <div class="footer-content">
-            <p class="footer-main-text">Lista Central Sistema - SENA</p>
-            <p class="footer-subtext">Arte digital sostenible</p>
-            <div class="footer-copyright">
-                <p>&copy; 2024 Sistema de Control de Usuarios. Todos los derechos reservados.</p>
-            </div>
-        </div>
+        <p>Sistema de Control de Usuarios - SENA</p>
+        <p>Todos los derechos reservados © 2025</p>
     </footer>
 
-    <!-- ===== PANEL DE CONFIGURACIÓN ===== -->
+    <!-- PANEL CONFIGURACIÓN -->
     <div id="configOverlay" class="config-overlay"></div>
     <div id="configPanel" class="config-panel">
+        <button id="closeConfig" class="close-btn"><i class="bi bi-x-lg"></i></button>
         <h3>⚙️ Configuración</h3>
         <label for="theme">Tema:</label>
         <select id="theme">
             <option value="light">Claro</option>
             <option value="dark">Oscuro</option>
         </select>
-
         <label for="notifications">Notificaciones:</label>
         <select id="notifications">
             <option value="enabled">Activadas</option>
             <option value="disabled">Desactivadas</option>
         </select>
-
         <label for="language">Idioma:</label>
         <select id="language">
             <option value="es">Español</option>
             <option value="en">English</option>
         </select>
-
         <label for="resultsPerPage">Resultados por página:</label>
         <input type="number" id="resultsPerPage" min="5" max="50" value="10">
-
         <div class="config-actions">
             <button id="saveConfig">Guardar</button>
             <button id="cancelConfig">Cancelar</button>
@@ -164,7 +273,30 @@
         <div id="configMessage" class="config-message"></div>
     </div>
 
+    <!-- MODAL DESHABILITAR -->
+    <div id="modal-deshabilitar" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <button id="closeModalBtn" class="close" aria-label="Cerrar">&times;</button>
+            <header class="modal-header">
+                <div class="modal-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+                <h3 class="modal-title-text">Deshabilitar Usuario</h3>
+            </header>
+            <section class="modal-body">
+                <p>¿Está seguro de deshabilitar al usuario <strong id="usuario-nombre"></strong>?
+                   Esta acción impedirá su acceso al sistema.</p>
+                <form id="form-deshabilitar" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-actions">
+                        <button type="button" id="modalCancelBtn" class="btn-secondary">Cancelar</button>
+                        <button type="submit" class="btn-danger">Deshabilitar</button>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+
     <!-- JS -->
-    <script src="{% static 'js/listar_usuarios.js' %}?v=3.1"></script>
+    <script src="{% static 'js/listar_usuarios.js' %}?v=6.0"></script>
+
 </body>
 </html>

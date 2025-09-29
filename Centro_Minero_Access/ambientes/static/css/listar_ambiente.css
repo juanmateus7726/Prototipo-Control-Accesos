@@ -14,7 +14,7 @@ a {
     text-decoration: none;
 }
 
-/* ===== HEADER ===== */
+/* ===== HEADER (Unchanged) ===== */
 .top-header {
     background: linear-gradient(90deg, #008037, #00a84f);
     display: flex;
@@ -37,11 +37,12 @@ a {
     flex-direction: column;
     line-height: 1.2;
 }
-.top-header .brand span:first-child {
+.top-header .brand h1 {
     font-size: 1.3rem;
     font-weight: 700;
+    margin: 0;
 }
-.top-header .brand span:last-child {
+.top-header .brand span {
     font-size: 0.9rem;
     opacity: 0.9;
 }
@@ -56,7 +57,12 @@ a {
     text-decoration: underline;
 }
 
-/* ===== PAGE HEADER ===== */
+/* ===== MAIN CONTAINER (Unchanged) ===== */
+.main-container {
+    min-height: calc(100vh - 120px);
+}
+
+/* ===== PAGE HEADER (Unchanged) ===== */
 .page-header {
     display: flex;
     justify-content: space-between;
@@ -93,7 +99,7 @@ a {
     transform: translateY(-2px);
 }
 
-/* ===== TABLE ===== */
+/* ===== TABLE (Unchanged) ===== */
 .table-container {
     padding: 0 2rem 2rem;
 }
@@ -122,7 +128,7 @@ a {
     transition: 0.3s;
 }
 
-/* ===== BADGES ===== */
+/* ===== BADGES (Unchanged) ===== */
 .badge {
     padding: 0.35rem 0.7rem;
     border-radius: 12px;
@@ -143,7 +149,7 @@ a {
     color: #721c24;
 }
 
-/* ===== ACTION BUTTONS ===== */
+/* ===== ACTION BUTTONS (Unchanged) ===== */
 .action-links {
     display: flex;
     gap: 0.6rem;
@@ -155,6 +161,9 @@ a {
     border-radius: 6px;
     font-weight: 500;
     transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 .btn-edit:hover {
     background: #e0a800;
@@ -169,6 +178,9 @@ a {
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 .btn-disable:hover {
     background: linear-gradient(45deg, #c82333, #a71d2a);
@@ -176,7 +188,7 @@ a {
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-/* ===== EMPTY STATE ===== */
+/* ===== EMPTY STATE (Unchanged) ===== */
 .empty-state {
     text-align: center;
     padding: 2rem 0;
@@ -189,7 +201,7 @@ a {
     margin-bottom: 0.5rem;
 }
 
-/* ===== FOOTER ===== */
+/* ===== FOOTER (Unchanged) ===== */
 .footer {
     background: #008037;
     color: #fff;
@@ -197,86 +209,271 @@ a {
     padding: 1rem;
     font-size: 0.9rem;
 }
-.footer a {
-    color: #fff;
-    margin: 0 10px;
-    text-decoration: underline;
-    font-size: 0.85rem;
+.footer p {
+    margin: 5px 0;
 }
 
-/* ===== MODAL DE CONFIRMACIÓN ===== */
-.custom-modal {
+/*
+==================================================
+        ✨ CONFIGURATION PANEL STYLES FIXES
+==================================================
+*/
+
+/* 1. Overlay (Unchanged - works well) */
+.config-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.55);
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
     display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 2000;
+    transition: opacity 0.3s ease;
+    opacity: 0;
 }
-.custom-modal.show {
-    display: flex;
-    animation: fadeIn 0.3s ease-in-out;
+
+.config-overlay.show {
+    display: block;
+    opacity: 1;
 }
-.modal-content {
+
+/* 2. Flyout Panel */
+.config-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 320px; /* Slight increase for better spacing */
+    height: 100%;
     background: #fff;
-    padding: 25px;
-    border-radius: 12px;
-    text-align: center;
-    width: 320px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    z-index: 1001;
+    padding: 20px;
+    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.2);
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    /* ⚠️ Important: Allows content to scroll if it exceeds screen height */
+    overflow-y: auto; 
 }
-.modal-content h3 {
-    margin-bottom: 12px;
-    font-size: 20px;
+
+.config-panel.show {
+    transform: translateX(0);
+}
+
+/* 3. Panel Header & Close Button (Unchanged - already good) */
+.config-panel h3 {
+    margin-top: 0;
+    color: #008037;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    /* Added alignment for the icon */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #6c757d;
+    transition: color 0.2s;
+    z-index: 1002; /* Ensure it stays above everything */
+}
+.close-btn:hover {
     color: #333;
 }
-.modal-content p {
-    margin-bottom: 20px;
-    font-size: 15px;
-    color: #555;
+
+/* 4. Input/Select Spacing & Layout FIXES */
+.config-panel label {
+    /* ⚠️ Ensure label takes full width and moves to a new line */
+    font-weight: 500;
+    display: block; 
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: #333;
 }
-.modal-buttons {
+
+.config-panel select,
+.config-panel input[type="number"] {
+    width: 100%; /* Make inputs full width of the panel area */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background: #f9f9f9;
+    transition: border-color 0.3s;
+    /* ⚠️ Margin below input/select for separation */
+    margin-bottom: 10px;
+}
+
+.config-panel select:focus,
+.config-panel input:focus {
+    border-color: #008037;
+    outline: none;
+}
+
+/* 5. Actions/Buttons (Unchanged - works well) */
+.config-actions {
+    margin-top: 30px;
     display: flex;
     justify-content: space-between;
+    gap: 10px;
 }
-.cancel-btn,
-.confirm-btn {
-    flex: 1;
-    margin: 0 5px;
-    padding: 8px 15px;
+
+.config-actions button {
+    padding: 10px 15px;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
-    font-weight: 600;
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
-.cancel-btn {
-    background: #6c757d;
-    color: #fff;
-}
-.cancel-btn:hover {
-    background: #5a6268;
-}
-.confirm-btn {
-    background: #dc3545;
-    color: #fff;
-}
-.confirm-btn:hover {
-    background: #c82333;
-    transform: scale(1.05);
+    font-weight: 500;
+    transition: background 0.3s, transform 0.2s;
+    flex: 1;
 }
 
+#saveConfig {
+    background: #008037;
+    color: #fff;
+}
+#saveConfig:hover {
+    background: #005f2a;
+}
+
+#cancelConfig {
+    background: #ccc;
+    color: #333;
+}
+#cancelConfig:hover {
+    background: #b3b3b3;
+}
+
+.config-message {
+    margin-top: 15px;
+    padding: 10px;
+    background: #d4edda;
+    color: #155724;
+    border-radius: 4px;
+    text-align: center;
+    display: none;
+    font-weight: 500;
+}
+
+/*
+==================================================
+        ✨ MODAL DE CONFIRMACIÓN (Deshabilitar)
+==================================================
+*/
+
+/* .modal es el overlay/fondo. */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro */
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    z-index: 1005; /* Asegurar que esté sobre el config-panel (1001) */
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* La clase .hidden oculta el modal */
+.modal.hidden {
+    display: none !important;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+    width: 90%;
+    max-width: 450px; 
+    position: relative;
+    animation: zoomIn 0.3s ease-out;
+}
+
+/* Estilo para el botón de cierre (x) */
+.modal-content .close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 2rem;
+    font-weight: 300;
+    color: #6c757d;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.modal-content .close:hover {
+    color: #333;
+}
+
+/* Adaptación de clases Tailwind/utilitarias usadas en el HTML */
+.text-xl { font-size: 1.25rem; }
+.font-semibold { font-weight: 600; }
+.mb-4 { margin-bottom: 1rem; }
+.mt-6 { margin-top: 1.5rem; }
+.flex { display: flex; }
+.justify-end { justify-content: flex-end; }
+.gap-3 { gap: 0.75rem; }
+.text-\[\#ff9800\] { color: #ff9800; } /* Naranja SENA para destaque */
+
+/* Botones dentro del modal */
+.btn-secondary, .btn-danger {
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+/* Botón secundario (Cancelar) */
+.btn-secondary {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #f6f8fa;
+}
+
+/* Botón peligroso (Sí, Deshabilitar) */
+.btn-danger {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+    color: #fff;
+    border: none;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(45deg, #c82333, #a71d2a);
+    transform: translateY(-1px);
+}
+
+/* Animaciones */
 @keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-/* ===== DARK MODE ===== */
+@keyframes zoomIn {
+    from { transform: scale(0.9); }
+    to { transform: scale(1); }
+}
+
+
+/*
+==================================================
+        DARK MODE (Updated to include Modal)
+==================================================
+*/
 body.dark-mode {
     background: #121212;
     color: #eaeaea;
@@ -291,10 +488,64 @@ body.dark-mode .ambientes-table thead {
 body.dark-mode .ambientes-table tr:nth-child(even) {
     background: #2b2b2b;
 }
+/* DARK MODE FOR MODAL CONTENT */
 body.dark-mode .modal-content {
     background: #1e1e1e;
     color: #eaeaea;
 }
+body.dark-mode .btn-secondary {
+    background: #444;
+    color: #eaeaea;
+    border-color: #555;
+}
+body.dark-mode .btn-secondary:hover {
+    background: #5a5a5a;
+}
 body.dark-mode .footer {
     background: #00a84f;
+}
+
+/* Dark Mode Config Panel */
+body.dark-mode .config-panel {
+    background: #1e1e1e;
+}
+body.dark-mode .config-panel h3 {
+    color: #00a84f;
+    border-bottom-color: #333;
+}
+body.dark-mode .config-panel label {
+    color: #eaeaea;
+}
+body.dark-mode .config-panel select,
+body.dark-mode .config-panel input[type="number"] {
+    background: #2b2b2b;
+    color: #eaeaea;
+    border-color: #444;
+}
+body.dark-mode .config-panel select:focus,
+body.dark-mode .config-panel input:focus {
+    border-color: #00a84f;
+}
+body.dark-mode #saveConfig {
+    background: #00a84f;
+}
+body.dark-mode #saveConfig:hover {
+    background: #008037;
+}
+body.dark-mode #cancelConfig {
+    background: #444;
+    color: #eaeaea;
+}
+body.dark-mode #cancelConfig:hover {
+    background: #5a5a5a;
+}
+body.dark-mode .config-message {
+    background: #155724;
+    color: #d4edda;
+}
+body.dark-mode .close-btn {
+    color: #999;
+}
+body.dark-mode .close-btn:hover {
+    color: #eaeaea;
 }

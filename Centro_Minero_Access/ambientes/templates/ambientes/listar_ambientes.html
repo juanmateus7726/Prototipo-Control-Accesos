@@ -7,15 +7,276 @@
     <title id="pageTitle">🏫 Lista de Ambientes - Sistema SENA</title>
     <link rel="icon" href="https://www.sena.edu.co/favicon.ico" type="image/x-icon">
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="{% static 'css/listar_ambiente.css' %}?v=3.0">
+    <!-- Se necesita este CSS para que el modal se vea centrado y con estilos -->
+    <link rel="stylesheet" href="{% static 'css/listar_ambiente.css' %}?v=3.2"> 
 
-    <!-- Fuente y Bootstrap Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- CSS EMBEBIDO PARA EL MODAL Y EL PANEL DE CONFIGURACIÓN -->
+    <style>
+        /* ===== ESTILOS MEJORADOS PARA EL MODAL ===== */
+        /* Modal mejorado */
+.modal {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(6px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1100;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s;
+}
+
+.modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background-color: #fff;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 480px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    transform: translateY(40px);
+    opacity: 0;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s;
+    outline: none;
+    padding: 32px 32px 24px;
+}
+
+.modal.show .modal-content {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.modal-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.modal-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 16px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+    font-size: 40px;
+    color: white;
+}
+
+.modal-title-text {
+    font-size: 26px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.modal-ip-badge {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 6px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #e74c3c;
+    background: rgba(255, 107, 107, 0.15);
+    border-radius: 24px;
+}
+
+.modal-body {
+    font-size: 17px;
+    color: #4a5568;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.modal-message-text strong#ambiente-nombre {
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.1);
+    padding: 3px 10px;
+    border-radius: 6px;
+}
+
+.warning-badge {
+    margin: 24px 0;
+    background: #fff3cd;
+    color: #856404;
+    border-left: 5px solid #ffc107;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+}
+
+.warning-badge i {
+    font-size: 20px;
+    color: #ffc107;
+}
+
+.close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 28px;
+    color: #999;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.3s ease;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.close:hover,
+.close:focus {
+    color: #ff6b6b;
+    transform: rotate(90deg);
+    outline: none;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.btn-secondary,
+.btn-danger {
+    flex: 1;
+    padding: 14px 0;
+    font-weight: 700;
+    font-size: 16px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.btn-secondary {
+    background-color: #e2e8f0;
+    color: #2d3748;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+    background-color: #cbd5e0;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    outline: none;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    color: white;
+    box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
+}
+
+.btn-danger:hover,
+.btn-danger:focus {
+    box-shadow: 0 8px 20px rgba(255, 107, 107, 0.6);
+    outline: none;
+    transform: translateY(-2px);
+}
+
+/* Dark mode */
+body.dark-mode .modal-content {
+    background-color: #1a202c;
+    color: #e2e8f0;
+}
+
+body.dark-mode .modal-header {
+    background: none;
+}
+
+body.dark-mode .modal-title-text {
+    color: #e2e8f0;
+}
+
+body.dark-mode .modal-ip-badge {
+    color: #fc8181;
+    background: rgba(252, 129, 129, 0.15);
+}
+
+body.dark-mode .modal-message-text {
+    color: #cbd5e0;
+}
+
+body.dark-mode .warning-badge {
+    background: rgba(255, 193, 7, 0.15);
+    color: #ffd54f;
+    border-left-color: #ffc107;
+}
+
+body.dark-mode .btn-secondary {
+    background-color: #4a5568;
+    color: #e2e8f0;
+}
+
+body.dark-mode .btn-secondary:hover,
+body.dark-mode .btn-secondary:focus {
+    background-color: #5a6575;
+}
+
+body.dark-mode .close {
+    color: #a0aec0;
+}
+
+body.dark-mode .close:hover,
+body.dark-mode .close:focus {
+    color: #ff6b6b;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .modal-content {
+        width: 95%;
+        padding: 24px 20px 20px;
+    }
+
+    .modal-icon {
+        width: 64px;
+        height: 64px;
+        font-size: 32px;
+    }
+
+    .modal-title-text {
+        font-size: 22px;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+        gap: 12px;
+    }
+
+    .btn-secondary,
+    .btn-danger {
+        width: 100%;
+    }
+}
+
+    </style>
 </head>
 <body>
-    <!-- ===== HEADER ===== -->
+    <!-- Elemento oculto para pasar la URL de Django al JavaScript -->
+    <div id="urlPatterns" data-deshabilitar-url="{% url 'ambientes:deshabilitar_ambiente' pk=0 %}" style="display: none;"></div>
+
     <header class="top-header">
         <div class="logo">
             <div class="icon">🏫</div>
@@ -34,7 +295,6 @@
         </nav>
     </header>
 
-    <!-- ===== CONTENIDO PRINCIPAL ===== -->
     <main class="main-container">
         <div class="page-header">
             <h2 class="page-title" id="pageTitleText">🏫 Lista de Ambientes</h2>
@@ -48,7 +308,6 @@
             </div>
         </div>
 
-        <!-- ===== TABLA ===== -->
         <div class="table-container">
             <table class="ambientes-table">
                 <thead>
@@ -67,7 +326,7 @@
                         <td>{{ ambiente.codigo }}</td>
                         <td>
                             <span class="badge {{ ambiente.estado|lower }}">
-                                {{ ambiente.estado }}
+                            {{ ambiente.estado }}
                             </span>
                         </td>
                         <td>{{ ambiente.capacidad }}</td>
@@ -76,13 +335,14 @@
                                 <i class="bi bi-pencil-square"></i>
                                 <span class="action-text">Editar</span>
                             </a>
+                            <!-- Botón actualizado para usar data-* attributes en lugar de onclick -->
                             <form action="{% url 'ambientes:deshabilitar_ambiente' ambiente.pk %}" method="post" style="display:inline;">
                                 {% csrf_token %}
-                                <button type="submit" class="btn-disable" onclick="return confirm('¿Seguro que quieres deshabilitar este ambiente?')">
+                                    <button type="button" class="btn-disable">
                                     <i class="bi bi-slash-circle-fill"></i>
-                                    <span class="action-text">Deshabilitar</span>
-                                </button>
-                            </form>
+                                <span class="action-text">Deshabilitar</span>
+                        </button>
+                    </form>
                         </td>
                     </tr>
                     {% empty %}
@@ -98,16 +358,19 @@
         </div>
     </main>
 
-    <!-- ===== FOOTER ===== -->
     <footer class="footer">
         <p id="footerText1">Sistema de Control de Ambientes - SENA</p>
         <p id="footerText2">Todos los derechos reservados © 2025</p>
     </footer>
 
-    <!-- ===== PANEL DE CONFIGURACIÓN ===== -->
+    <!-- =================================== -->
+    <!-- PANEL DE CONFIGURACIÓN (Off-Canvas) -->
+    <!-- =================================== -->
     <div id="configOverlay" class="config-overlay"></div>
     <div id="configPanel" class="config-panel">
+        <button id="closeConfig" class="close-btn"><i class="bi bi-x-lg"></i></button> 
         <h3>⚙️ Configuración</h3>
+        
         <label for="theme">Tema:</label>
         <select id="theme">
             <option value="light">Claro</option>
@@ -133,10 +396,47 @@
             <button id="saveConfig">Guardar</button>
             <button id="cancelConfig">Cancelar</button>
         </div>
-        <div id="configMessage" class="config-message"></div>
+        
+        <div id="configMessage" class="config-message">
+            <!-- Este mensaje es actualizado por JS -->
+            ¡Configuración guardada!
+        </div>
     </div>
+    
+    <!-- ================================ -->
+    <!-- MODAL DE CONFIRMACIÓN MEJORADO -->
+    <!-- ================================ -->
+    <div id="modal-deshabilitar" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc" tabindex="-1">
+    <div class="modal-content" role="document">
+        <button id="closeModalBtn" class="close" aria-label="Cerrar modal">&times;</button>
+        <header class="modal-header">
+            <div class="modal-icon" aria-hidden="true">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <h3 id="modalTitle" class="modal-title-text">Deshabilitar Ambiente</h3>
+            <span class="modal-ip-badge">Sistema SENA</span>
+        </header>
+        <section class="modal-body" id="modalDesc">
+            <p class="modal-message-text">
+                ¿Está seguro que desea deshabilitar el ambiente <strong id="ambiente-nombre"></strong>? Esta acción impedirá que se realicen reservas hasta que sea habilitado nuevamente.
+            </p>
+            <div class="warning-badge" role="alert">
+                <i class="bi bi-info-circle-fill"></i>
+                <span>Esta acción es reversible</span>
+            </div>
+            <form id="form-deshabilitar" method="POST">
+                {% csrf_token %}
+                <div class="modal-actions">
+                    <button type="button" id="modalCancelBtn" class="btn-secondary">Cancelar</button>
+                    <button type="submit" id="modalConfirmBtn" class="btn-danger">Deshabilitar</button>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
 
-    <!-- JS -->
-    <script src="{% static 'js/listar_ambientes.js' %}?v=3.0"></script>
+
+    <!-- Cargar JavaScript -->
+    <script src="{% static 'js/listar_ambientes.js' %}?v=3.2"></script>
 </body>
 </html>

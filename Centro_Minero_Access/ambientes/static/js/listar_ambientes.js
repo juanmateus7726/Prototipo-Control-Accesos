@@ -1,165 +1,69 @@
-document.addEventListener('DOMContentLoaded', function () {
-    // =========================
-    // PANEL DE CONFIGURACIÓN
-    // =========================
-    const configLink = document.getElementById('configLink');
-    const configPanel = document.getElementById('configPanel');
-    const closeConfigBtn = document.getElementById('closeConfig');
-    const cancelConfigBtn = document.getElementById('cancelConfig');
-    const saveConfigBtn = document.getElementById('saveConfig');
-    const configOverlay = document.getElementById('configOverlay');
-    const configMessage = document.getElementById('configMessage');
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('modal-deshabilitar');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const cancelBtn = document.getElementById('modalCancelBtn');
+    const ambienteNombreSpan = document.getElementById('ambiente-nombre');
+    const formDeshabilitar = document.getElementById('form-deshabilitar');
 
-    const themeSelect = document.getElementById('theme');
-    const notificationsSelect = document.getElementById('notifications');
-    const languageSelect = document.getElementById('language');
-    const resultsInput = document.getElementById('resultsPerPage');
-
-    const translations = {
-        es: {
-            pageTitle: '🏫 Lista de Ambientes',
-            createBtn: '+ Crear Ambiente',
-            thNombre: 'Nombre',
-            thCodigo: 'Código',
-            thEstado: 'Estado',
-            thCapacidad: 'Capacidad',
-            thAcciones: 'Acciones',
-            emptyStateText: 'No hay ambientes registrados en el sistema.',
-            actionEdit: 'Editar',
-            actionDelete: 'Deshabilitar',
-            footerText1: 'Sistema de Control de Ambientes - SENA',
-            footerText2: 'Todos los derechos reservados',
-            message: '¡Configuración guardada!',
-            confirmTitle: '¿Deshabilitar Ambiente?',
-            confirmText: '¿Seguro que deseas deshabilitar este ambiente?',
-            btnCancel: 'Cancelar',
-            btnConfirm: 'Deshabilitar'
-        },
-        en: {
-            pageTitle: '🏫 Room List',
-            createBtn: '+ Create Room',
-            thNombre: 'Name',
-            thCodigo: 'Code',
-            thEstado: 'Status',
-            thCapacidad: 'Capacity',
-            thAcciones: 'Actions',
-            emptyStateText: 'No rooms registered in the system.',
-            actionEdit: 'Edit',
-            actionDelete: 'Disable',
-            footerText1: 'Room Control System - SENA',
-            footerText2: 'All rights reserved',
-            message: 'Settings saved!',
-            confirmTitle: 'Disable Room?',
-            confirmText: 'Are you sure you want to disable this room?',
-            btnCancel: 'Cancel',
-            btnConfirm: 'Disable'
-        }
-    };
-
-    function togglePanel() {
-        configPanel.classList.toggle('show');
-        configOverlay.classList.toggle('show');
+    // Función para abrir el modal con datos dinámicos
+    function openModal(nombreAmbiente, urlAction) {
+        ambienteNombreSpan.textContent = nombreAmbiente;
+        formDeshabilitar.action = urlAction;
+        modal.classList.add('show');
+        modal.setAttribute('aria-hidden', 'false');
+        modal.focus();
+        document.body.style.overflow = 'hidden'; // Evitar scroll en background
     }
 
-    function applyTheme(theme) {
-        if (theme === 'dark') {
-            document.body.classList.add('dark-mode');
-        } else {
-            document.body.classList.remove('dark-mode');
-        }
-    }
-
-    function applyLanguage(lang) {
-        const t = translations[lang] || translations.es;
-        Object.keys(t).forEach(key => {
-            const el = document.getElementById(key);
-            if (el) el.textContent = t[key];
-        });
-        document.querySelectorAll('.action-text').forEach(span => {
-            const parent = span.closest('a,button');
-            span.textContent = parent.classList.contains('edit') ? t.actionEdit : t.actionDelete;
-        });
-        configMessage.textContent = t.message;
-    }
-
-    function loadSettings() {
-        const saved = JSON.parse(localStorage.getItem('userSettings') || '{}');
-        themeSelect.value = saved.theme || 'light';
-        notificationsSelect.value = saved.notifications || 'enabled';
-        languageSelect.value = saved.language || 'es';
-        resultsInput.value = saved.resultsPerPage || 10;
-        applyTheme(themeSelect.value);
-        applyLanguage(languageSelect.value);
-    }
-
-    function saveSettings() {
-        const settings = {
-            theme: themeSelect.value,
-            notifications: notificationsSelect.value,
-            language: languageSelect.value,
-            resultsPerPage: resultsInput.value
-        };
-        localStorage.setItem('userSettings', JSON.stringify(settings));
-        applyTheme(settings.theme);
-        applyLanguage(settings.language);
-        configMessage.style.display = 'block';
-        setTimeout(() => {
-            configMessage.style.display = 'none';
-            togglePanel();
-        }, 1500);
-    }
-
-    configLink.addEventListener('click', e => {
-        e.preventDefault();
-        loadSettings();
-        togglePanel();
-    });
-    closeConfigBtn.addEventListener('click', togglePanel);
-    cancelConfigBtn.addEventListener('click', togglePanel);
-    configOverlay.addEventListener('click', togglePanel);
-    saveConfigBtn.addEventListener('click', saveSettings);
-    loadSettings();
-
-    // =========================
-    // MODAL DE CONFIRMACIÓN
-    // =========================
-    const deleteForms = document.querySelectorAll('form[action*="deshabilitar_ambiente"]');
-
-    // Crear modal dinámicamente
-    const modal = document.createElement('div');
-    modal.className = 'custom-modal';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <h3 id="confirmTitle">¿Deshabilitar Ambiente?</h3>
-            <p id="confirmText">¿Seguro que deseas deshabilitar este ambiente?</p>
-            <div class="modal-buttons">
-                <button id="modalCancel" class="cancel-btn">Cancelar</button>
-                <button id="modalConfirm" class="confirm-btn">Deshabilitar</button>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(modal);
-
-    const modalCancel = modal.querySelector('#modalCancel');
-    const modalConfirm = modal.querySelector('#modalConfirm');
-
-    let formToSubmit = null;
-
-    deleteForms.forEach(form => {
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            formToSubmit = form;
-            modal.classList.add('show');
-        });
-    });
-
-    modalCancel.addEventListener('click', () => {
+    // Función para cerrar el modal
+    function closeModal() {
         modal.classList.remove('show');
-        formToSubmit = null;
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = ''; // Restaurar scroll
+    }
+
+    // Cerrar modal con botón cerrar
+    closeModalBtn.addEventListener('click', closeModal);
+
+    // Cerrar modal con botón cancelar
+    cancelBtn.addEventListener('click', closeModal);
+
+    // Cerrar modal al hacer click fuera del contenido
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
     });
 
-    modalConfirm.addEventListener('click', () => {
-        if (formToSubmit) formToSubmit.submit();
-        modal.classList.remove('show');
+    // Cerrar modal con tecla ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('show')) {
+            closeModal();
+        }
+    });
+
+    // Seleccionamos todos los botones "Deshabilitar" con clase .btn-disable
+    const disableButtons = document.querySelectorAll('.btn-disable');
+
+    disableButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevenir submit inmediato
+
+            // Obtener el nombre del ambiente (primer td de la fila)
+            const row = button.closest('tr');
+            const nombreAmbiente = row.querySelector('td:first-child').textContent.trim();
+
+            // Obtener la URL del formulario padre
+            const form = button.closest('form');
+            const urlAction = form.action;
+
+            // Abrir modal con datos dinámicos
+            openModal(nombreAmbiente, urlAction);
+        });
+    });
+
+    // Opcional: cerrar modal al enviar formulario
+    formDeshabilitar.addEventListener('submit', () => {
+        closeModal();
     });
 });
