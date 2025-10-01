@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <title>Reporte de Accesos</title>
     <style>
+        @page {
+            size: letter;
+            margin: 1.5cm;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -28,14 +33,28 @@
             color: #ffffff;
             padding: 20px 20px 20px 120px;
             position: relative;
+            min-height: 100px;
         }
         
-        .header img {
+        .header .logo-circle {
             position: absolute;
             left: 20px;
             top: 10px;
             width: 80px;
             height: 80px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .header img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
         }
         
         h1 { 
@@ -43,36 +62,65 @@
             font-size: 24px;
             font-weight: bold;
             margin: 0;
-            padding: 15px 0;
+            padding: 15px 0 5px 0;
+        }
+        
+        .subtitle {
+            text-align: center;
+            font-size: 11px;
+            opacity: 0.9;
+        }
+        
+        .info-box {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 10px;
+            margin: 15px 20px;
+            font-size: 10px;
+        }
+        
+        .info-box strong {
+            color: #2e7d32;
         }
         
         .table-wrapper {
-            padding: 20px;
+            padding: 0 20px 20px 20px;
         }
         
         table { 
             width: 100%; 
             border-collapse: collapse;
             margin: 0;
+            table-layout: fixed;
         }
         
         th { 
             background-color: #4caf50;
             color: #ffffff;
-            padding: 12px 10px;
-            font-size: 12px;
+            padding: 10px 5px;
+            font-size: 11px;
             font-weight: bold;
             text-transform: uppercase;
-            text-align: left;
+            text-align: center;
             border: 1px solid #388e3c;
+            word-wrap: break-word;
         }
         
+        th:nth-child(1) { width: 18%; }
+        th:nth-child(2) { width: 18%; }
+        th:nth-child(3) { width: 20%; }
+        th:nth-child(4) { width: 15%; }
+        th:nth-child(5) { width: 29%; }
+        
         td { 
-            padding: 10px;
-            font-size: 11px;
+            padding: 8px 5px;
+            font-size: 10px;
             color: #333333;
             border: 1px solid #c8e6c9;
             background-color: #ffffff;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            text-align: center;
         }
         
         tbody tr:nth-child(even) td {
@@ -81,6 +129,15 @@
         
         td:nth-child(4) {
             font-weight: bold;
+            text-align: center;
+        }
+        
+        .permitido-si {
+            color: #2e7d32;
+        }
+        
+        .permitido-no {
+            color: #c62828;
         }
     </style>
 </head>
@@ -88,10 +145,19 @@
     <div class="container">
         <div class="header">
             {% if logo_base64 %}
-            <img src="data:image/jpg;base64,{{ logo_base64 }}" alt="Logo">
+            <div class="logo-circle">
+                <img src="data:image/png;base64,{{ logo_base64 }}" alt="Logo">
+            </div>
             {% endif %}
-            <h1>Reporte de Accesos</h1>
+            <h1>REPORTE DE ACCESOS</h1>
+            <div class="subtitle">Sistema de Control y Monitoreo</div>
         </div>
+        
+        <div class="info-box">
+            <strong>Total de registros:</strong> {{ accesos|length }} | 
+            <strong>Generado:</strong> {% now "d/m/Y H:i" %}
+        </div>
+        
         <div class="table-wrapper">
             <table>
                 <thead>
@@ -109,8 +175,17 @@
                         <td>{{ acceso.usuario.nombre }}</td>
                         <td>{{ acceso.ambiente.nombre }}</td>
                         <td>{{ acceso.get_metodo_display }}</td>
-                        <td>{{ acceso.acceso_permitido|yesno:"Sí,No" }}</td>
+                        <td class="{% if acceso.acceso_permitido %}permitido-si{% else %}permitido-no{% endif %}">
+                            {{ acceso.acceso_permitido|yesno:"✓ Sí,✗ No" }}
+                        </td>
                         <td>{{ acceso.fecha_hora|date:"d/m/Y H:i" }}</td>
+                        
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 20px; color: #999;">
+                            No hay registros de accesos disponibles
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
