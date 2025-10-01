@@ -15,12 +15,21 @@
         <span class="icon"><a href="{% url 'accesos:control_acceso' %}" class="nav-link">🏭</span>
         <span class="brand"><a href="{% url 'accesos:control_acceso' %}" class="nav-link">Centro Minero SENA</span>
     </div>
+
     <nav class="nav-bar">
         <a href="{% url 'accesos:control_acceso' %}" class="nav-link">Inicio</a>
         <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link">Usuarios</a>
         <a href="{% url 'ambientes:listar_ambientes' %}" class="nav-link">Ambientes</a>
         <a href="{% url 'reportes:reporte_accesos_pdf' %}" class="nav-link">Reportes</a>
         <a href="#" class="nav-link">Configuración</a>
+
+        <!-- 🔹 Sección condicional para login/logout -->
+        {% if user.is_authenticated %} 
+        <span class="nav-link text-success fw-bold">👤 {{ user.username }}</span>
+        <a href="{% url 'usuarios:logout' %}" class="nav-link text-danger">Cerrar sesión</a>
+    {% else %}
+        <a href="{% url 'usuarios:login' %}" class="nav-link text-primary">Iniciar sesión</a>
+    {% endif %}
     </nav>
 </header>
 

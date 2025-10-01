@@ -15,6 +15,7 @@ from .forms import UsuarioForm
 from .face_recognition.face_system_opencv import opencv_face_system
 from accesos.models import Acceso
 from ambientes.models import Ambiente
+from django.contrib.auth.decorators import login_required
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +23,7 @@ logger = logging.getLogger(__name__)
 # =========================================================
 # 🔹 LISTAR USUARIOS
 # =========================================================
-
+@login_required
 def listar_usuarios(request):
     """
     Lista los usuarios activos.
@@ -30,7 +31,7 @@ def listar_usuarios(request):
     usuarios = Usuario.objects.filter(activo=True).order_by("nombre")
     return render(request, "usuarios/listar_usuarios.html", {"usuarios": usuarios})
 
-
+@login_required
 def listar_usuarios_deshabilitados(request):
     """
     Lista los usuarios deshabilitados (inactivos).
@@ -42,7 +43,7 @@ def listar_usuarios_deshabilitados(request):
 # =========================================================
 # 🔹 CRUD USUARIOS
 # =========================================================
-
+@login_required
 def crear_usuario(request):
     ambientes = Ambiente.objects.all().order_by('nombre')
     if request.method == "POST":
@@ -67,7 +68,7 @@ def crear_usuario(request):
 
     return render(request, "usuarios/crear_usuario.html", {"form": form, "ambientes": ambientes})
 
-
+@login_required
 def editar_usuario(request, pk):
     usuario = get_object_or_404(Usuario, pk=pk)
     ambientes = Ambiente.objects.all().order_by('nombre')
@@ -100,7 +101,7 @@ def editar_usuario(request, pk):
         "ambientes": ambientes
     })
 
-
+@login_required
 def eliminar_usuario(request, pk):
     """
     ⚠️ Eliminación permanente del usuario.
@@ -118,7 +119,7 @@ def eliminar_usuario(request, pk):
 # =========================================================
 # 🔹 DESHABILITAR / REACTIVAR USUARIOS (Soft Delete)
 # =========================================================
-
+@login_required
 def deshabilitar_usuario(request, pk):
     """
     Deshabilita un usuario (soft delete), sin borrar sus datos ni registros.
@@ -132,7 +133,7 @@ def deshabilitar_usuario(request, pk):
 
     return render(request, 'usuarios/deshabilitar_usuario.html', {'usuario': usuario})
 
-
+@login_required
 def reactivar_usuario(request, pk):
     """
     Reactiva un usuario previamente deshabilitado.
@@ -150,12 +151,12 @@ def reactivar_usuario(request, pk):
 # =========================================================
 # 🔹 REGISTROS DE ACCESO
 # =========================================================
-
+@login_required
 def listar_registros(request):
     registros = Registro.objects.all().order_by('-fecha_hora')
     return render(request, 'usuarios/listar_registros.html', {'registros': registros})
 
-
+@login_required
 def registrar_rostro(request, pk):
     usuario = get_object_or_404(Usuario, pk=pk)
     return render(request, "usuarios/registrar_rostro.html", {"usuario": usuario})
@@ -283,3 +284,8 @@ def reconocer_rostro(request):
 @require_http_methods(["POST"])
 def verificar_camara(request):
     return JsonResponse({"success": True, "message": "Cámara verificada correctamente"}, status=200)
+
+
+@login_required
+def dashboard(request):
+    return render(request, 'usuarios/dashboard.html')
