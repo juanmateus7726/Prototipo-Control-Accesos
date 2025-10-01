@@ -473,6 +473,49 @@
 <script src="https://website-widgets.pages.dev/dist/sienna.min.js" defer></script>
 <script>
 
+// Manejo del modal de acceso manual
+const modalAccesoManual = document.getElementById('modalAccesoManual');
+const btnManual = document.getElementById('btn-acceso-manual');
+const customClose = document.querySelector('.custom-close');
+
+btnManual.addEventListener('click', (e) => {
+    e.preventDefault();
+    detenerReconocimiento(); // Detener cámara si está activa
+    const ambienteSelect = document.getElementById('ambienteSelect');
+    document.getElementById('modalAmbienteManualHiddenInput').value = ambienteSelect.value;
+    modalAccesoManual.style.display = 'block';
+});
+
+customClose.addEventListener('click', () => {
+    modalAccesoManual.style.display = 'none';
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target === modalAccesoManual) {
+        modalAccesoManual.style.display = 'none';
+    }
+});
+
+// Manejo del formulario dentro del modal
+document.getElementById('modalManualForm').addEventListener('submit', (e) => {
+    const input = document.getElementById('modalNumeroIdInput');
+    const btn = e.target.querySelector('button[type="submit"]');
+    if (!input.value.trim()) {
+        e.preventDefault();
+        alert('⚠️ Ingrese su número de identificación.');
+        return;
+    }
+    btn.innerHTML = '⏳ Verificando...';
+    btn.disabled = true;
+});
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+        // Call your exported functions here to test
+        SiennaAccessibility.load();
+    });
+
+
     // Tu código JavaScript existente...
     document.addEventListener('DOMContentLoaded', () => {
         // === NUEVA LÓGICA DE INTERFAZ ===
