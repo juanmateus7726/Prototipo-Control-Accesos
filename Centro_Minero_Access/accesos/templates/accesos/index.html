@@ -238,8 +238,80 @@
 </div>
 
 <div id="notification" class="notification"></div>
+
+<!-- Modal para Acceso Manual -->
+<div id="modalAccesoManual" class="custom-modal">
+    <div class="custom-modal-content">
+        <span class="custom-close">&times;</span>
+        <div class="manual-access-modal">
+            <h4 style="margin-bottom:15px; color:#2c3e50;">🎫 Acceso Manual por Carnet</h4>
+            <form method="post" id="modalManualForm" action="{% url 'accesos:control_acceso' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">👤 Ingrese su Número de Identificación:</label>
+                    <input type="text"
+                           name="numero_identificacion"
+                           id="modalNumeroIdInput"
+                           class="form-control"
+                           placeholder="Ej: 123456789"
+                           maxlength="10"
+                           required
+                           autocomplete="off"
+                           style="font-size: 1.1rem; padding: 12px; border: 2px solid #3498db;">
+                    <small class="form-text text-muted">Escriba su ID y presione Enter o "Acceder". El ambiente se toma del selector superior.</small>
+                </div>
+                <input type="hidden" name="ambiente_id" id="modalAmbienteManualHiddenInput">
+                <button type="submit" class="btn btn-primary w-100">
+                    ✅ Acceder al Ambiente
+                </button>
+            </form>
+            <div id="modalManualResultado" class="reconocimiento-resultado" style="display:none; margin-top:15px;">
+                <!-- Aquí se mostrará el resultado -->
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 <style>
+
+/* Estilos para el modal personalizado */
+.custom-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.custom-modal-content {
+    background-color: #f8f9fa;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #dee2e6;
+    border-radius: 15px;
+    width: 400px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    animation: modalFadeIn 0.3s;
+}
+
+.custom-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
 .face-detection-guide {
     position: absolute;
     top: 50%;
@@ -399,6 +471,44 @@
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+
+// Manejo del modal de acceso manual
+const modalAccesoManual = document.getElementById('modalAccesoManual');
+const btnManual = document.getElementById('btn-acceso-manual');
+const customClose = document.querySelector('.custom-close');
+
+btnManual.addEventListener('click', (e) => {
+    e.preventDefault();
+    detenerReconocimiento(); // Detener cámara si está activa
+    const ambienteSelect = document.getElementById('ambienteSelect');
+    document.getElementById('modalAmbienteManualHiddenInput').value = ambienteSelect.value;
+    modalAccesoManual.style.display = 'block';
+});
+
+customClose.addEventListener('click', () => {
+    modalAccesoManual.style.display = 'none';
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target === modalAccesoManual) {
+        modalAccesoManual.style.display = 'none';
+    }
+});
+
+// Manejo del formulario dentro del modal
+document.getElementById('modalManualForm').addEventListener('submit', (e) => {
+    const input = document.getElementById('modalNumeroIdInput');
+    const btn = e.target.querySelector('button[type="submit"]');
+    if (!input.value.trim()) {
+        e.preventDefault();
+        alert('⚠️ Ingrese su número de identificación.');
+        return;
+    }
+    btn.innerHTML = '⏳ Verificando...';
+    btn.disabled = true;
+});
+
+
     // Tu código JavaScript existente...
     document.addEventListener('DOMContentLoaded', () => {
         // === NUEVA LÓGICA DE INTERFAZ ===
