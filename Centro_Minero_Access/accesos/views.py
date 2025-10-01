@@ -1,88 +1,124 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_protect
 from django.db.models import Q
 from datetime import datetime
 from .models import Acceso
-from usuarios.models import Usuario, Registro  # Para registrar también en Registro
+from usuarios.models import Usuario, Registro
+from ambientes.models import Ambiente, ProtocoloAmbiente
 
-
-def index(request):
+def control_acceso_view(request):
     """
-    Vista principal: Renderiza index.html y maneja POST para acceso manual por ID.
-    Verifica usuario, permisos, registra Acceso y Registro, muestra mensaje "Bienvenido".
+    Vista principal de control de acceso con sistema dual de permisos.
     """
-    # Accesos recientes (últimos 10)
-    accesos_lista = Acceso.objects.select_related('usuario').all()[:10]
     
     if request.method == "POST":
         numero_id = request.POST.get('numero_identificacion', '').strip()
-        ambiente_codigo = request.POST.get('ambiente', 'sistemas')  # Del select
+        ambiente_id = request.POST.get('ambiente_id', '')
         
-        if not numero_id:
-            messages.error(request, '⚠️ Ingrese un número de identificación válido.')
-        else:
-            # Buscar usuario por numero_identificacion (solo activos)
-            try:
-                usuario = Usuario.objects.get(numero_identificacion=numero_id, activo=True)
-            except Usuario.DoesNotExist:
-                messages.error(request, f'❌ Usuario con ID "{numero_id}" no encontrado o inactivo.')
-                return render(request, "accesos/index.html", {"accesos_lista": accesos_lista})
-            
-            # Verificar permisos por ambiente (simple: split de ambientes_permitidos)
-            permisos = usuario.ambientes_permitidos.lower().split(',')
-            permisos_limpios = [p.strip() for p in permisos if p.strip()]
-            if 'todos' not in permisos_limpios and ambiente_codigo not in permisos_limpios:
-                # Obtener nombre del ambiente para mensaje
-                nombre_ambiente = dict(Acceso.AMBIENTE_CHOICES).get(ambiente_codigo, 'desconocido')
-                messages.error(request, f'❌ {usuario.nombre} no tiene permiso para {nombre_ambiente}.')
-                return render(request, "accesos/index.html", {"accesos_lista": accesos_lista})
-            
-            # ÉXITO: Registrar acceso
-            nombre_ambiente = dict(Acceso.AMBIENTE_CHOICES).get(ambiente_codigo, 'el ambiente')
-            # 1. En Acceso (accesos)
+        if not numero_id or not ambiente_id:
+            messages.error(request, '⚠️ Complete todos los campos.')
+            return redirect('accesos:control_acceso')
+        
+        try:
+            usuario = Usuario.objects.get(numero_identificacion=numero_id, activo=True)
+            ambiente = Ambiente.objects.get(id=ambiente_id)
+        except Usuario.DoesNotExist:
+            messages.error(request, f'❌ Usuario con ID "{numero_id}" no encontrado o inactivo.')
+            return redirect('accesos:control_acceso')
+        except Ambiente.DoesNotExist:
+            messages.error(request, f'❌ Ambiente no encontrado.')
+            return redirect('accesos:control_acceso')
+
+        # VERIFICACIÓN DE PERMISOS
+        if not usuario.tiene_permiso_ambiente(ambiente):
+            messages.error(request, f'❌ {usuario.nombre} no tiene permiso para {ambiente.nombre}.')
+            return redirect('accesos:control_acceso')
+        
+        # Migración automática en el primer acceso exitoso
+        try:
+            usuario.migrar_permisos_automaticamente()
+        except Exception as e:
+            print(f"Error en migración automática: {e}")
+            # Continuar aunque falle la migración
+        
+        # REGISTRAR ACCESO
+        try:
+            # 1. Registro en la tabla Acceso
             Acceso.objects.create(
                 usuario=usuario,
-                ambiente=ambiente_codigo,
+                ambiente=ambiente,
                 metodo='manual',
                 acceso_permitido=True,
-                razon_denegacion='',  # Vacío si OK
-                confianza=100.0  # 100% para manual
+                razon_denegacion='',
+                confianza=100.0
             )
             
-            # 2. En Registro (usuarios) – alterna Entrada/Salida como en facial
+            # 2. Determinar tipo de acceso (Entrada/Salida)
             ultimo_registro = Registro.objects.filter(usuario=usuario).order_by("-fecha_hora").first()
             tipo_acceso = "Salida" if ultimo_registro and ultimo_registro.tipo == "Entrada" else "Entrada"
+            
+            # 3. Registro en la tabla Registro
             Registro.objects.create(
                 usuario=usuario,
                 tipo=tipo_acceso,
                 metodo="manual",
-                ambiente=nombre_ambiente,  # Nombre legible
+                ambiente=ambiente.nombre,
                 confianza=100.0,
                 fecha_hora=datetime.now()
             )
             
-            # Mensaje bienvenida
-            nombre_ambiente = dict(Acceso.AMBIENTE_CHOICES).get(ambiente_codigo, 'el ambiente')
-            messages.success(request, f'✅ ¡Bienvenido al {nombre_ambiente}, {usuario.nombre}! Acceso registrado como {tipo_acceso}.')
-            
-            # Actualizar lista reciente
-            accesos_lista = Acceso.objects.select_related('usuario').all()[:10]
+            messages.success(request, f'✅ ¡Bienvenido a {ambiente.nombre}, {usuario.nombre}! Acceso registrado como {tipo_acceso}.')
         
-        # Redirige a sí misma para mostrar messages y tabla actualizada
-        return render(request, "accesos/index.html", {"accesos_lista": accesos_lista})
+        except Exception as e:
+            messages.error(request, f'❌ Ocurrió un error al registrar el acceso: {e}')
+        
+        return redirect('accesos:control_acceso')
     
-    # GET: Solo renderiza
-    return render(request, "accesos/index.html", {"accesos_lista": accesos_lista})
+    # GET request - Mostrar página
+    accesos_lista = Acceso.objects.select_related('usuario', 'ambiente').order_by('-fecha_hora')[:10]
+    ambientes_list = Ambiente.objects.all()
 
-
-# Opcional: Mantén si lo usas para otros forms
-def registrar_acceso(request):
-    # ... (tu código viejo, pero no lo usamos para manual)
-    return redirect("accesos:index")
-
+    context = {
+        "accesos_lista": accesos_lista,
+        "ambientes_list": ambientes_list
+    }
+    return render(request, "accesos/index.html", context)
 
 def listar_accesos(request):
-    accesos = Acceso.objects.select_related('usuario').all()
+    """
+    Vista para mostrar la lista completa de accesos.
+    """
+    accesos = Acceso.objects.select_related('usuario', 'ambiente').all().order_by('-fecha_hora')
     return render(request, "accesos/listar.html", {"accesos": accesos})
+
+def ambiente_detalle(request, ambiente_id):
+    """
+    Devuelve la información completa de un ambiente en formato JSON.
+    """
+    try:
+        ambiente = Ambiente.objects.get(id=ambiente_id)
+        
+        # Obtener resumen de protocolos
+        resumen_protocolos = ambiente.resumen_protocolos()
+        
+        data = {
+            "id": ambiente.id,
+            "nombre": ambiente.nombre,
+            "codigo": ambiente.codigo,
+            "estado": ambiente.get_estado_display(),
+            "capacidad": ambiente.capacidad,
+            "riesgo": ambiente.get_riesgo_display(),
+            "riesgo_raw": ambiente.riesgo,
+            "protocolos": {
+                "total": resumen_protocolos['total'],
+                "completados": resumen_protocolos['completados'],
+                "pendientes": resumen_protocolos['pendientes'],
+                "tareas_pendientes": resumen_protocolos['tareas_pendientes']
+            }
+        }
+        return JsonResponse(data)
+    except Ambiente.DoesNotExist:
+        return JsonResponse({"error": "Ambiente no encontrado"}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": f"Error al obtener detalles: {str(e)}"}, status=500)

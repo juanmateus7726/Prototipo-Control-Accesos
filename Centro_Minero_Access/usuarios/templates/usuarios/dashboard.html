@@ -1,0 +1,224 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏫 Dashboard - Sistema SENA</title>
+    <link rel="icon" href="https://www.sena.edu.co/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        /* ===== RESET ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f2f5f7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #333;
+        }
+
+        /* ===== HEADER ===== */
+        .top-header {
+            background: linear-gradient(90deg, #008037, #00a84f);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2.5rem;
+            color: #fff;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+            border-bottom: 3px solid #00662b;
+        }
+
+        .top-header h1 {
+            font-size: 1.6rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .top-header h1 i {
+            font-size: 1.8rem;
+        }
+
+        .top-header nav a {
+            color: #fff;
+            margin-left: 2rem;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .top-header nav a:hover {
+            color: #d6f5e3;
+            border-bottom: 2px solid #fff;
+            padding-bottom: 0.2rem;
+        }
+
+        /* ===== CONTENIDO PRINCIPAL ===== */
+        main {
+            flex: 1;
+            padding: 3rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        main h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #008037;
+        }
+
+        main p.subtitle {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 2rem;
+        }
+
+        /* ===== TARJETAS ===== */
+        .card {
+            background: #fff;
+            padding: 2rem 1.5rem;
+            border-radius: 14px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            border-top: 5px solid #008037;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.2);
+        }
+
+        .card i {
+            font-size: 3rem;
+            color: #008037;
+            margin-bottom: 1rem;
+        }
+
+        .card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.6rem;
+            color: #333;
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .card a {
+            display: inline-block;
+            padding: 0.6rem 1.4rem;
+            background: linear-gradient(90deg, #008037, #00a84f);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .card a:hover {
+            background: linear-gradient(90deg, #00662b, #008f44);
+            transform: scale(1.05);
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: linear-gradient(90deg, #008037, #00a84f);
+            color: #fff;
+            text-align: center;
+            padding: 1.3rem 1rem;
+            margin-top: auto;
+            box-shadow: 0 -3px 10px rgba(0,0,0,0.25);
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: #cdeed8;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .top-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .top-header nav {
+                margin-top: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="top-header">
+        <h1><i class="fa-solid fa-graduation-cap"></i> SENA Dashboard</h1>
+        <nav>
+            <a href="{% url 'usuarios:listar_usuarios' %}"><i class="fa-solid fa-users"></i> Usuarios</a>
+            <a href="#"><i class="fa-solid fa-clipboard-check"></i> Registros</a>
+            <a href="#"><i class="fa-solid fa-calendar-check"></i> Reservas</a>
+            <a href="{% url 'usuarios:logout' %}"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
+        </nav>
+    </header>
+
+    <!-- ===== CONTENIDO PRINCIPAL ===== -->
+    <main>
+        <h2>Bienvenido al Panel Principal</h2>
+        <p class="subtitle">Selecciona un módulo para comenzar</p>
+
+        <div class="dashboard-cards">
+            <div class="card">
+                <i class="fa-solid fa-users"></i>
+                <h3>Gestión de Usuarios</h3>
+                <p>Administra los usuarios del sistema</p>
+                <a href="{% url 'usuarios:listar_usuarios' %}">Entrar</a>
+            </div>
+
+            <div class="card">
+                <i class="fa-solid fa-clipboard-check"></i>
+                <h3>Registros</h3>
+                <p>Consulta los registros de acceso</p>
+                <a href="#">Ver registros</a>
+            </div>
+
+            <div class="card">
+                <i class="fa-solid fa-calendar-check"></i>
+                <h3>Reservas</h3>
+                <p>Gestiona las reservas de ambientes</p>
+                <a href="#">Administrar</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <p>© 2025 Centro Minero SENA | <a href="https://www.sena.edu.co/" target="_blank">www.sena.edu.co</a></p>
+    </footer>
+
+</body>
+</html>

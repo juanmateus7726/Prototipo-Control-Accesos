@@ -1,104 +1,69 @@
-document.addEventListener('DOMContentLoaded', function() {
-            const configLink = document.getElementById('configLink');
-            const configPanel = document.getElementById('configPanel');
-            const closeConfigBtn = document.getElementById('closeConfig');
-            const cancelConfigBtn = document.getElementById('cancelConfig');
-            const saveConfigBtn = document.getElementById('saveConfig');
-            const configOverlay = document.getElementById('configOverlay');
-            const configMessage = document.getElementById('configMessage');
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('modal-deshabilitar');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const cancelBtn = document.getElementById('modalCancelBtn');
+    const ambienteNombreSpan = document.getElementById('ambiente-nombre');
+    const formDeshabilitar = document.getElementById('form-deshabilitar');
 
-            const themeSelect = document.getElementById('theme');
-            const notificationsSelect = document.getElementById('notifications');
-            const languageSelect = document.getElementById('language');
-            const resultsInput = document.getElementById('resultsPerPage');
+    // Función para abrir el modal con datos dinámicos
+    function openModal(nombreAmbiente, urlAction) {
+        ambienteNombreSpan.textContent = nombreAmbiente;
+        formDeshabilitar.action = urlAction;
+        modal.classList.add('show');
+        modal.setAttribute('aria-hidden', 'false');
+        modal.focus();
+        document.body.style.overflow = 'hidden'; // Evitar scroll en background
+    }
 
-            const translations = {
-                es: {
-                    pageTitle: '🏫 Lista de Ambientes',
-                    createBtn: '+ Crear Ambiente',
-                    thNombre: 'Nombre',
-                    thCodigo: 'Código',
-                    thEstado: 'Estado',
-                    thCapacidad: 'Capacidad',
-                    thAcciones: 'Acciones',
-                    emptyStateText: 'No hay ambientes registrados en el sistema.',
-                    actionEdit: 'Editar',
-                    actionDelete: 'Eliminar',
-                    footerText1: 'Sistema de Control de Ambientes - SENA',
-                    footerText2: 'Todos los derechos reservados',
-                    message: '¡Configuración guardada!'
-                },
-                en: {
-                    pageTitle: '🏫 Room List',
-                    createBtn: '+ Create Room',
-                    thNombre: 'Name',
-                    thCodigo: 'Code',
-                    thEstado: 'Status',
-                    thCapacidad: 'Capacity',
-                    thAcciones: 'Actions',
-                    emptyStateText: 'No rooms registered in the system.',
-                    actionEdit: 'Edit',
-                    actionDelete: 'Delete',
-                    footerText1: 'Room Control System - SENA',
-                    footerText2: 'All rights reserved',
-                    message: 'Settings saved!'
-                }
-            };
+    // Función para cerrar el modal
+    function closeModal() {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = ''; // Restaurar scroll
+    }
 
-            function togglePanel() {
-                configPanel.classList.toggle('show');
-                configOverlay.classList.toggle('show');
-            }
+    // Cerrar modal con botón cerrar
+    closeModalBtn.addEventListener('click', closeModal);
 
-            function applyTheme(theme) {
-                if (theme === 'dark') {
-                    document.body.classList.add('dark-mode');
-                } else {
-                    document.body.classList.remove('dark-mode');
-                }
-            }
+    // Cerrar modal con botón cancelar
+    cancelBtn.addEventListener('click', closeModal);
 
-            function applyLanguage(lang) {
-                const t = translations[lang] || translations.es;
-                Object.keys(t).forEach(key => {
-                    const el = document.getElementById(key);
-                    if (el) el.textContent = t[key];
-                });
-                document.querySelectorAll('.action-text').forEach(span => {
-                    const parent = span.closest('a');
-                    span.textContent = parent.classList.contains('edit') ? t.actionEdit : t.actionDelete;
-                });
-                configMessage.textContent = t.message;
-            }
+    // Cerrar modal al hacer click fuera del contenido
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
 
-            function loadSettings() {
-                const saved = JSON.parse(localStorage.getItem('userSettings') || '{}');
-                themeSelect.value = saved.theme || 'light';
-                notificationsSelect.value = saved.notifications || 'enabled';
-                languageSelect.value = saved.language || 'es';
-                resultsInput.value = saved.resultsPerPage || 10;
-                applyTheme(themeSelect.value);
-                applyLanguage(languageSelect.value);
-            }
+    // Cerrar modal con tecla ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('show')) {
+            closeModal();
+        }
+    });
 
-            function saveSettings() {
-                const settings = {
-                    theme: themeSelect.value,
-                    notifications: notificationsSelect.value,
-                    language: languageSelect.value,
-                    resultsPerPage: resultsInput.value
-                };
-                localStorage.setItem('userSettings', JSON.stringify(settings));
-                applyTheme(settings.theme);
-                applyLanguage(settings.language);
-                configMessage.style.display = 'block';
-                setTimeout(() => { configMessage.style.display = 'none'; togglePanel(); }, 1500);
-            }
+    // Seleccionamos todos los botones "Deshabilitar" con clase .btn-disable
+    const disableButtons = document.querySelectorAll('.btn-disable');
 
-            configLink.addEventListener('click', e => { e.preventDefault(); loadSettings(); togglePanel(); });
-            closeConfigBtn.addEventListener('click', togglePanel);
-            cancelConfigBtn.addEventListener('click', togglePanel);
-            configOverlay.addEventListener('click', togglePanel);
-            saveConfigBtn.addEventListener('click', saveSettings);
-            loadSettings();
+    disableButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevenir submit inmediato
+
+            // Obtener el nombre del ambiente (primer td de la fila)
+            const row = button.closest('tr');
+            const nombreAmbiente = row.querySelector('td:first-child').textContent.trim();
+
+            // Obtener la URL del formulario padre
+            const form = button.closest('form');
+            const urlAction = form.action;
+
+            // Abrir modal con datos dinámicos
+            openModal(nombreAmbiente, urlAction);
         });
+    });
+
+    // Opcional: cerrar modal al enviar formulario
+    formDeshabilitar.addEventListener('submit', () => {
+        closeModal();
+    });
+});

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'accesos',
     'usuarios',
     'ambientes',
+    'reportes',
 ]
 
 MIDDLEWARE = [
@@ -88,9 +89,9 @@ DATABASES = {
 }
 
 
-LOGIN_URL = '/accounts/login/'        # A dónde redirige si no hay sesión
-LOGIN_REDIRECT_URL = '/'              # Después de login, redirige al index
-LOGOUT_REDIRECT_URL = '/'             # Después de logout, redirige al index
+LOGIN_URL = '/usuarios/login/'        # Se redirigira si intenta entrar sin estar logueado.
+LOGIN_REDIRECT_URL = '/usuarios/dashboard/' # a dónde irá el usuario después de loguearse
+LOGOUT_REDIRECT_URL = '/'             # a dónde irá después de cerrar sesión
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
