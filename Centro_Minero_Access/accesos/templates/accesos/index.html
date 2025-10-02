@@ -26,9 +26,9 @@
         <!-- 🔹 Sección condicional para login/logout -->
         {% if user.is_authenticated %} 
         <span class="nav-link text-success fw-bold">👤 {{ user.username }}</span>
-        <a href="{% url 'usuarios:logout' %}" class="nav-link text-danger">Cerrar sesión</a>
+        <a href="{% url 'cuentas:logout' %}" class="nav-link text-danger">Cerrar sesión</a>
     {% else %}
-        <a href="{% url 'usuarios:login' %}" class="nav-link text-primary">Iniciar sesión</a>
+        <a href="{% url 'cuentas:login' %}" class="nav-link text-primary">Iniciar sesión</a>
     {% endif %}
     </nav>
 </header>

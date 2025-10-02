@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'usuarios',
     'ambientes',
     'reportes',
+    'cuentas',
 ]
 
 MIDDLEWARE = [
@@ -89,8 +90,8 @@ DATABASES = {
 }
 
 
-LOGIN_URL = '/usuarios/login/'        # Se redirigira si intenta entrar sin estar logueado.
-LOGIN_REDIRECT_URL = '/usuarios/dashboard/' # a dónde irá el usuario después de loguearse
+LOGIN_URL = '/cuentas/login/'        # Se redirigira si intenta entrar sin estar logueado.
+LOGIN_REDIRECT_URL = '/cuentas/dashboard/' # a dónde irá el usuario después de loguearse
 LOGOUT_REDIRECT_URL = '/'             # a dónde irá después de cerrar sesión
 
 # Password validation

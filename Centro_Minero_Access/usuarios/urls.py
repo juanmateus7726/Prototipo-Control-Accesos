@@ -1,5 +1,4 @@
 from django.urls import path
-from django.contrib.auth import views as auth_views
 from . import views
 
 app_name = 'usuarios'
@@ -33,17 +32,5 @@ urlpatterns = [
     path('api/reconocer-rostro/', views.reconocer_rostro, name='reconocer_rostro'),
     path('api/verificar-camara/', views.verificar_camara, name='verificar_camara'),
 
-    # ===========================
-    # 🔹 Login / Logout
-    # ===========================
-    path('login/', auth_views.LoginView.as_view(
-        template_name='usuarios/login.html'
-    ), name='login'),
 
-    path('logout/', auth_views.LogoutView.as_view(
-        next_page='/'
-    ), name='logout'),
-
-    # Dashboard
-    path('dashboard/', views.dashboard, name='dashboard')
 ]

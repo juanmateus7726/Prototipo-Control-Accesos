@@ -29,6 +29,7 @@ urlpatterns = [
     # Estas líneas son para tus otras aplicaciones
     path('ambientes/', include('ambientes.urls')),
     path('usuarios/', include('usuarios.urls')),
+    path('cuentas/', include('cuentas.urls')),
     path('reportes/', include(('reportes.urls', 'reportes'), namespace='reportes')),
     ]
 
