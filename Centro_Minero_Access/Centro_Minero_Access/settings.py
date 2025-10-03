@@ -15,9 +15,11 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
 # Para imagenes de rostros
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -27,12 +29,13 @@ SECRET_KEY = 'django-insecure-ot($_0i=&5$43&pn_g25pwe&bl1yk^lcu5bnv)^a*aj0&yi^ke
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    # 'control.apps.ControlAppConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,6 +45,7 @@ INSTALLED_APPS = [
     'accesos',
     'usuarios',
     'ambientes',
+    'reportes',
 ]
 
 MIDDLEWARE = [
@@ -129,7 +133,9 @@ STATIC_URL = '/static/'
 
 # Carpetas donde buscar archivos estáticos durante el desarrollo
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    BASE_DIR / "Centro_Minero_Access" / "static",
+    BASE_DIR / "accesos" / "static",              
+    BASE_DIR / "usuarios" / "static",
 ]
 
 # (Opcional) Carpeta donde Django recopila los archivos cuando usas collectstatic
@@ -139,6 +145,3 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# Tamaño máximo de archivos subidos (para imágenes)
-FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
-DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB

@@ -6,131 +6,160 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Control de Acceso - Centro Minero SENA</title>
     <link rel="stylesheet" href="{% static 'css/control.css' %}?v=1.1">
-    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
-<!-- ===== HEADER & NAVBAR ===== -->
 <header class="top-header">
     <div class="logo">
-        <span class="icon">🏭</span>
-        <span class="brand">Centro Minero SENA</span>
+        <span class="icon"><a href="{% url 'accesos:control_acceso' %}" class="nav-link">🏭</span>
+        <span class="brand"><a href="{% url 'accesos:control_acceso' %}" class="nav-link">Centro Minero SENA</span>
     </div>
     <nav class="nav-bar">
-        <a href="{% url 'index' %}" class="nav-link">Inicio</a>
+        <a href="{% url 'accesos:control_acceso' %}" class="nav-link">Inicio</a>
         <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link">Usuarios</a>
         <a href="{% url 'ambientes:listar_ambientes' %}" class="nav-link">Ambientes</a>
-        <a href="#" class="nav-link">Reportes</a>
+        <a href="{% url 'reportes:reporte_accesos_pdf' %}" class="nav-link">Reportes</a>
         <a href="#" class="nav-link">Configuración</a>
     </nav>
 </header>
 
-<!-- ===== CONTENIDO PRINCIPAL ===== -->
 <main class="container">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="position: fixed; top: 80px; right: 20px; z-index: 1000; max-width: 400px;">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
 
-    <!-- Selector de Ambiente -->
-    <section class="card fade-in">
-        <div class="card-title">📍 Selección de Ambiente</div>
+    <!-- En tu template, modifica la sección de selección de ambiente -->
+<section class="card fade-in">
+    <div class="card-title">📍 Selección de Ambiente</div>
+    <form method="post" id="ambienteForm">
+        {% csrf_token %}
         <div class="ambiente-selector">
-            <select id="ambienteSelect" onchange="cambiarAmbiente()">
-                <option value="sistemas">💻 Laboratorio de Sistemas</option>
-                <option value="quimica">🧪 Laboratorio de Química Aplicada</option>
-                <option value="carbones">⚫ Laboratorio de Carbones</option>
-                <option value="biotecnologia">🧬 Laboratorio de Biotecnología</option>
-                <option value="beneficios">⛏️ Lab. Beneficios Minerales</option>
-                <option value="aguas">💧 Laboratorio de Aguas</option>
-                <option value="suelos">🌱 Laboratorio de Suelos</option>
-                <option value="abc_maquinaria">🚜 Ambiente ABC - Maquinaria Pesada</option>
-                <option value="bilinguismo">🗣️ Ambiente de Bilingüismo</option>
-                <option value="minas_didacticas">⛏️ Minas Didácticas</option>
+            <select id="ambienteSelect" name="ambiente" class="form-control" onchange="cambiarAmbiente()">
+                <option value="">-- Seleccione un ambiente --</option>
+                {% for ambiente in ambientes_list %}
+                    <option value="{{ ambiente.id }}" 
+                            data-codigo="{{ ambiente.codigo }}"
+                            data-estado="{{ ambiente.estado }}"
+                            data-capacidad="{{ ambiente.capacidad }}"
+                            data-riesgo="{{ ambiente.get_riesgo_display }}">
+                        {{ ambiente.nombre }}
+                    </option>
+                {% endfor %}
             </select>
         </div>
-        <div id="ambienteInfo" class="ambiente-info">
-            💻 Laboratorio de Sistemas
-            <span class="risk-indicator risk-bajo">Riesgo: Bajo</span>
+    </form>
+    
+    <div id="ambienteInfo" class="ambiente-info">
+        <!-- La información del ambiente se cargará aquí -->
+    </div>
+</section>
+    <section class="card fade-in">
+        <div class="card-title">🔐 Control de Acceso</div>
+        <div class="method-selector-buttons">
+            <button id="btn-acceso-facial" class="btn btn-info active">🎭 Reconocimiento Facial</button>
+            <button id="btn-acceso-manual" class="btn btn-secondary">🎫 Acceso Manual</button>
         </div>
     </section>
 
-    <!-- GRID PRINCIPAL -->
     <div class="main-grid">
 
-        <!-- PANEL ACCESO -->
         <section class="card">
-            <div class="card-title">🔐 Control de Acceso</div>
-
-            <!-- Cámara para Reconocimiento Facial -->
-            <div class="camera-container">
-                <div class="camera-view" id="cameraView">
-                    <div id="cameraStatus">
-                        🎭 RECONOCIMIENTO FACIAL<br>
-                        <small>Presiona "Activar Reconocimiento" para iniciar</small>
+            
+            <div id="seccion-facial">
+                <div class="camera-container">
+                    <div class="camera-view" id="cameraView">
+                        <div id="cameraStatus">
+                            🎭 RECONOCIMIENTO FACIAL<br>
+                            <small>Presiona "Activar Reconocimiento" para iniciar</small>
+                        </div>
+                        <video id="videoElement" style="display:none;" autoplay></video>
+                        <div class="camera-overlay" id="cameraOverlay" style="display:none;">
+                            🔍 Buscando rostros...
+                        </div>
+                        <div class="face-detection-guide" id="faceGuide" style="display:none;"></div>
                     </div>
-                    <video id="videoElement" style="display:none;" autoplay></video>
-                    <div class="camera-overlay" id="cameraOverlay" style="display:none;">
-                        🔍 Buscando rostros...
+    
+                    <div class="face-detection-area" id="faceDetection" style="display:none;">
+                        <div style="text-align:center; color:#74b9ff;">
+                            🤖 Sistema de Reconocimiento Facial Activo
+                        </div>
                     </div>
-                    <div class="face-detection-guide" id="faceGuide" style="display:none;"></div>
+    
+                    <div class="camera-controls">
+                        <button class="btn btn-success" onclick="activarReconocimiento()">
+                            <span id="reconocimientoButtonText">🎭 Activar Reconocimiento</span>
+                        </button>
+                        <button class="btn btn-warning" onclick="capturarRostro()" id="captureBtn" style="display:none;">
+                            📸 Reconocer Acceso
+                        </button>
+                        <button class="btn btn-danger" onclick="detenerReconocimiento()" id="stopBtn" style="display:none;">
+                            ⏹️ Detener
+                        </button>
+                    </div>
                 </div>
-
-                <div class="face-detection-area" id="faceDetection" style="display:none;">
-                    <div style="text-align:center; color:#74b9ff;">
-                        🤖 Sistema de Reconocimiento Facial Activo
+    
+                <div id="reconocimientoResultado" class="reconocimiento-resultado" style="display:none;">
+                    <div class="usuario-reconocido">
+                        <div class="avatar-usuario" id="avatarUsuario">👤</div>
+                        <div class="info-usuario">
+                            <h3 id="nombreUsuario">Usuario Desconocido</h3>
+                            <p id="carnetUsuario">Carnet: ----</p>
+                            <p id="tipoUsuario">Tipo: ----</p>
+                            <p id="confianzaReconocimiento">Confianza: --%</p>
+                        </div>
+                        <div class="acceso-status" id="accesoStatus">
+                            <span class="status-badge status-denied">❌ DENEGADO</span>
+                        </div>
                     </div>
-                </div>
-
-                <div class="camera-controls">
-                    <button class="btn btn-success" onclick="activarReconocimiento()">
-                        <span id="reconocimientoButtonText">🎭 Activar Reconocimiento</span>
-                    </button>
-                    <button class="btn btn-warning" onclick="capturarRostro()" id="captureBtn" style="display:none;">
-                        📸 Reconocer Acceso
-                    </button>
-                    <button class="btn btn-danger" onclick="detenerReconocimiento()" id="stopBtn" style="display:none;">
-                        ⏹️ Detener
-                    </button>
                 </div>
             </div>
 
-            <!-- Resultado del Reconocimiento -->
-            <div id="reconocimientoResultado" class="reconocimiento-resultado" style="display:none;">
-                <div class="usuario-reconocido">
-                    <div class="avatar-usuario" id="avatarUsuario">👤</div>
-                    <div class="info-usuario">
-                        <h3 id="nombreUsuario">Usuario Desconocido</h3>
-                        <p id="carnetUsuario">Carnet: ----</p>
-                        <p id="tipoUsuario">Tipo: ----</p>
-                        <p id="confianzaReconocimiento">Confianza: --%</p>
-                    </div>
-                    <div class="acceso-status" id="accesoStatus">
-                        <span class="status-badge status-denied">❌ DENEGADO</span>
+            <div id="seccion-manual" style="display: none;">
+                <div class="manual-access">
+                    <h4 style="margin-bottom:15px; color:#2c3e50;">🎫 Acceso Manual por Carnet</h4>
+                    <form method="post" id="manualForm" action="{% url 'accesos:control_acceso' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">👤 Ingrese su Numero de Identificacion:</label>
+                            <input type="text" 
+                                   name="numero_identificacion" 
+                                   id="numeroIdInput" 
+                                   class="form-control" 
+                                   placeholder="Ej: 123456789" 
+                                   maxlength="10" 
+                                   required 
+                                   autocomplete="off"
+                                   style="font-size: 1.1rem; padding: 12px; border: 2px solid #3498db;">
+                            <small class="form-text text-muted">Escriba su ID y presione Enter o "Acceder". El ambiente se toma del selector superior.</small>
+                        </div>
+                        <input type="hidden" name="ambiente_id" id="ambienteManualHiddenInput">
+                        <button type="submit" class="btn btn-primary w-100">
+                            ✅ Acceder al Ambiente
+                        </button>
+                    </form>
+                    <div id="manualResultado" class="reconocimiento-resultado" style="display:none; margin-top:15px;">
+                        <div class="usuario-reconocido">
+                            <div class="avatar-usuario" id="avatarManual">👤</div>
+                            <div class="info-usuario">
+                                <h3 id="nombreManual">Usuario Desconocido</h3>
+                                <p id="idManual">ID: ----</p>
+                                <p id="tipoManual">Tipo: ----</p>
+                                <p id="bienvenidaManual" style="color: #27ae60; font-weight: bold;"></p>
+                            </div>
+                            <div class="acceso-status" id="accesoStatusManual">
+                                <span class="status-badge status-denied">❌ DENEGADO</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Acceso Manual -->
-            <div class="manual-access">
-                <h4 style="margin-bottom:15px; color:#2c3e50;">🎫 Acceso Manual por Carnet</h4>
-                <form method="post" id="accesoForm">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label class="form-label">👤 Usuario:</label>
-                        {{ form.usuario }}
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">📍 Ambiente:</label>
-                        {{ form.laboratorio }}
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">🔧 Método de Acceso:</label>
-                        {{ form.metodo }}
-                    </div>
-                    <button type="submit" class="btn btn-danger w-100">
-                        ✅ Registrar Acceso Manual
-                    </button>
-                </form>
-            </div>
-
-            <!-- Tabla accesos recientes -->
             <div style="margin-top:20px;">
                 <h5>📋 Accesos recientes</h5>
                 <table class="table table-striped">
@@ -147,8 +176,8 @@
                         {% for acceso in accesos_lista %}
                         <tr>
                             <td>{{ acceso.usuario.nombre }}</td>
-                            <td>{{ acceso.get_laboratorio_display }}</td>
-                            <td>{{ acceso.get_metodo_display }}</td>
+                            <td>{{ acceso.ambiente.nombre }}</td>
+                            <td>{{ acceso.metodo }}</td>
                             <td>{{ acceso.fecha_hora|date:"Y-m-d H:i" }}</td>
                             <td>
                                 {% if acceso.confianza %}
@@ -170,7 +199,6 @@
             </div>
         </section>
 
-        <!-- PANEL ESTADO -->
         <aside class="card">
             <div class="card-title">📊 Estado del Sistema</div>
             <div class="status-panel">
@@ -192,7 +220,6 @@
     </div>
 </main>
 
-<!-- ===== FOOTER ===== -->
 <footer class="footer">
     <p>🤖 Sistema Inteligente de Control de Acceso con IA - Centro Minero SENA © 2025</p>
     <p class="footer-links">
@@ -202,7 +229,6 @@
     </p>
 </footer>
 
-<!-- Modal -->
 <div id="protocolModal" class="protocol-modal">
     <div class="protocol-content">
         <h3 id="protocolTitle">Protocolo de Seguridad</h3>
@@ -212,8 +238,7 @@
 </div>
 
 <div id="notification" class="notification"></div>
-
-<!-- Estilos adicionales para reconocimiento facial -->
+</body>
 <style>
 .face-detection-guide {
     position: absolute;
@@ -227,6 +252,18 @@
     opacity: 0.7;
     z-index: 5;
     animation: pulse 2s infinite;
+}
+
+.text-muy-alto {
+    color: #b20000 !important; /* rojo intenso de alerta */
+    font-weight: bold;
+    animation: parpadeo 1s infinite;
+}
+
+@keyframes parpadeo {
+    0%   { opacity: 1; }
+    50%  { opacity: 0.4; }
+    100% { opacity: 1; }
 }
 
 @keyframes pulse {
@@ -346,32 +383,108 @@
     from { transform: translateX(100%); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
 }
+
+/* Estilos para los nuevos botones de selección */
+.method-selector-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.method-selector-buttons .btn {
+    width: 200px;
+}
 </style>
 
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://website-widgets.pages.dev/dist/sienna.min.js" defer></script>
 <script>
-// Variables globales para reconocimiento facial
+// ========================================
+// SISTEMA DE RECONOCIMIENTO FACIAL - VERSIÓN CORREGIDA
+// ========================================
+
 let videoStream = null;
 let isRecognitionActive = false;
 let canvas = null;
+let isProcessing = false;
 
-// Función para activar reconocimiento facial
+// URLs necesarias
+const RECONOCER_URL = "{% url 'usuarios:reconocer_rostro' %}";
+const CSRF_TOKEN = "{{ csrf_token }}";
+
+document.addEventListener('DOMContentLoaded', () => {
+    // === LÓGICA DE INTERFAZ (Facial vs Manual) ===
+    const seccionFacial = document.getElementById('seccion-facial');
+    const seccionManual = document.getElementById('seccion-manual');
+    const btnFacial = document.getElementById('btn-acceso-facial');
+    const btnManual = document.getElementById('btn-acceso-manual');
+
+    seccionFacial.style.display = 'block';
+    seccionManual.style.display = 'none';
+
+    btnFacial.addEventListener('click', () => {
+        seccionFacial.style.display = 'block';
+        seccionManual.style.display = 'none';
+        btnFacial.classList.add('btn-info', 'active');
+        btnFacial.classList.remove('btn-secondary');
+        btnManual.classList.remove('btn-info', 'active');
+        btnManual.classList.add('btn-secondary');
+    });
+
+    btnManual.addEventListener('click', () => {
+        detenerReconocimiento();
+        seccionFacial.style.display = 'none';
+        seccionManual.style.display = 'block';
+        btnManual.classList.add('btn-info', 'active');
+        btnManual.classList.remove('btn-secondary');
+        btnFacial.classList.remove('btn-info', 'active');
+        btnFacial.classList.add('btn-secondary');
+    });
+
+    // === FORM MANUAL ===
+    const manualForm = document.getElementById('manualForm');
+    const ambienteSelect = document.getElementById('ambienteSelect');
+    const ambienteManualInput = document.getElementById('ambienteManualHiddenInput');
+
+    if (manualForm) {
+        manualForm.addEventListener('submit', (e) => {
+            ambienteManualInput.value = ambienteSelect.value;
+            const input = document.getElementById('numeroIdInput');
+            const btn = manualForm.querySelector('button[type="submit"]');
+            if (!input.value.trim()) {
+                e.preventDefault();
+                alert('⚠️ Ingrese su número de identificación.');
+                return;
+            }
+            btn.innerHTML = '⏳ Verificando...';
+            btn.disabled = true;
+        });
+    }
+    
+    cambiarAmbiente();
+});
+
+// ========================================
+// RECONOCIMIENTO FACIAL
+// ========================================
+
 async function activarReconocimiento() {
     try {
         mostrarNotificacion('Iniciando sistema de reconocimiento facial...', 'warning');
+        agregarLog('Iniciando cámara...');
         
         const video = document.getElementById('videoElement');
         const cameraStatus = document.getElementById('cameraStatus');
         const cameraOverlay = document.getElementById('cameraOverlay');
         const faceGuide = document.getElementById('faceGuide');
-        const reconocimientoBtn = document.getElementById('reconocimientoButtonText');
         const captureBtn = document.getElementById('captureBtn');
         const stopBtn = document.getElementById('stopBtn');
 
-        // Solicitar acceso a la cámara
         videoStream = await navigator.mediaDevices.getUserMedia({
             video: {
-                width: { ideal: 640 },
-                height: { ideal: 480 },
+                width: { ideal: 1280 },
+                height: { ideal: 720 },
                 facingMode: 'user'
             }
         });
@@ -382,95 +495,94 @@ async function activarReconocimiento() {
             cameraStatus.style.display = 'none';
             video.style.display = 'block';
             cameraOverlay.style.display = 'flex';
-            cameraOverlay.textContent = '🎭 Sistema de reconocimiento activo - Posicione su rostro';
+            cameraOverlay.textContent = '🎭 Sistema activo - Posicione su rostro';
             faceGuide.style.display = 'block';
             
-            // Cambiar botones
             document.querySelector('.btn.btn-success').style.display = 'none';
             captureBtn.style.display = 'inline-block';
             stopBtn.style.display = 'inline-block';
             
             isRecognitionActive = true;
             
-            mostrarNotificacion('Sistema de reconocimiento facial activado correctamente', 'success');
-            agregarLog('Sistema de reconocimiento facial activado');
+            mostrarNotificacion('Cámara activada correctamente', 'success');
+            agregarLog('✅ Cámara activada');
         };
 
     } catch (error) {
-        console.error('Error al activar reconocimiento:', error);
-        mostrarNotificacion('Error al acceder a la cámara. Verifique los permisos.', 'error');
-        agregarLog('ERROR: No se pudo acceder a la cámara');
+        console.error('Error al activar cámara:', error);
+        mostrarNotificacion('Error al acceder a la cámara', 'error');
+        agregarLog('❌ Error al acceder a la cámara');
     }
 }
 
-// Función para capturar y reconocer rostro
 async function capturarRostro() {
-    if (!isRecognitionActive) {
-        mostrarNotificacion('Active primero el sistema de reconocimiento', 'warning');
+    if (!isRecognitionActive || isProcessing) {
+        mostrarNotificacion('Sistema no disponible', 'warning');
         return;
     }
 
+    isProcessing = true;
+    
     try {
-        mostrarNotificacion('Capturando y analizando rostro...', 'warning');
-        agregarLog('Iniciando proceso de reconocimiento...');
+        mostrarNotificacion('Analizando rostro...', 'warning');
+        agregarLog('🔍 Procesando imagen...');
 
         const video = document.getElementById('videoElement');
         
-        // Crear canvas para capturar imagen
-        if (!canvas) {
-            canvas = document.createElement('canvas');
-        }
+        if (!canvas) canvas = document.createElement('canvas');
         
         const ctx = canvas.getContext('2d');
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
-        
-        // Capturar frame actual
         ctx.drawImage(video, 0, 0);
-        const imageData = canvas.toDataURL('image/jpeg', 0.8);
         
-        // Obtener ambiente seleccionado
+        const imageData = canvas.toDataURL('image/jpeg', 0.9);
+        
         const ambienteSelect = document.getElementById('ambienteSelect');
-        const ambienteSeleccionado = ambienteSelect.options[ambienteSelect.selectedIndex].text;
+        const ambienteNombre = ambienteSelect.options[ambienteSelect.selectedIndex].text;
 
-        // Enviar para reconocimiento
-        const response = await fetch('{% url "usuarios:reconocer_rostro" %}', {
+        console.log('📤 Enviando a:', RECONOCER_URL);
+        console.log('🎯 Ambiente:', ambienteSelect.value);
+
+        const response = await fetch(RECONOCER_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRFToken': CSRF_TOKEN
             },
             body: JSON.stringify({
                 image_data: imageData,
-                ambiente: ambienteSeleccionado
+                ambiente: ambienteSelect.value
             })
         });
 
-        const data = await response.json();
+        console.log('📡 Respuesta:', response.status);
         
-        // Mostrar resultado
+        const data = await response.json();
+        console.log('📦 Datos:', data);
+        
         mostrarResultadoReconocimiento(data);
         
         if (data.success && data.acceso_autorizado) {
             actualizarEstadoSistema('approved', data.usuario.nombre);
-            mostrarNotificacion(data.message, 'success');
-            agregarLog(`ACCESO AUTORIZADO: ${data.usuario.nombre} (${data.confianza}% confianza)`);
-            
-            // Actualizar tabla de accesos recientes
-            actualizarTablaAccesos(data.usuario, ambienteSeleccionado, 'Reconocimiento Facial', data.confianza);
+            mostrarNotificacion(`¡Bienvenido ${data.usuario.nombre}!`, 'success');
+            agregarLog(`✅ ACCESO: ${data.usuario.nombre} (${data.confianza}%)`);
+            actualizarTablaAccesos(data.usuario, ambienteNombre, 'Facial', data.confianza);
         } else {
             actualizarEstadoSistema('denied');
-            mostrarNotificacion(data.message, 'error');
-            agregarLog('ACCESO DENEGADO: Rostro no reconocido');
+            mostrarNotificacion(data.message || 'Acceso denegado', 'error');
+            agregarLog('❌ DENEGADO: ' + (data.message || 'No reconocido'));
         }
 
     } catch (error) {
-        console.error('Error en reconocimiento:', error);
-        mostrarNotificacion('Error al procesar el reconocimiento facial', 'error');
-        agregarLog('ERROR: Fallo en el sistema de reconocimiento');
+        console.error('❌ Error:', error);
+        mostrarNotificacion('Error de conexión', 'error');
+        agregarLog('❌ ERROR: ' + error.message);
+    } finally {
+        isProcessing = false;
     }
 }
 
-// Función para detener reconocimiento
 function detenerReconocimiento() {
     if (videoStream) {
         videoStream.getTracks().forEach(track => track.stop());
@@ -490,22 +602,22 @@ function detenerReconocimiento() {
     cameraOverlay.style.display = 'none';
     faceGuide.style.display = 'none';
     
-    // Restaurar botones
     document.querySelector('.btn.btn-success').style.display = 'inline-block';
     captureBtn.style.display = 'none';
     stopBtn.style.display = 'none';
     
     isRecognitionActive = false;
-    
-    // Ocultar resultado
     document.getElementById('reconocimientoResultado').style.display = 'none';
     
-    mostrarNotificacion('Sistema de reconocimiento desactivado', 'warning');
-    agregarLog('Sistema de reconocimiento desactivado');
+    mostrarNotificacion('Cámara desactivada', 'warning');
+    agregarLog('⏸️ Cámara detenida');
     actualizarEstadoSistema('waiting');
 }
 
-// Función para mostrar resultado del reconocimiento
+// ========================================
+// FUNCIONES AUXILIARES
+// ========================================
+
 function mostrarResultadoReconocimiento(data) {
     const resultado = document.getElementById('reconocimientoResultado');
     const avatar = document.getElementById('avatarUsuario');
@@ -514,9 +626,107 @@ function mostrarResultadoReconocimiento(data) {
     const tipo = document.getElementById('tipoUsuario');
     const confianza = document.getElementById('confianzaReconocimiento');
     const status = document.getElementById('accesoStatus');
+    
+    resultado.style.display = 'block';
 
     if (data.success && data.acceso_autorizado && data.usuario) {
-        // Usuario reconocido
         avatar.textContent = '✅';
         avatar.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
-        nombre.textContent = data.usuario.nombre
+        nombre.textContent = data.usuario.nombre;
+        carnet.textContent = `ID: ${data.usuario.numero_identificacion}`;
+        tipo.textContent = `Tipo: ${data.usuario.tipo}`;
+        confianza.textContent = `Confianza: ${data.confianza}%`;
+        status.innerHTML = '<span class="status-badge status-approved">✅ AUTORIZADO</span>';
+    } else {
+        avatar.textContent = '❌';
+        avatar.style.background = 'linear-gradient(135deg, #dc3545, #c82333)';
+        nombre.textContent = 'Usuario Desconocido';
+        carnet.textContent = 'ID: ----';
+        tipo.textContent = 'Tipo: ----';
+        confianza.textContent = 'Confianza: --%';
+        status.innerHTML = '<span class="status-badge status-denied">❌ DENEGADO</span>';
+    }
+}
+
+function agregarLog(mensaje) {
+    const logContainer = document.getElementById('logContainer');
+    const nuevoLog = document.createElement('div');
+    nuevoLog.textContent = `[${new Date().toLocaleTimeString()}] ${mensaje}`;
+    logContainer.prepend(nuevoLog);
+    if (logContainer.children.length > 20) {
+        logContainer.lastChild.remove();
+    }
+}
+
+function mostrarNotificacion(mensaje, tipo) {
+    const notification = document.getElementById('notification');
+    notification.textContent = mensaje;
+    notification.className = `notification notification-${tipo}`;
+    notification.style.display = 'block';
+    setTimeout(() => { notification.style.display = 'none'; }, 3000);
+}
+
+function actualizarEstadoSistema(status, nombre = 'No hay usuario identificado') {
+    const statusIndicator = document.getElementById('statusIndicator');
+    const userInfo = document.getElementById('userInfo');
+    
+    statusIndicator.classList.remove('status-denied', 'status-approved', 'status-waiting');
+    userInfo.innerHTML = `<p style="color:#7f8c8d; font-style:italic;">${nombre}</p>`;
+
+    if (status === 'approved') {
+        statusIndicator.classList.add('status-approved');
+        statusIndicator.innerHTML = '✅ ACCESO AUTORIZADO<br><small>Bienvenido</small>';
+    } else {
+        statusIndicator.classList.add('status-denied');
+        statusIndicator.innerHTML = '🔴 ACCESO DENEGADO<br><small>Esperando identificación...</small>';
+    }
+}
+
+function actualizarTablaAccesos(usuario, ambiente, metodo, confianza) {
+    const tbody = document.getElementById('accesosRecentesBody');
+    const newRow = tbody.insertRow(0);
+    newRow.innerHTML = `
+        <td>${usuario.nombre}</td>
+        <td>${ambiente}</td>
+        <td>${metodo}</td>
+        <td>${new Date().toLocaleString('es-CO')}</td>
+        <td>${confianza ? confianza.toFixed(1) + '%' : '--'}</td>
+    `;
+    if (tbody.rows.length > 10) tbody.deleteRow(10);
+}
+
+function cambiarAmbiente() {
+    const select = document.getElementById('ambienteSelect');
+    const infoDiv = document.getElementById('ambienteInfo');
+    const opcionSeleccionada = select.options[select.selectedIndex];
+
+    if (opcionSeleccionada.value === "") {
+        infoDiv.innerHTML = "<p class='text-secondary'>Seleccione un ambiente</p>";
+        return;
+    }
+
+    const codigo = opcionSeleccionada.getAttribute("data-codigo");
+    const estado = opcionSeleccionada.getAttribute("data-estado");
+    const capacidad = opcionSeleccionada.getAttribute("data-capacidad");
+    const riesgo = opcionSeleccionada.getAttribute("data-riesgo");
+
+    let riesgoClass = "text-secondary";
+    if (riesgo.toLowerCase() === "bajo") riesgoClass = "text-success fw-bold";
+    if (riesgo.toLowerCase() === "medio") riesgoClass = "text-warning fw-bold";
+    if (riesgo.toLowerCase() === "alto") riesgoClass = "text-danger fw-bold";
+    if (riesgo.toLowerCase() === "muy alto") riesgoClass = "text-muy-alto";
+
+    infoDiv.innerHTML = `
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">🏭 ${opcionSeleccionada.text}</h5>
+                <p><strong>Código:</strong> ${codigo}</p>
+                <p><strong>Estado:</strong> ${estado}</p>
+                <p><strong>Capacidad:</strong> ${capacidad} personas</p>
+                <p><strong>Riesgo:</strong> <span class="${riesgoClass}">${riesgo}</span></p>
+            </div>
+        </div>
+    `;
+}
+</script>
+</html>

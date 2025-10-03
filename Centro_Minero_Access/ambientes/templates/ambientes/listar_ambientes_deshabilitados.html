@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">🚫 Ambientes Deshabilitados - Sistema SENA</title>
+    <link rel="icon" href="https://www.sena.edu.co/favicon.ico" type="image/x-icon">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/listar_ambiente.css' %}?v=3.1">
+
+    <!-- Fuente y Bootstrap Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <!-- ===== HEADER ===== -->
+    <header class="top-header">
+        <div class="logo">
+            <div class="icon">🚫</div>
+            <div class="brand">
+                <h1>Ambientes Deshabilitados</h1>
+                <span>SENA - Centro de Formación</span>
+            </div>
+        </div>
+        <nav class="nav-bar">
+            <a href="{% url 'accesos:control_acceso' %}" class="nav-link">Inicio</a>
+            <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link">Usuarios</a>
+            <a href="{% url 'ambientes:listar_ambientes' %}" class="nav-link">Activos</a>
+            <a href="#" id="configLink" class="nav-link">
+                <i class="bi bi-gear"></i> Configuración
+            </a>
+        </nav>
+    </header>
+
+    <!-- ===== CONTENIDO PRINCIPAL ===== -->
+    <main class="main-container">
+        <div class="page-header">
+            <h2 class="page-title" id="pageTitleText">🚫 Ambientes Deshabilitados</h2>
+            <div class="header-actions">
+                <a href="{% url 'ambientes:listar_ambientes' %}" class="btn-create" id="createBtn">
+                    <i class="bi bi-eye-fill"></i> Ver Activos
+                </a>
+            </div>
+        </div>
+
+        <!-- ===== TABLA ===== -->
+        <div class="table-container">
+            <table class="ambientes-table">
+                <thead>
+                    <tr>
+                        <th id="thNombre">Nombre</th>
+                        <th id="thCodigo">Código</th>
+                        <th id="thEstado">Estado</th>
+                        <th id="thCapacidad">Capacidad</th>
+                        <th id="thAcciones">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ambiente in ambientes %}
+                    <tr>
+                        <td>{{ ambiente.nombre }}</td>
+                        <td>{{ ambiente.codigo }}</td>
+                        <td>
+                            <span class="badge {{ ambiente.estado|lower }}">
+                                {{ ambiente.estado }}
+                            </span>
+                        </td>
+                        <td>{{ ambiente.capacidad }}</td>
+                        <td class="action-links">
+                            <form action="{% url 'ambientes:reactivar_ambiente' ambiente.pk %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-create" onclick="return confirm('¿Seguro que quieres habilitar este ambiente?')">
+                                    <i class="bi bi-check-circle-fill"></i> Habilitar
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            <i class="bi bi-door-closed"></i>
+                            <p id="emptyStateText">No hay ambientes deshabilitados.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <p id="footerText1">Sistema de Control de Ambientes - SENA</p>
+        <p id="footerText2">Todos los derechos reservados © 2025</p>
+    </footer>
+
+    <!-- ===== PANEL DE CONFIGURACIÓN ===== -->
+    <div id="configOverlay" class="config-overlay"></div>
+    <div id="configPanel" class="config-panel">
+        <h3>⚙️ Configuración</h3>
+        <label for="theme">Tema:</label>
+        <select id="theme">
+            <option value="light">Claro</option>
+            <option value="dark">Oscuro</option>
+        </select>
+
+        <label for="notifications">Notificaciones:</label>
+        <select id="notifications">
+            <option value="enabled">Activadas</option>
+            <option value="disabled">Desactivadas</option>
+        </select>
+
+        <label for="language">Idioma:</label>
+        <select id="language">
+            <option value="es">Español</option>
+            <option value="en">English</option>
+        </select>
+
+        <label for="resultsPerPage">Resultados por página:</label>
+        <input type="number" id="resultsPerPage" min="5" max="50" value="10">
+
+        <div class="config-actions">
+            <button id="saveConfig">Guardar</button>
+            <button id="cancelConfig">Cancelar</button>
+        </div>
+        <div id="configMessage" class="config-message"></div>
+    </div>
+
+    <!-- JS -->
+    <script src="{% static 'js/listar_ambientes.js' %}?v=3.0"></script>
+</body>
+</html>

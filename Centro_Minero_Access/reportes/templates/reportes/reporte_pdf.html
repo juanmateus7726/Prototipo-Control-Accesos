@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Accesos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body { 
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #e8f5e9;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 0;
+        }
+        
+        .header {
+            background-color: #2e7d32;
+            color: #ffffff;
+            padding: 20px 20px 20px 120px;
+            position: relative;
+        }
+        
+        .header img {
+            position: absolute;
+            left: 20px;
+            top: 10px;
+            width: 80px;
+            height: 80px;
+        }
+        
+        h1 { 
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+            padding: 15px 0;
+        }
+        
+        .table-wrapper {
+            padding: 20px;
+        }
+        
+        table { 
+            width: 100%; 
+            border-collapse: collapse;
+            margin: 0;
+        }
+        
+        th { 
+            background-color: #4caf50;
+            color: #ffffff;
+            padding: 12px 10px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-align: left;
+            border: 1px solid #388e3c;
+        }
+        
+        td { 
+            padding: 10px;
+            font-size: 11px;
+            color: #333333;
+            border: 1px solid #c8e6c9;
+            background-color: #ffffff;
+        }
+        
+        tbody tr:nth-child(even) td {
+            background-color: #f1f8f4;
+        }
+        
+        td:nth-child(4) {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            {% if logo_base64 %}
+            <img src="data:image/jpg;base64,{{ logo_base64 }}" alt="Logo">
+            {% endif %}
+            <h1>Reporte de Accesos</h1>
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Ambiente</th>
+                        <th>Método</th>
+                        <th>Permitido</th>
+                        <th>Fecha y Hora</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for acceso in accesos %}
+                    <tr>
+                        <td>{{ acceso.usuario.nombre }}</td>
+                        <td>{{ acceso.ambiente.nombre }}</td>
+                        <td>{{ acceso.get_metodo_display }}</td>
+                        <td>{{ acceso.acceso_permitido|yesno:"Sí,No" }}</td>
+                        <td>{{ acceso.fecha_hora|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

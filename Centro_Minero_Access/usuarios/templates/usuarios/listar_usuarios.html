@@ -1,923 +1,302 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Usuarios - Sistema SENA</title>
+    <title id="pageTitle">👥 Lista de Usuarios - Sistema SENA</title>
     <link rel="icon" href="https://www.sena.edu.co/favicon.ico" type="image/x-icon">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/listar_usuarios.css' %}?v=3.2">
+
+    <!-- Fuentes y Bootstrap Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- ====== CSS EMBEBIDO PARA EL MODAL ====== -->
     <style>
-        /* Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            transition: background-color 0.3s, color 0.3s; /* Transición suave para el modo oscuro */
-        }
-
-        :root {
-            --sena-green: #39A900;
-            --sena-green-dark: #2B8000;
-            --sena-blue: #005DA8;
-            --sena-blue-dark: #004880;
-            --sena-gray: #F3F3F3;
-            --sena-text: #333333;
-            --sena-border: #DDDDDD;
-            --sena-shadow: rgba(0, 0, 0, 0.08);
-            --sena-success: #28a745;
-            --sena-danger: #dc3545;
-            --sena-warning: #ffc107;
-            --background-color: #f5f7fa;
-            --main-background: #e4e8f0;
-            --card-background: white;
-            --text-color: var(--sena-text);
-            --header-background: white;
-            --border-color: var(--sena-border);
-        }
-
-        /* Tema Oscuro */
-        body.dark-mode {
-            --background-color: #121212;
-            --main-background: #1e1e1e;
-            --card-background: #2b2b2b;
-            --text-color: #e0e0e0;
-            --header-background: #2b2b2b;
-            --border-color: #444444;
-            --sena-text: #e0e0e0;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--background-color) 0%, var(--main-background) 100%);
-            min-height: 100vh;
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-            color: var(--text-color);
-            line-height: 1.6;
-        }
-
-        /* ===== HEADER & NAVBAR ===== */
-        .top-header {
-            background: var(--header-background);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            padding: 0.8rem 2rem;
-            box-shadow: 0 2px 10px var(--sena-shadow);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 3px solid var(--sena-green);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo .icon {
-            font-size: 2.2rem;
-            color: var(--sena-green);
-        }
-
-        .logo .brand {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--sena-blue);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .logo .brand span {
-            font-size: 0.9rem;
-            font-weight: 400;
-            color: var(--sena-text);
-            margin-top: -3px;
-        }
-
-        .nav-bar {
-            display: flex;
-            gap: 30px;
-            position: relative;
-        }
-
-        .nav-link {
-            text-decoration: none;
-            color: var(--sena-text);
-            font-size: 1.1rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
-            padding: 8px 0;
-            cursor: pointer;
-        }
-
-        .nav-link:hover {
-            color: var(--sena-green);
-        }
-
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 0;
-            height: 3px;
-            background-color: var(--sena-green);
-            transition: width 0.3s ease;
-        }
-
-        .nav-link:hover::after {
-            width: 100%;
-        }
-
-        .nav-link.active {
-            color: var(--sena-green);
-        }
-
-        .nav-link.active::after {
-            width: 100%;
-        }
-
-        /* Panel de Configuración */
-        .config-panel {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: var(--card-background);
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            padding: 20px;
-            width: 320px;
-            z-index: 1001;
-            display: none;
-            margin-top: 10px;
-            border: 1px solid var(--border-color);
-            animation: fadeIn 0.3s ease;
-        }
-
-        .config-panel::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            right: 20px;
-            width: 20px;
-            height: 20px;
-            background: var(--card-background);
-            transform: rotate(45deg);
-            border-top: 1px solid var(--border-color);
-            border-left: 1px solid var(--border-color);
-        }
-
-        .config-panel.show {
-            display: block;
-        }
-
-        .config-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .config-header h3 {
-            color: var(--sena-blue);
-            font-size: 1.3rem;
-        }
-
-        .close-config {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #6c757d;
-            transition: color 0.3s ease;
-        }
-
-        .close-config:hover {
-            color: var(--sena-danger);
-        }
-
-        .config-option {
-            margin-bottom: 15px;
-        }
-
-        .config-option label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--sena-blue);
-        }
-
-        .config-option select, .config-option input {
-            width: 100%;
-            padding: 10px 12px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            background: var(--sena-gray);
-            font-size: 1rem;
-            color: var(--sena-text);
-            transition: all 0.3s ease;
-        }
-        
-        body.dark-mode .config-option select,
-        body.dark-mode .config-option input {
-            background-color: #3b3b3b;
-            color: var(--text-color);
-            border-color: #555555;
-        }
-        
-        .config-option select:focus, .config-option input:focus {
-            border-color: var(--sena-green);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(57, 169, 0, 0.1);
-        }
-
-        .config-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .config-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .config-btn.save {
-            background: var(--sena-green);
-            color: white;
-        }
-
-        .config-btn.cancel {
-            background: #f8f9fa;
-            color: #6c757d;
-            border: 1px solid #dee2e6;
-        }
-        
-        body.dark-mode .config-btn.cancel {
-            background-color: #444444;
-            color: var(--text-color);
-            border-color: #555555;
-        }
-
-        .config-btn.save:hover {
-            background: var(--sena-green-dark);
-        }
-
-        .config-btn.cancel:hover {
-            background: #e9ecef;
-        }
-        
-        body.dark-mode .config-btn.cancel:hover {
-            background: #555555;
-        }
-
-        .config-message {
-            text-align: center;
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            display: none;
-            font-size: 0.9rem;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        body.dark-mode .config-message {
-            background-color: #1a361f;
-            color: #d4edda;
-            border-color: #2b5130;
-        }
-
-
-        /* Overlay para cuando el panel está abierto */
-        .overlay {
+        .modal {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            display: none;
-        }
-
-        .overlay.show {
-            display: block;
-        }
-
-        /* ===== CONTENIDO PRINCIPAL ===== */
-        .main-container {
-            max-width: 1200px;
-            width: 100%;
-            margin: 30px auto;
-            padding: 0 20px;
-            flex: 1;
-        }
-
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .page-title {
-            font-size: 2rem;
-            color: var(--sena-blue);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .create-btn {
-            background: linear-gradient(135deg, var(--sena-green), var(--sena-green-dark));
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 12px rgba(57, 169, 0, 0.3);
-        }
-
-        .create-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(57, 169, 0, 0.4);
-        }
-
-        /* Tabla */
-        .table-container {
-            background: var(--card-background);
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 10px 30px var(--sena-shadow);
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .table-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, var(--sena-green), var(--sena-blue));
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        thead th {
-            background: rgba(0, 93, 168, 0.1);
-            color: var(--sena-blue);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 16px;
-            text-align: left;
-            font-size: 0.95rem;
-            border-bottom: 2px solid var(--border-color);
-        }
-        
-        body.dark-mode thead th {
-            background: rgba(0, 93, 168, 0.2);
-        }
-
-        tbody td {
-            padding: 16px;
-            color: var(--sena-text);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        tbody tr:nth-child(even) {
-            background: rgba(57, 169, 0, 0.03);
-        }
-
-        body.dark-mode tbody tr:nth-child(even) {
-            background: rgba(57, 169, 0, 0.08);
-        }
-
-        tbody tr:hover {
-            background: rgba(0, 93, 168, 0.05);
-            transition: all 0.3s ease;
-        }
-        
-        body.dark-mode tbody tr:hover {
-            background: rgba(0, 93, 168, 0.1);
-        }
-
-        /* Acciones */
-        .action-links {
-            display: flex;
-            gap: 10px;
-        }
-
-        .action-links a {
-            padding: 8px 16px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .edit {
-            background: linear-gradient(135deg, #ffc107, #e0a800);
-            color: #212529;
-        }
-        
-        body.dark-mode .edit {
-            color: #212529;
-        }
-
-        .edit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
-        }
-
-        .delete {
-            background: linear-gradient(135deg, var(--sena-danger), #c82333);
-            color: white;
-        }
-        
-        body.dark-mode .delete {
-            color: white;
-        }
-
-        .delete:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
-        }
-
-        /* Estado vacío */
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #6c757d;
-        }
-        
-        body.dark-mode .empty-state {
-            color: #a8b5bd;
-        }
-
-
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            display: block;
-            color: #adb5bd;
-        }
-        
-        body.dark-mode .empty-state i {
-            color: #88949d;
-        }
-
-        /* ===== FOOTER ===== */
-        .footer {
-            background: linear-gradient(135deg, var(--sena-blue), var(--sena-blue-dark));
-            color: white;
-            text-align: center;
-            padding: 25px 20px;
-            margin-top: 40px;
-            position: relative;
-        }
-
-        .footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: var(--sena-green);
-        }
-
-        .footer p {
-            margin: 8px 0;
-            font-weight: 300;
-        }
-
-        .footer-links {
-            margin-top: 15px;
+            backdrop-filter: blur(5px);
             display: flex;
             justify-content: center;
-            flex-wrap: wrap;
-            gap: 20px;
+            align-items: center;
+            z-index: 1100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .3s ease, visibility .3s ease;
         }
-
-        .footer-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: 400;
-            transition: color 0.3s ease;
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: #fff;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 460px;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+            transform: translateY(40px);
+            opacity: 0;
+            transition: transform .3s ease, opacity .3s ease;
+            padding: 32px 32px 24px;
+            position: relative;
+        }
+        .modal.show .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .modal-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 15px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            gap: 5px;
+            justify-content: center;
+            font-size: 34px;
+            color: #fff;
         }
-
-        .footer-links a:hover {
-            color: #a8e6cf;
-            text-decoration: underline;
+        .modal-title-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0;
         }
-
-        /* Responsivo */
-        @media (max-width: 768px) {
-            .top-header {
-                flex-direction: column;
-                padding: 1rem;
-                text-align: center;
-            }
-            
-            .logo {
-                margin-bottom: 15px;
-            }
-            
-            .nav-bar {
-                flex-direction: row;
-                gap: 15px;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .page-header {
-                flex-direction: column;
-                gap: 20px;
-                text-align: center;
-            }
-            
-            table thead {
-                display: none;
-            }
-            
-            table, table tbody, table tr, table td {
-                display: block;
-                width: 100%;
-            }
-            
-            table tr {
-                margin-bottom: 1rem;
-                border-radius: 8px;
-                background: var(--card-background);
-                overflow: hidden;
-                box-shadow: 0 4px 8px var(--sena-shadow);
-                padding: 10px;
-            }
-            
-            table td {
-                padding: 12px;
-                text-align: right;
-                position: relative;
-                border-bottom: 1px solid var(--border-color);
-            }
-            
-            table td::before {
-                content: attr(data-label);
-                position: absolute;
-                left: 12px;
-                font-weight: bold;
-                color: var(--sena-blue);
-            }
-            
-            .action-links {
-                justify-content: center;
-            }
+        .modal-body {
+            text-align: center;
+            font-size: 16px;
+            color: #4a5568;
         }
+        .modal-body strong#usuario-nombre {
+            color: #ff6b6b;
+            background: rgba(255,107,107,.1);
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .btn-secondary, .btn-danger {
+            flex: 1;
+            padding: 12px 0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #2d3748;
+        }
+        .btn-secondary:hover { background: #cbd5e0; }
+        .btn-danger {
+            background: linear-gradient(135deg,#ff6b6b,#ee5a6f);
+            color: #fff;
+            box-shadow: 0 6px 16px rgba(255,107,107,.4);
+        }
+        .btn-danger:hover { box-shadow: 0 8px 20px rgba(255,107,107,.6); }
 
-        /* Animación */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 26px;
+            cursor: pointer;
+            color: #777;
+        }
+        .close:hover { color: #ff6b6b; }
+
+        @media (max-width:480px) {
+            .modal-content { padding: 24px 20px; }
+            .modal-actions { flex-direction: column-reverse; }
+            .btn-secondary, .btn-danger { width: 100%; }
         }
     </style>
 </head>
 <body>
-    <div class="overlay" id="configOverlay"></div>
 
-    <div class="top-header">
+    <!-- URL oculta para JS -->
+    <div id="urlPatterns" data-deshabilitar-url="{% url 'usuarios:deshabilitar_usuario' pk=0 %}" style="display:none;"></div>
+
+    <!-- ===== HEADER ===== -->
+    <header class="top-header">
         <div class="logo">
-            <div class="icon">⚙️</div>
+            <div class="icon">👥</div>
             <div class="brand">
-                <span id="brandTitle">Control de Accesos</span>
-                <span id="brandSubtitle">SENA - Centro de Formación</span>
+                <h1>Control de Usuarios</h1>
+                <span>SENA - Centro de Formación</span>
             </div>
         </div>
-        <div class="nav-bar">
-            <a href="{% url 'index' %}" class="nav-link" id="navInicio">Inicio</a>
-            <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link active" id="navUsuarios">Usuarios</a>
-            <a href="{% url 'usuarios:listar_registros' %}" class="nav-link" id="navRegistros">Registros</a>
-            <a class="nav-link" id="configLink"><span id="navConfiguracion">Configuración</span></a>
-            
-            <div class="config-panel" id="configPanel">
-                <div class="config-header">
-                    <h3 id="panelTitle">Configuración del Sistema</h3>
-                    <button class="close-config" id="closeConfig">&times;</button>
-                </div>
-                
-                <div class="config-message" id="configMessage">¡Configuración guardada!</div>
+        <nav class="nav-bar">
+            <a href="{% url 'accesos:control_acceso' %}" class="nav-link">Inicio</a>
+            <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link active">Usuarios</a>
+            <a href="{% url 'ambientes:listar_ambientes' %}" class="nav-link">Ambientes</a>
+            <a href="#" id="configLink" class="nav-link">
+                <i class="bi bi-gear"></i> Configuración
+            </a>
+        </nav>
+    </header>
 
-                <div class="config-option">
-                    <label for="theme" id="labelTheme">Tema de la interfaz</label>
-                    <select id="theme">
-                        <option value="light" id="optLight">Claro</option>
-                        <option value="dark" id="optDark">Oscuro</option>
-                        <option value="auto" id="optAuto">Automático</option>
-                    </select>
-                </div>
-                
-                <div class="config-option">
-                    <label for="notifications" id="labelNotifications">Notificaciones</label>
-                    <select id="notifications">
-                        <option value="enabled" id="optEnabled">Activadas</option>
-                        <option value="disabled" id="optDisabled">Desactivadas</option>
-                    </select>
-                </div>
-                
-                <div class="config-option">
-                    <label for="language" id="labelLanguage">Idioma</label>
-                    <select id="language">
-                        <option value="es">Español</option>
-                        <option value="en">English</option>
-                    </select>
-                </div>
-                
-                <div class="config-option">
-                    <label for="resultsPerPage" id="labelResults">Resultados por página</label>
-                    <input type="number" id="resultsPerPage" min="5" max="50" value="10">
-                </div>
-                
-                <div class="config-buttons">
-                    <button class="config-btn cancel" id="cancelConfig"><span id="btnCancel">Cancelar</span></button>
-                    <button class="config-btn save" id="saveConfig"><span id="btnSave">Guardar</span></button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="main-container">
+    <!-- ===== CONTENIDO ===== -->
+    <main class="main-container">
         <div class="page-header">
-            <h1 class="page-title" id="pageTitle">👥 Lista de Usuarios</h1>
-            <a href="{% url 'usuarios:crear_usuario' %}" class="create-btn" id="createBtn">+ Crear Usuario</a>
+            <h2 class="page-title">👥 Lista de Usuarios</h2>
+            <div class="header-actions">
+                <a href="{% url 'usuarios:crear_usuario' %}" class="btn-create">
+                    <i class="bi bi-person-plus-fill"></i> + Crear Usuario
+                </a>
+                <a href="{% url 'usuarios:listar_usuarios_deshabilitados' %}" class="btn-disabled">
+                    <i class="bi bi-eye-slash-fill"></i> Ver Deshabilitados
+                </a>
+            </div>
         </div>
 
+        <!-- MENSAJES -->
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- TABLA -->
         <div class="table-container">
-            <table>
+            <table class="usuarios-table">
                 <thead>
                     <tr>
-                        <th id="thNombre">Nombre</th>
-                        <th id="thCarnet">Carnet</th>
-                        <th id="thTipo">Tipo</th>
-                        <th id="thAcciones">Acciones</th>
+                        <th>Nombre</th>
+                        <th>Tipo de Identificación</th>
+                        <th>Número</th>
+                        <th>Tipo</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for usuario in usuarios %}
-                        <tr>
-                            <td data-label="Nombre">{{ usuario.nombre }}</td>
-                            <td data-label="Carnet">{{ usuario.carnet }}</td>
-                            <td data-label="Tipo">{{ usuario.tipo }}</td>
-                            <td data-label="Acciones" class="action-links">
-                                <a href="{% url 'usuarios:editar_usuario' usuario.pk %}" class="edit" id="btnEditar{{ forloop.counter }}">✏️ <span class="action-text">Editar</span></a>
-                                <a href="{% url 'usuarios:eliminar_usuario' usuario.pk %}" class="delete" id="btnEliminar{{ forloop.counter }}">🗑️ <span class="action-text">Eliminar</span></a>
-                            </td>
-                        </tr>
+                    <tr class="{% if not usuario.activo %}inactivo{% endif %}">
+                        <td>{{ usuario.nombre }}</td>
+                        <td>{{ usuario.get_tipo_identificacion_display }}</td>
+                        <td>{{ usuario.numero_identificacion }}</td>
+                        <td>{{ usuario.get_tipo_display }}</td>
+                        <td>
+                            <span class="badge {% if usuario.activo %}activo{% else %}inactivo{% endif %}">
+                                {% if usuario.activo %}Activo{% else %}Inactivo{% endif %}
+                            </span>
+                        </td>
+                        <td class="action-links">
+                            <a href="{% url 'usuarios:editar_usuario' usuario.pk %}" class="btn-edit">
+                                <i class="bi bi-pencil-square"></i>
+                                <span class="action-text">Editar</span>
+                            </a>
+
+                            {% if usuario.activo %}
+                            <!-- Botón con modal -->
+                            <button type="button" class="btn-disable" 
+                                    data-id="{{ usuario.pk }}" 
+                                    data-nombre="{{ usuario.nombre }}">
+                                <i class="bi bi-person-dash-fill"></i>
+                                <span class="action-text">Deshabilitar</span>
+                            </button>
+                            {% else %}
+                            <form action="{% url 'usuarios:reactivar_usuario' usuario.pk %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-reactivate">
+                                    <i class="bi bi-person-check-fill"></i>
+                                    <span class="action-text">Reactivar</span>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
                     {% empty %}
-                        <tr>
-                            <td colspan="4">
-                                <div class="empty-state">
-                                    <i>👥</i>
-                                    <p id="emptyStateText">No hay usuarios registrados en el sistema.</p>
-                                </div>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <i class="bi bi-person-x"></i>
+                            <p>No hay usuarios registrados en el sistema.</p>
+                        </td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>Sistema de Control de Usuarios - SENA</p>
+        <p>Todos los derechos reservados © 2025</p>
+    </footer>
+
+    <!-- PANEL CONFIGURACIÓN -->
+    <div id="configOverlay" class="config-overlay"></div>
+    <div id="configPanel" class="config-panel">
+        <button id="closeConfig" class="close-btn"><i class="bi bi-x-lg"></i></button>
+        <h3>⚙️ Configuración</h3>
+        <label for="theme">Tema:</label>
+        <select id="theme">
+            <option value="light">Claro</option>
+            <option value="dark">Oscuro</option>
+        </select>
+        <label for="notifications">Notificaciones:</label>
+        <select id="notifications">
+            <option value="enabled">Activadas</option>
+            <option value="disabled">Desactivadas</option>
+        </select>
+        <label for="language">Idioma:</label>
+        <select id="language">
+            <option value="es">Español</option>
+            <option value="en">English</option>
+        </select>
+        <label for="resultsPerPage">Resultados por página:</label>
+        <input type="number" id="resultsPerPage" min="5" max="50" value="10">
+        <div class="config-actions">
+            <button id="saveConfig">Guardar</button>
+            <button id="cancelConfig">Cancelar</button>
+        </div>
+        <div id="configMessage" class="config-message"></div>
     </div>
 
-    <div class="footer">
-        <p><span id="footerText1">Sistema de Control de Accesos - SENA</span></p>
-        <p>© 2023 <span id="footerText2">Todos los derechos reservados</span></p>
-        <div class="footer-links">
-            <a href="#" id="linkPrivacy">Políticas de Privacidad</a>
-            <a href="#" id="linkTerms">Términos de Uso</a>
-            <a href="#" id="linkSupport">Soporte Técnico</a>
+    <!-- MODAL DESHABILITAR -->
+    <div id="modal-deshabilitar" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <button id="closeModalBtn" class="close" aria-label="Cerrar">&times;</button>
+            <header class="modal-header">
+                <div class="modal-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+                <h3 class="modal-title-text">Deshabilitar Usuario</h3>
+            </header>
+            <section class="modal-body">
+                <p>¿Está seguro de deshabilitar al usuario <strong id="usuario-nombre"></strong>?
+                   Esta acción impedirá su acceso al sistema.</p>
+                <form id="form-deshabilitar" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-actions">
+                        <button type="button" id="modalCancelBtn" class="btn-secondary">Cancelar</button>
+                        <button type="submit" class="btn-danger">Deshabilitar</button>
+                    </div>
+                </form>
+            </section>
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const configLink = document.getElementById('configLink');
-            const configPanel = document.getElementById('configPanel');
-            const closeConfigBtn = document.getElementById('closeConfig');
-            const cancelConfigBtn = document.getElementById('cancelConfig');
-            const saveConfigBtn = document.getElementById('saveConfig');
-            const configOverlay = document.getElementById('configOverlay');
-            const configMessage = document.getElementById('configMessage');
-            
-            // Elementos de configuración
-            const themeSelect = document.getElementById('theme');
-            const notificationsSelect = document.getElementById('notifications');
-            const languageSelect = document.getElementById('language');
-            const resultsInput = document.getElementById('resultsPerPage');
+    <!-- JS -->
+    <script src="{% static 'js/listar_usuarios.js' %}?v=6.0"></script>
 
-            // Mapeo de traducciones
-            const translations = {
-                es: {
-                    brandTitle: 'Control de Accesos',
-                    brandSubtitle: 'SENA - Centro de Formación',
-                    navInicio: 'Inicio',
-                    navUsuarios: 'Usuarios',
-                    navRegistros: 'Registros',
-                    navConfiguracion: 'Configuración',
-                    panelTitle: 'Configuración del Sistema',
-                    labelTheme: 'Tema de la interfaz',
-                    optLight: 'Claro',
-                    optDark: 'Oscuro',
-                    optAuto: 'Automático',
-                    labelNotifications: 'Notificaciones',
-                    optEnabled: 'Activadas',
-                    optDisabled: 'Desactivadas',
-                    labelLanguage: 'Idioma',
-                    labelResults: 'Resultados por página',
-                    btnCancel: 'Cancelar',
-                    btnSave: 'Guardar',
-                    pageTitle: '👥 Lista de Usuarios',
-                    createBtn: '+ Crear Usuario',
-                    thNombre: 'Nombre',
-                    thCarnet: 'Carnet',
-                    thTipo: 'Tipo',
-                    thAcciones: 'Acciones',
-                    emptyStateText: 'No hay usuarios registrados en el sistema.',
-                    actionEdit: 'Editar',
-                    actionDelete: 'Eliminar',
-                    footerText1: 'Sistema de Control de Accesos - SENA',
-                    footerText2: 'Todos los derechos reservados',
-                    linkPrivacy: 'Políticas de Privacidad',
-                    linkTerms: 'Términos de Uso',
-                    linkSupport: 'Soporte Técnico',
-                    message: '¡Configuración guardada!'
-                },
-                en: {
-                    brandTitle: 'Access Control',
-                    brandSubtitle: 'SENA - Training Center',
-                    navInicio: 'Home',
-                    navUsuarios: 'Users',
-                    navRegistros: 'Logs',
-                    navConfiguracion: 'Settings',
-                    panelTitle: 'System Settings',
-                    labelTheme: 'Interface Theme',
-                    optLight: 'Light',
-                    optDark: 'Dark',
-                    optAuto: 'Auto',
-                    labelNotifications: 'Notifications',
-                    optEnabled: 'Enabled',
-                    optDisabled: 'Disabled',
-                    labelLanguage: 'Language',
-                    labelResults: 'Results per page',
-                    btnCancel: 'Cancel',
-                    btnSave: 'Save',
-                    pageTitle: '👥 User List',
-                    createBtn: '+ Create User',
-                    thNombre: 'Name',
-                    thCarnet: 'ID Number',
-                    thTipo: 'Type',
-                    thAcciones: 'Actions',
-                    emptyStateText: 'No users are registered in the system.',
-                    actionEdit: 'Edit',
-                    actionDelete: 'Delete',
-                    footerText1: 'Access Control System - SENA',
-                    footerText2: 'All rights reserved',
-                    linkPrivacy: 'Privacy Policy',
-                    linkTerms: 'Terms of Use',
-                    linkSupport: 'Technical Support',
-                    message: 'Settings saved!'
-                }
-            };
-
-            function toggleConfigPanel() {
-                configPanel.classList.toggle('show');
-                configOverlay.classList.toggle('show');
-            }
-
-            function applyTheme(theme) {
-                if (theme === 'dark') {
-                    document.body.classList.add('dark-mode');
-                } else {
-                    document.body.classList.remove('dark-mode');
-                }
-            }
-
-            function applyLanguage(lang) {
-                const currentLang = translations[lang] || translations.es;
-                document.querySelectorAll('[id]').forEach(element => {
-                    const translationKey = element.id;
-                    if (currentLang[translationKey]) {
-                        if (element.tagName === 'A' && element.classList.contains('create-btn')) {
-                            element.textContent = currentLang[translationKey];
-                        } else {
-                            element.textContent = currentLang[translationKey];
-                        }
-                    }
-                });
-                // Actualizar los textos de los botones de acción en la tabla
-                document.querySelectorAll('.action-text').forEach(actionSpan => {
-                    const parentLink = actionSpan.closest('a');
-                    if (parentLink.classList.contains('edit')) {
-                        actionSpan.textContent = currentLang.actionEdit;
-                    } else if (parentLink.classList.contains('delete')) {
-                        actionSpan.textContent = currentLang.actionDelete;
-                    }
-                });
-                configMessage.textContent = currentLang.message;
-            }
-
-            function loadSettings() {
-                const savedSettings = localStorage.getItem('userSettings');
-                if (savedSettings) {
-                    const settings = JSON.parse(savedSettings);
-                    themeSelect.value = settings.theme || 'light';
-                    notificationsSelect.value = settings.notifications || 'enabled';
-                    languageSelect.value = settings.language || 'es';
-                    resultsInput.value = settings.resultsPerPage || 10;
-                    applySettings(settings);
-                }
-            }
-            
-            function applySettings(settings) {
-                applyTheme(settings.theme);
-                applyLanguage(settings.language);
-            }
-
-            function saveSettings() {
-                const settings = {
-                    theme: themeSelect.value,
-                    notifications: notificationsSelect.value,
-                    language: languageSelect.value,
-                    resultsPerPage: resultsInput.value
-                };
-                localStorage.setItem('userSettings', JSON.stringify(settings));
-
-                applySettings(settings);
-
-                configMessage.style.display = 'block';
-                setTimeout(() => {
-                    configMessage.style.display = 'none';
-                    toggleConfigPanel();
-                }, 1500);
-            }
-
-            // Event Listeners
-            configLink.addEventListener('click', function(event) {
-                event.preventDefault();
-                loadSettings();
-                toggleConfigPanel();
-            });
-
-            closeConfigBtn.addEventListener('click', function() {
-                loadSettings();
-                toggleConfigPanel();
-            });
-
-            cancelConfigBtn.addEventListener('click', function() {
-                loadSettings();
-                toggleConfigPanel();
-            });
-
-            saveConfigBtn.addEventListener('click', saveSettings);
-
-            configOverlay.addEventListener('click', function() {
-                loadSettings();
-                toggleConfigPanel();
-            });
-            
-            // Cargar la configuración al iniciar la página por primera vez
-            loadSettings();
-        });
-    </script>
 </body>
 </html>

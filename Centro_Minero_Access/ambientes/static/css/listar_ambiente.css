@@ -1,0 +1,551 @@
+/* ===== FUENTE GLOBAL ===== */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* ===== GENERAL ===== */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    background: #f6f8fa;
+    color: #333;
+    transition: background 0.3s, color 0.3s;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* ===== HEADER (Unchanged) ===== */
+.top-header {
+    background: linear-gradient(90deg, #008037, #00a84f);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 2rem;
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+.top-header .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.top-header .icon {
+    font-size: 2rem;
+}
+.top-header .brand {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+.top-header .brand h1 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0;
+}
+.top-header .brand span {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+.nav-bar a {
+    color: #fff;
+    margin-left: 1rem;
+    font-weight: 500;
+    transition: color 0.3s, text-decoration 0.3s;
+}
+.nav-bar a:hover,
+.nav-bar .active {
+    text-decoration: underline;
+}
+
+/* ===== MAIN CONTAINER (Unchanged) ===== */
+.main-container {
+    min-height: calc(100vh - 120px);
+}
+
+/* ===== PAGE HEADER (Unchanged) ===== */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem;
+}
+.page-title {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #008037;
+}
+.header-actions a {
+    margin-left: 10px;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: all 0.3s ease-in-out;
+}
+.btn-create {
+    background: #28a745;
+    color: #fff;
+}
+.btn-create:hover {
+    background: #218838;
+    transform: translateY(-2px);
+}
+.btn-disabled {
+    background: #6c757d;
+    color: #fff;
+}
+.btn-disabled:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+/* ===== TABLE (Unchanged) ===== */
+.table-container {
+    padding: 0 2rem 2rem;
+}
+.ambientes-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.ambientes-table thead {
+    background: #008037;
+    color: #fff;
+}
+.ambientes-table th,
+.ambientes-table td {
+    padding: 1rem;
+    text-align: left;
+}
+.ambientes-table tr:nth-child(even) {
+    background: #f9f9f9;
+}
+.ambientes-table tr:hover {
+    background: #eaf7ea;
+    transition: 0.3s;
+}
+
+/* ===== BADGES (Unchanged) ===== */
+.badge {
+    padding: 0.35rem 0.7rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+.badge.disponible {
+    background: #d4edda;
+    color: #155724;
+}
+.badge.ocupado {
+    background: #fff3cd;
+    color: #856404;
+}
+.badge.mantenimiento {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* ===== ACTION BUTTONS (Unchanged) ===== */
+.action-links {
+    display: flex;
+    gap: 0.6rem;
+}
+.btn-edit {
+    background: #ffc107;
+    color: #212529;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.btn-edit:hover {
+    background: #e0a800;
+    transform: translateY(-2px);
+}
+.btn-disable {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+    color: #fff;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.btn-disable:hover {
+    background: linear-gradient(45deg, #c82333, #a71d2a);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* ===== EMPTY STATE (Unchanged) ===== */
+.empty-state {
+    text-align: center;
+    padding: 2rem 0;
+    color: #6c757d;
+    font-size: 1rem;
+}
+.empty-state i {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* ===== FOOTER (Unchanged) ===== */
+.footer {
+    background: #008037;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9rem;
+}
+.footer p {
+    margin: 5px 0;
+}
+
+/*
+==================================================
+        ✨ CONFIGURATION PANEL STYLES FIXES
+==================================================
+*/
+
+/* 1. Overlay (Unchanged - works well) */
+.config-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+}
+
+.config-overlay.show {
+    display: block;
+    opacity: 1;
+}
+
+/* 2. Flyout Panel */
+.config-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 320px; /* Slight increase for better spacing */
+    height: 100%;
+    background: #fff;
+    z-index: 1001;
+    padding: 20px;
+    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.2);
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    /* ⚠️ Important: Allows content to scroll if it exceeds screen height */
+    overflow-y: auto; 
+}
+
+.config-panel.show {
+    transform: translateX(0);
+}
+
+/* 3. Panel Header & Close Button (Unchanged - already good) */
+.config-panel h3 {
+    margin-top: 0;
+    color: #008037;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    /* Added alignment for the icon */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #6c757d;
+    transition: color 0.2s;
+    z-index: 1002; /* Ensure it stays above everything */
+}
+.close-btn:hover {
+    color: #333;
+}
+
+/* 4. Input/Select Spacing & Layout FIXES */
+.config-panel label {
+    /* ⚠️ Ensure label takes full width and moves to a new line */
+    font-weight: 500;
+    display: block; 
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.config-panel select,
+.config-panel input[type="number"] {
+    width: 100%; /* Make inputs full width of the panel area */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background: #f9f9f9;
+    transition: border-color 0.3s;
+    /* ⚠️ Margin below input/select for separation */
+    margin-bottom: 10px;
+}
+
+.config-panel select:focus,
+.config-panel input:focus {
+    border-color: #008037;
+    outline: none;
+}
+
+/* 5. Actions/Buttons (Unchanged - works well) */
+.config-actions {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.config-actions button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.3s, transform 0.2s;
+    flex: 1;
+}
+
+#saveConfig {
+    background: #008037;
+    color: #fff;
+}
+#saveConfig:hover {
+    background: #005f2a;
+}
+
+#cancelConfig {
+    background: #ccc;
+    color: #333;
+}
+#cancelConfig:hover {
+    background: #b3b3b3;
+}
+
+.config-message {
+    margin-top: 15px;
+    padding: 10px;
+    background: #d4edda;
+    color: #155724;
+    border-radius: 4px;
+    text-align: center;
+    display: none;
+    font-weight: 500;
+}
+
+/*
+==================================================
+        ✨ MODAL DE CONFIRMACIÓN (Deshabilitar)
+==================================================
+*/
+
+/* .modal es el overlay/fondo. */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro */
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    z-index: 1005; /* Asegurar que esté sobre el config-panel (1001) */
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* La clase .hidden oculta el modal */
+.modal.hidden {
+    display: none !important;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+    width: 90%;
+    max-width: 450px; 
+    position: relative;
+    animation: zoomIn 0.3s ease-out;
+}
+
+/* Estilo para el botón de cierre (x) */
+.modal-content .close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 2rem;
+    font-weight: 300;
+    color: #6c757d;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.modal-content .close:hover {
+    color: #333;
+}
+
+/* Adaptación de clases Tailwind/utilitarias usadas en el HTML */
+.text-xl { font-size: 1.25rem; }
+.font-semibold { font-weight: 600; }
+.mb-4 { margin-bottom: 1rem; }
+.mt-6 { margin-top: 1.5rem; }
+.flex { display: flex; }
+.justify-end { justify-content: flex-end; }
+.gap-3 { gap: 0.75rem; }
+.text-\[\#ff9800\] { color: #ff9800; } /* Naranja SENA para destaque */
+
+/* Botones dentro del modal */
+.btn-secondary, .btn-danger {
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+/* Botón secundario (Cancelar) */
+.btn-secondary {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #f6f8fa;
+}
+
+/* Botón peligroso (Sí, Deshabilitar) */
+.btn-danger {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+    color: #fff;
+    border: none;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(45deg, #c82333, #a71d2a);
+    transform: translateY(-1px);
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.9); }
+    to { transform: scale(1); }
+}
+
+
+/*
+==================================================
+        DARK MODE (Updated to include Modal)
+==================================================
+*/
+body.dark-mode {
+    background: #121212;
+    color: #eaeaea;
+}
+body.dark-mode .ambientes-table {
+    background: #1e1e1e;
+    color: #eaeaea;
+}
+body.dark-mode .ambientes-table thead {
+    background: #00a84f;
+}
+body.dark-mode .ambientes-table tr:nth-child(even) {
+    background: #2b2b2b;
+}
+/* DARK MODE FOR MODAL CONTENT */
+body.dark-mode .modal-content {
+    background: #1e1e1e;
+    color: #eaeaea;
+}
+body.dark-mode .btn-secondary {
+    background: #444;
+    color: #eaeaea;
+    border-color: #555;
+}
+body.dark-mode .btn-secondary:hover {
+    background: #5a5a5a;
+}
+body.dark-mode .footer {
+    background: #00a84f;
+}
+
+/* Dark Mode Config Panel */
+body.dark-mode .config-panel {
+    background: #1e1e1e;
+}
+body.dark-mode .config-panel h3 {
+    color: #00a84f;
+    border-bottom-color: #333;
+}
+body.dark-mode .config-panel label {
+    color: #eaeaea;
+}
+body.dark-mode .config-panel select,
+body.dark-mode .config-panel input[type="number"] {
+    background: #2b2b2b;
+    color: #eaeaea;
+    border-color: #444;
+}
+body.dark-mode .config-panel select:focus,
+body.dark-mode .config-panel input:focus {
+    border-color: #00a84f;
+}
+body.dark-mode #saveConfig {
+    background: #00a84f;
+}
+body.dark-mode #saveConfig:hover {
+    background: #008037;
+}
+body.dark-mode #cancelConfig {
+    background: #444;
+    color: #eaeaea;
+}
+body.dark-mode #cancelConfig:hover {
+    background: #5a5a5a;
+}
+body.dark-mode .config-message {
+    background: #155724;
+    color: #d4edda;
+}
+body.dark-mode .close-btn {
+    color: #999;
+}
+body.dark-mode .close-btn:hover {
+    color: #eaeaea;
+}

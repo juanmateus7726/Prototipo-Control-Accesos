@@ -38,6 +38,7 @@ body {
     flex-grow: 1;
 }
 
+
 /* Animaciones mejoradas */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
