@@ -285,4 +285,3 @@ def reconocer_rostro(request):
 def verificar_camara(request):
     return JsonResponse({"success": True, "message": "Cámara verificada correctamente"}, status=200)
 
-

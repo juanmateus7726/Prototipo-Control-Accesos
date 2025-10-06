@@ -1,0 +1,120 @@
+<!-- logout.html - ACTUALIZADO -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sesión Cerrada - Sistema de Control SENA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(120deg, #005DA8, #39A900);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+        .logout-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 3rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        .logo-sena {
+            width: 120px;
+            margin-bottom: 1.5rem;
+        }
+        h2 {
+            color: #005DA8;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        p {
+            color: #555;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        .btn-home {
+            background: linear-gradient(90deg, #39A900, #005DA8);
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0.5rem;
+        }
+        .btn-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(57, 169, 0, 0.4);
+            color: white;
+        }
+        .btn-logout {
+            background: #dc3545;
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin: 0.5rem;
+        }
+        .btn-logout:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="logout-card">
+        <img src="https://www.sena.edu.co/Style%20Library/alayout/images/logoSena.png" alt="Logo SENA" class="logo-sena">
+        
+        {% if user.is_authenticated %}
+        <!-- Si está logueado, mostrar confirmación -->
+        <h2><i class="fa-solid fa-sign-out-alt"></i> Confirmar Cierre de Sesión</h2>
+        <p>¿Estás seguro de que deseas cerrar tu sesión?</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn-logout">
+                <i class="fa-solid fa-sign-out-alt"></i> Sí, Cerrar Sesión
+            </button>
+        </form>
+        <a href="{% url 'accesos:control_acceso' %}" class="btn-home">
+            <i class="fa-solid fa-arrow-left"></i> Cancelar
+        </a>
+        {% else %}
+        <!-- Si NO está logueado, mostrar mensaje de sesión cerrada -->
+        <h2><i class="fa-solid fa-sign-out-alt"></i> Sesión Cerrada</h2>
+        <p>Haz cerrado sesión exitosamente. Para acceder al sistema, inicia sesión nuevamente.</p>
+        
+        <a href="{% url 'accesos:control_acceso' %}" class="btn-home">
+            <i class="fa-solid fa-home"></i> Volver al Inicio
+        </a>
+        <a href="{% url 'cuentas:login' %}" class="btn-home">
+            <i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
+        </a>
+        {% endif %}
+        
+        <p style="margin-top: 2rem; color: #777; font-size: 0.9rem;">
+            © 2025 Centro Minero SENA | Plataforma de Control de Accesos
+        </p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
+</body>
+</html>

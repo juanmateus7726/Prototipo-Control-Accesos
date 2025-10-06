@@ -1,4 +1,4 @@
-{% load static %}
+// {% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - Sistema de Control</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/control.css' %}?v=1.2">
+    <link rel="stylesheet" href="{% static 'css/control.css' %}?v=1.2">  <!-- Tu CSS original -->
     <style>
-        /* 🔹 Fondo degradado */
+        /* Tu CSS original completo (copia de tu primer mensaje) */
         body {
             background: linear-gradient(120deg, #005DA8, #39A900);
             min-height: 100vh;
@@ -16,8 +16,6 @@
             align-items: center;
             justify-content: center;
         }
-
-        /* 🔹 Tarjeta */
         .login-card {
             background: #fff;
             border-radius: 16px;
@@ -31,8 +29,6 @@
             transform: translateY(-4px);
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
         }
-
-        /* 🔹 Logo y título */
         .logo-sena {
             width: 85px;
             display: block;
@@ -44,8 +40,6 @@
             color: #005DA8;
             font-weight: 700;
         }
-
-        /* 🔹 Inputs */
         .form-control {
             border-radius: 10px;
             transition: border-color 0.3s, box-shadow 0.3s;
@@ -54,8 +48,6 @@
             border-color: #39A900;
             box-shadow: 0 0 8px rgba(57, 169, 0, 0.4);
         }
-
-        /* 🔹 Botón */
         .btn-login {
             background: #39A900;
             color: white;
@@ -67,29 +59,28 @@
             background: #2B8000;
             transform: scale(1.02);
         }
-
-        /* 🔹 Footer */
         .footer-text {
             text-align: center;
             margin-top: 1rem;
             font-size: 0.9rem;
             color: #444;
         }
-
-        /* 🔹 Spinner oculto por defecto */
         .spinner-border {
             display: none;
             margin-left: 8px;
         }
+        .alert {
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
-
     <div class="login-card">
         <img src="https://www.sena.edu.co/Style%20Library/alayout/images/logoSena.png" alt="Logo SENA" class="logo-sena">
         <h2>Iniciar Sesión</h2>
 
-        <!-- 🔹 Mensajes Django -->
+        <!-- Mensajes de Django (errores de login, etc.) -->
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
@@ -99,16 +90,16 @@
             {% endfor %}
         {% endif %}
 
-        <!-- 🔹 Formulario de login -->
+        <!-- Formulario de login (campos manuales – Django lo procesa) -->
         <form method="POST" id="loginForm">
             {% csrf_token %}
             <div class="mb-3">
                 <label for="username" class="form-label">Usuario</label>
-                <input type="text" id="username" name="username" class="form-control" placeholder="Ingrese su usuario" autocomplete="username" aria-label="Usuario" required>
+                <input type="text" id="username" name="username" class="form-control" placeholder="Ingrese su usuario" autocomplete="username" required>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Contraseña</label>
-                <input type="password" id="password" name="password" class="form-control" placeholder="Ingrese su contraseña" autocomplete="current-password" aria-label="Contraseña" required>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Ingrese su contraseña" autocomplete="current-password" required>
             </div>
             <button type="submit" class="btn btn-login w-100" id="btnLogin">
                 Ingresar
@@ -116,21 +107,21 @@
             </button>
         </form>
 
-        <p class="footer-text mt-3">🔒 Solo personal autorizado</p>
+        <p class="footer-text mt-3">🔒 Solo personal autorizado (Instructores y Administrativos)</p>
     </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // 🔹 Spinner al enviar el formulario
-    const form = document.getElementById('loginForm');
-    const btnLogin = document.getElementById('btnLogin');
-    const spinner = btnLogin.querySelector('.spinner-border');
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Tu spinner JS original
+        const form = document.getElementById('loginForm');
+        const btnLogin = document.getElementById('btnLogin');
+        const spinner = btnLogin.querySelector('.spinner-border');
 
-    form.addEventListener('submit', () => {
-        btnLogin.disabled = true;
-        spinner.style.display = 'inline-block';
-        btnLogin.textContent = "Ingresando ";
-    });
-</script>
+        form.addEventListener('submit', () => {
+            btnLogin.disabled = true;
+            spinner.style.display = 'inline-block';
+            btnLogin.textContent = "Ingresando...";
+        });
+    </script>
 </body>
 </html>

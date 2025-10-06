@@ -4,19 +4,19 @@ from . import views
 
 app_name = 'cuentas'
 
-
 urlpatterns = [
-        # ===========================
-    # 🔹 Login / Logout
-    # ===========================
+    # Login (usa template custom con campos manuales)
     path('login/', auth_views.LoginView.as_view(
-        template_name='login.html'
+        template_name='cuentas/login.html',
+        redirect_authenticated_user=True,  # Si ya logueado, redirige a dashboard
     ), name='login'),
-
-    path('logout/', auth_views.LogoutView.as_view(
-        next_page='/'
-    ), name='logout'),
-
-    # Dashboard
-    path('dashboard/', views.dashboard, name='dashboard')
+    
+    # Logout (redirige a index de accesos)
+    path('logout/', views.custom_logout, name='logout'),
+    
+    # Register restringido
+    path('register/', views.register, name='register'),
+    
+    # Dashboard (protegido)
+    path('dashboard/', views.dashboard, name='dashboard'),
 ]
