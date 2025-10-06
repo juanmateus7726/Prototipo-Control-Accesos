@@ -5,17 +5,21 @@ from . import views
 app_name = 'cuentas'
 
 urlpatterns = [
-    # ===========================
-    # 🔹 Login / Logout
-    # ===========================
-    path('login/', auth_views.LoginView.as_view(
-        template_name='cuentas/login.html'   # ✅ RUTA CORRECTA
-    ), name='login'),
+    # === Autenticación ===
+    path(
+        'login/',
+        auth_views.LoginView.as_view(
+            template_name='cuentas/login.html',
+            redirect_authenticated_user=True  # Redirige si ya está logueado
+        ),
+        name='login'
+    ),
+    
+    path('logout/', views.custom_logout, name='logout'),
 
-    path('logout/', auth_views.LogoutView.as_view(
-        next_page='/'                        # redirige al cerrar sesión
-    ), name='logout'),
+    # === Registro de usuarios ===
+    path('register/', views.register, name='register'),
 
-    # 🔹 Dashboard
+    # === Dashboard protegido ===
     path('dashboard/', views.dashboard, name='dashboard'),
 ]

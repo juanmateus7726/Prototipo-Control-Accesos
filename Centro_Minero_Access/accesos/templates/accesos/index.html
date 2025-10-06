@@ -21,14 +21,17 @@
     </div>
 
     <nav class="nav-bar">
-        <a href="{% url 'accesos:control_acceso' %}" class="nav-link">Inicio</a>
+    <a href="{% url 'accesos:control_acceso' %}" class="nav-link">Inicio</a>
+    
+    {% if user.is_authenticated %}
+        <!-- Opciones solo si logueado: usuarios, ambientes, reportes, dashboard, configuración -->
         <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link">Usuarios</a>
         <a href="{% url 'ambientes:listar_ambientes' %}" class="nav-link">Ambientes</a>
         <a href="{% url 'reportes:reporte_accesos_pdf' %}" class="nav-link">Reportes</a>
+        <a href="{% url 'cuentas:dashboard' %}" class="nav-link">Dashboard</a>  <!-- Nuevo: Enlace al hub de cuentas -->
         <a href="#" class="nav-link">Configuración</a>
 
-         <!-- 🔹 Usuario con menú -->
-        {% if user.is_authenticated %}
+        <!-- Usuario con menú (tu código original – ahora dentro del if principal) -->
         <li class="nav-item dropdown ms-3 list-unstyled">
             <a class="nav-link dropdown-toggle d-flex align-items-center user-link" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <div class="user-avatar">
@@ -43,10 +46,13 @@
                 <li><a class="dropdown-item logout-item" href="{% url 'cuentas:logout' %}">🚪 Cerrar sesión</a></li>
             </ul>
         </li>
-        {% else %}
-            <a href="{% url 'cuentas:login' %}" class="nav-link text-primary">Iniciar sesión</a>
-        {% endif %}
-    </nav>
+    {% else %}
+        <!-- Solo si no logueado: Oculta opciones sensibles, muestra solo login -->
+        <a href="{% url 'cuentas:login' %}" class="nav-link text-primary">🔑 Iniciar Sesión</a>
+        <span class="nav-link text-muted">| Solo personal autorizado</span>
+    {% endif %}
+</nav>
+
 </header>
 
 <main class="container">

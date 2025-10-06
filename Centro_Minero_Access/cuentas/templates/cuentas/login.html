@@ -2,135 +2,238 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión - Sistema de Control</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/control.css' %}?v=1.2">
-    <style>
-        /* 🔹 Fondo degradado */
-        body {
-            background: linear-gradient(120deg, #005DA8, #39A900);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iniciar Sesión - Sistema de Control</title>
 
-        /* 🔹 Tarjeta */
-        .login-card {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-            max-width: 400px;
-            width: 100%;
-            padding: 2rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .login-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-        }
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-        /* 🔹 Logo y título */
-        .logo-sena {
-            width: 85px;
-            display: block;
-            margin: 0 auto 1rem;
-        }
-        .login-card h2 {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            color: #005DA8;
-            font-weight: 700;
-        }
+  <!-- Iconos (Bootstrap Icons) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
-        /* 🔹 Inputs */
-        .form-control {
-            border-radius: 10px;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        .form-control:focus {
-            border-color: #39A900;
-            box-shadow: 0 0 8px rgba(57, 169, 0, 0.4);
-        }
+  <style>
+      body {
+          background: linear-gradient(120deg, #005DA8, #39A900);
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
 
-        /* 🔹 Botón */
-        .btn-login {
-            background: #39A900;
-            color: white;
-            font-weight: 600;
-            border-radius: 10px;
-            transition: background 0.3s, transform 0.2s;
-        }
-        .btn-login:hover {
-            background: #2B8000;
-            transform: scale(1.02);
-        }
+      .login-card {
+          background: #fff;
+          border-radius: 16px;
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+          max-width: 430px;
+          width: 100%;
+          padding: 2rem 2.5rem;
+      }
 
-        /* 🔹 Footer */
-        .footer-text {
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            color: #444;
-        }
+      .logo-sena {
+          width: 90px;
+          display: block;
+          margin: 0 auto 1rem;
+      }
 
-        /* 🔹 Spinner oculto por defecto */
-        .spinner-border {
-            display: none;
-            margin-left: 8px;
-        }
-    </style>
+      h2 {
+          text-align: center;
+          font-weight: 700;
+          font-size: 1.8rem;
+          color: #005DA8;
+          margin-bottom: 1.2rem;
+      }
+
+      .form-label {
+          font-weight: 500;
+          font-size: 0.95rem;
+      }
+
+      .input-group-text {
+          background: #f4f4f4;
+          border-radius: 10px 0 0 10px;
+      }
+
+      .form-control {
+          border-radius: 0 10px 10px 0;
+          transition: border-color 0.3s, box-shadow 0.3s;
+      }
+
+      .form-control:focus {
+          border-color: #39A900;
+          box-shadow: 0 0 8px rgba(57, 169, 0, 0.4);
+      }
+
+      .btn-login {
+          background: #39A900;
+          color: white;
+          font-weight: 600;
+          border-radius: 10px;
+          transition: background 0.3s ease-in-out;
+      }
+
+      .btn-login:hover {
+          background: #2B8000;
+      }
+
+      .form-check-label, .link-pass {
+          font-size: 0.9rem;
+      }
+
+      .link-pass {
+          text-decoration: none;
+          color: #005DA8;
+      }
+
+      .link-pass:hover {
+          text-decoration: underline;
+      }
+
+      .register-link {
+          text-align: center;
+          margin-top: 1rem;
+          font-size: 0.9rem;
+      }
+
+      .register-link a {
+          color: #39A900;
+          text-decoration: none;
+          font-weight: 600;
+      }
+
+      .register-link a:hover {
+          text-decoration: underline;
+      }
+
+      .footer-text {
+          text-align: center;
+          font-size: 0.85rem;
+          margin-top: 1.2rem;
+          color: #555;
+      }
+
+      .spinner-border {
+          display: none;
+          margin-left: 8px;
+      }
+
+      /* Modal */
+      .modal-header {
+          background: #005DA8;
+          color: white;
+      }
+
+      .btn-register {
+          background: #39A900;
+          color: white;
+          font-weight: 600;
+      }
+
+      .btn-register:hover {
+          background: #2B8000;
+      }
+  </style>
 </head>
+
 <body>
+  <div class="login-card">
+      <img src="https://www.sena.edu.co/Style%20Library/alayout/images/logoSena.png" alt="Logo SENA" class="logo-sena">
+      <h2>Iniciar Sesión</h2>
 
-    <div class="login-card">
-        <img src="https://www.sena.edu.co/Style%20Library/alayout/images/logoSena.png" alt="Logo SENA" class="logo-sena">
-        <h2>Iniciar Sesión</h2>
+      <!-- Mensajes de Django -->
+      {% if messages %}
+          {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+          {% endfor %}
+      {% endif %}
 
-        <!-- 🔹 Mensajes Django -->
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
+      <form method="POST" id="loginForm">
+          {% csrf_token %}
+          <!-- Usuario -->
+          <div class="mb-3">
+              <label for="username" class="form-label">Usuario</label>
+              <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-person"></i></span>
+                  <input type="text" class="form-control" id="username" name="username" placeholder="Ingrese su usuario" autocomplete="username" required>
+              </div>
+          </div>
 
-        <!-- 🔹 Formulario de login -->
-        <form method="POST" id="loginForm">
-            {% csrf_token %}
-            <div class="mb-3">
-                <label for="username" class="form-label">Usuario</label>
-                <input type="text" id="username" name="username" class="form-control" placeholder="Ingrese su usuario" autocomplete="username" aria-label="Usuario" required>
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Contraseña</label>
-                <input type="password" id="password" name="password" class="form-control" placeholder="Ingrese su contraseña" autocomplete="current-password" aria-label="Contraseña" required>
-            </div>
-            <button type="submit" class="btn btn-login w-100" id="btnLogin">
-                Ingresar
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            </button>
-        </form>
+          <!-- Contraseña -->
+          <div class="mb-3">
+              <label for="password" class="form-label">Contraseña</label>
+              <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                  <input type="password" class="form-control" id="password" name="password" placeholder="Ingrese su contraseña" autocomplete="current-password" required>
+                  <button type="button" class="btn btn-outline-secondary" id="togglePassword" tabindex="-1">
+                      <i class="bi bi-eye-slash"></i>
+                  </button>
+              </div>
+          </div>
 
-        <p class="footer-text mt-3">🔒 Solo personal autorizado</p>
-    </div>
+          <!-- Recordar usuario y olvidar contraseña -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+              <div class="form-check">
+                  <input type="checkbox" class="form-check-input" id="rememberMe">
+                  <label for="rememberMe" class="form-check-label">Recordarme</label>
+              </div>
+              <a href="#" class="link-pass">¿Olvidó su contraseña?</a>
+          </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // 🔹 Spinner al enviar el formulario
-    const form = document.getElementById('loginForm');
-    const btnLogin = document.getElementById('btnLogin');
-    const spinner = btnLogin.querySelector('.spinner-border');
+          <!-- Botón -->
+          <button type="submit" class="btn btn-login w-100" id="btnLogin">
+              Ingresar
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          </button>
+      </form>
 
-    form.addEventListener('submit', () => {
-        btnLogin.disabled = true;
-        spinner.style.display = 'inline-block';
-        btnLogin.textContent = "Ingresando ";
-    });
-</script>
+    
+
+
+
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+      // Spinner
+      const form = document.getElementById('loginForm');
+      const btnLogin = document.getElementById('btnLogin');
+      const spinner = btnLogin.querySelector('.spinner-border');
+
+      form.addEventListener('submit', () => {
+          btnLogin.disabled = true;
+          spinner.style.display = 'inline-block';
+          btnLogin.textContent = "Ingresando...";
+      });
+
+      // Mostrar / Ocultar contraseña en login
+      const togglePassword = document.getElementById('togglePassword');
+      const passwordField = document.getElementById('password');
+
+      togglePassword.addEventListener('click', () => {
+          const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+          passwordField.setAttribute('type', type);
+          togglePassword.innerHTML = type === 'password'
+              ? '<i class="bi bi-eye-slash"></i>'
+              : '<i class="bi bi-eye"></i>';
+      });
+
+      // Validación de contraseñas en registro
+      const registerForm = document.getElementById('registerForm');
+      const newPassword = document.getElementById('newPassword');
+      const confirmPassword = document.getElementById('confirmPassword');
+      const passwordHelp = document.getElementById('passwordHelp');
+
+      registerForm.addEventListener('submit', (e) => {
+          if (newPassword.value !== confirmPassword.value) {
+              e.preventDefault();
+              passwordHelp.classList.remove('d-none');
+          } else {
+              passwordHelp.classList.add('d-none');
+          }
+      });
+  </script>
 </body>
 </html>

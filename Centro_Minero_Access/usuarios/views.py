@@ -284,4 +284,3 @@ def reconocer_rostro(request):
 @require_http_methods(["POST"])
 def verificar_camara(request):
     return JsonResponse({"success": True, "message": "Cámara verificada correctamente"}, status=200)
-
