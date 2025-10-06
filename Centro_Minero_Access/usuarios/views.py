@@ -224,8 +224,9 @@ def reconocer_rostro(request):
     try:
         data = json.loads(request.body)
         image_data = data.get("image_data")
-        ambiente = data.get("ambiente", "Laboratorio de Sistemas")
-
+        ambiente_id = data.get('ambiente')  # ✅ Recibir el ID
+        ambiente = Ambiente.objects.get(pk=ambiente_id)  # ✅ Obtener objeto
+        
         if not image_data:
             return JsonResponse({"success": False, "message": "No se proporcionó imagen"}, status=400)
 
@@ -246,17 +247,17 @@ def reconocer_rostro(request):
                 usuario=usuario,
                 tipo=tipo_acceso,
                 metodo="facial",
-                ambiente=ambiente,
+                ambiente=ambiente,  # ✅ Ahora es un objeto, no string
                 confianza=confidence or 0.0,
                 fecha_hora=now()
             )
 
             Acceso.objects.create(
                 usuario=usuario,
-                ambiente=ambiente,
+                ambiente=ambiente,  # ✅ Ahora es un objeto, no string
                 metodo='reconocimiento_facial',
                 acceso_permitido=True,
-                razon_denegacion='Rostro no reconocido'
+                razon_denegacion=''  # ✅ Cambiar mensaje
             )
 
             return JsonResponse({
