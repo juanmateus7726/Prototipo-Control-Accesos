@@ -224,11 +224,18 @@ def reconocer_rostro(request):
     try:
         data = json.loads(request.body)
         image_data = data.get("image_data")
-        ambiente_id = data.get('ambiente')  # ✅ Recibir el ID
-        ambiente = Ambiente.objects.get(pk=ambiente_id)  # ✅ Obtener objeto
+        ambiente_id = data.get('ambiente')
         
         if not image_data:
             return JsonResponse({"success": False, "message": "No se proporcionó imagen"}, status=400)
+        
+        if not ambiente_id:
+            return JsonResponse({"success": False, "message": "No se seleccionó un ambiente"}, status=400)
+
+        try:
+            ambiente = Ambiente.objects.get(pk=ambiente_id)
+        except Ambiente.DoesNotExist:
+            return JsonResponse({"success": False, "message": "Ambiente no encontrado"}, status=404)
 
         usuarios = Usuario.objects.filter(face_registered=True, activo=True)
         if not usuarios.exists():
@@ -239,30 +246,64 @@ def reconocer_rostro(request):
         if user_id:
             usuario = get_object_or_404(Usuario, pk=user_id)
 
+            # ✅ VERIFICACIÓN DE PERMISOS - CRÍTICO
+            if not usuario.tiene_permiso_ambiente(ambiente):
+                # Registrar intento denegado
+                Acceso.objects.create(
+                    usuario=usuario,
+                    ambiente=ambiente,
+                    metodo='reconocimiento_facial',
+                    acceso_permitido=False,
+                    razon_denegacion=f'Usuario no tiene permiso para {ambiente.nombre}',
+                    confianza=round((confidence or 0) * 100, 1)
+                )
+                
+                return JsonResponse({
+                    "success": False,
+                    "message": f"Acceso denegado: {usuario.nombre} no tiene permiso para {ambiente.nombre}",
+                    "usuario": {
+                        "id": usuario.id,
+                        "nombre": usuario.nombre,
+                        "numero_identificacion": usuario.numero_identificacion,
+                        "tipo": usuario.get_tipo_display()
+                    },
+                    "confianza": round((confidence or 0) * 100, 1),
+                    "acceso_autorizado": False,
+                    "razon": "sin_permiso"
+                }, status=200)
+
+            # Migración automática de permisos si es necesario
+            try:
+                usuario.migrar_permisos_automaticamente()
+            except Exception as e:
+                logger.warning(f"Error en migración automática: {e}")
+
             # Alternar Entrada/Salida
             ultimo_registro = Registro.objects.filter(usuario=usuario).order_by("-fecha_hora").first()
             tipo_acceso = "Salida" if ultimo_registro and ultimo_registro.tipo == "Entrada" else "Entrada"
 
+            # Registrar acceso exitoso
             Registro.objects.create(
                 usuario=usuario,
                 tipo=tipo_acceso,
                 metodo="facial",
-                ambiente=ambiente,  # ✅ Ahora es un objeto, no string
+                ambiente=ambiente.nombre,
                 confianza=confidence or 0.0,
                 fecha_hora=now()
             )
 
             Acceso.objects.create(
                 usuario=usuario,
-                ambiente=ambiente,  # ✅ Ahora es un objeto, no string
+                ambiente=ambiente,
                 metodo='reconocimiento_facial',
                 acceso_permitido=True,
-                razon_denegacion=''  # ✅ Cambiar mensaje
+                razon_denegacion='',
+                confianza=round((confidence or 0) * 100, 1)
             )
 
             return JsonResponse({
                 "success": True,
-                "message": message,
+                "message": f"Bienvenido {usuario.nombre}",
                 "usuario": {
                     "id": usuario.id,
                     "nombre": usuario.nombre,
@@ -274,12 +315,20 @@ def reconocer_rostro(request):
                 "tipo_acceso": tipo_acceso
             }, status=200)
 
-        return JsonResponse({"success": False, "message": message, "acceso_autorizado": False}, status=200)
+        return JsonResponse({
+            "success": False, 
+            "message": message or "Rostro no reconocido", 
+            "acceso_autorizado": False,
+            "razon": "no_reconocido"
+        }, status=200)
 
-    except Exception:
+    except Exception as e:
         logger.exception("Error en reconocer_rostro")
-        return JsonResponse({"success": False, "message": "Error interno en el reconocimiento"}, status=500)
-
+        return JsonResponse({
+            "success": False, 
+            "message": "Error interno en el reconocimiento",
+            "error": str(e)
+        }, status=500)
 
 @csrf_protect
 @require_http_methods(["POST"])

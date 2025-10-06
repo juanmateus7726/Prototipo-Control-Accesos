@@ -648,11 +648,22 @@ function mostrarResultadoReconocimiento(data) {
     } else {
         avatar.textContent = '❌';
         avatar.style.background = 'linear-gradient(135deg, #dc3545, #c82333)';
-        nombre.textContent = 'Usuario Desconocido';
-        carnet.textContent = 'ID: ----';
-        tipo.textContent = 'Tipo: ----';
-        confianza.textContent = 'Confianza: --%';
-        status.innerHTML = '<span class="status-badge status-denied">❌ DENEGADO</span>';
+        
+        // Si hay usuario reconocido pero sin permiso
+        if (data.usuario && data.razon === 'sin_permiso') {
+            nombre.textContent = data.usuario.nombre;
+            carnet.textContent = `ID: ${data.usuario.numero_identificacion}`;
+            tipo.textContent = `Tipo: ${data.usuario.tipo}`;
+            confianza.textContent = `Confianza: ${data.confianza}%`;
+            status.innerHTML = '<span class="status-badge status-denied">🚫 SIN PERMISO</span>';
+        } else {
+            // Usuario no reconocido
+            nombre.textContent = 'Usuario Desconocido';
+            carnet.textContent = 'ID: ----';
+            tipo.textContent = 'Tipo: ----';
+            confianza.textContent = 'Confianza: --%';
+            status.innerHTML = '<span class="status-badge status-denied">❌ DENEGADO</span>';
+        }
     }
 }
 
