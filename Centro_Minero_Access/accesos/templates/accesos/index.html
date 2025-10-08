@@ -141,6 +141,22 @@
         z-index: 1000;
         box-shadow: 0 5px 20px rgba(220, 53, 69, 0.3);
         animation: slideInRight 0.5s ease;
+        font-size: 1.1rem;
+        font-weight: bold;
+        max-width: 500px;
+    }
+
+    .notification-warning {
+        background: linear-gradient(135deg, #ffc107, #ff9800);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        box-shadow: 0 5px 20px rgba(255, 193, 7, 0.3);
+        animation: slideInRight 0.5s ease;
     }
 
     @keyframes slideInRight {
@@ -582,8 +598,21 @@ async function capturarRostro() {
             actualizarTablaAccesos(data.usuario, ambienteNombre, 'Facial', data.confianza);
         } else {
             actualizarEstadoSistema('denied');
-            mostrarNotificacion(data.message || 'Acceso denegado', 'error');
-            agregarLog('❌ DENEGADO: ' + (data.message || 'No reconocido'));
+            
+            // Mensaje específico según el tipo de denegación
+            if (data.razon === 'sin_permiso' && data.usuario) {
+                const mensajePermiso = `🚫 ${data.usuario.nombre}, NO TIENES PERMISO para ingresar al ambiente "${ambienteNombre}"`;
+                mostrarNotificacion(mensajePermiso, 'error');
+                agregarLog(`🚫 ACCESO DENEGADO: ${data.usuario.nombre} - Sin permiso para ${ambienteNombre}`);
+                
+                // Alerta adicional más visible
+                setTimeout(() => {
+                    alert(`⛔ ACCESO DENEGADO\n\n${data.usuario.nombre}, no tienes autorización para acceder a:\n"${ambienteNombre}"\n\nContacta al administrador si necesitas acceso.`);
+                }, 500);
+            } else {
+                mostrarNotificacion(data.message || 'Acceso denegado - Rostro no reconocido', 'error');
+                agregarLog('❌ DENEGADO: ' + (data.message || 'No reconocido'));
+            }
         }
 
     } catch (error) {
@@ -682,7 +711,11 @@ function mostrarNotificacion(mensaje, tipo) {
     notification.textContent = mensaje;
     notification.className = `notification notification-${tipo}`;
     notification.style.display = 'block';
-    setTimeout(() => { notification.style.display = 'none'; }, 3000);
+    
+    // Duración según tipo: errores de permiso duran más
+    const duracion = (tipo === 'error' && mensaje.includes('NO TIENES PERMISO')) ? 5000 : 3000;
+    
+    setTimeout(() => { notification.style.display = 'none'; }, duracion);
 }
 
 function actualizarEstadoSistema(status, nombre = 'No hay usuario identificado') {
