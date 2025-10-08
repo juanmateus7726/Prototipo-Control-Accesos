@@ -68,16 +68,23 @@ a {
 
 /* ===== PAGE HEADER ===== */
 .page-header {
+    /* Solo necesitamos que el contenedor de los botones de acción se muestre flexiblemente */
     display: flex;
-    justify-content: space-between;
+    /* Alineamos los botones a la izquierda, ya que el título de la página está arriba */
+    justify-content: flex-start; 
     align-items: center;
-    padding: 2rem 0;
+    /* Espacio para separar los botones de la tabla de abajo, pero sin espacio superior conflictivo */
+    padding: 0 0 1.5rem 0; 
 }
+/* La clase .page-title ya no es necesaria, ya que el <h2> de tu base.html 
+   define el título, pero la mantendremos comentada por si la usas en otro contexto. */
+/*
 .page-title {
     font-size: 1.7rem;
     font-weight: 700;
     color: #008037;
 }
+*/
 .header-actions a {
     margin-left: 10px;
     padding: 0.5rem 1rem;

@@ -76,6 +76,15 @@ TEMPLATES = [
     },
 ]
 
+# Mensajes con Bootstrap
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger',   # error → alert-danger
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.INFO: 'info',
+}
+
 WSGI_APPLICATION = 'Centro_Minero_Access.wsgi.application'
 
 

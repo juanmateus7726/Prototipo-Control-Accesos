@@ -4,319 +4,489 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">🏫 Lista de Ambientes - Sistema SENA</title>
-    <link rel="icon" href="https://www.sena.edu.co/favicon.ico" type="image/x-icon">
+    <title>Gestión de Ambientes - Sistema de Control SENA</title>
 
-    <!-- Se necesita este CSS para que el modal se vea centrado y con estilos -->
-    <link rel="stylesheet" href="{% static 'css/listar_ambiente.css' %}?v=3.2"> 
+    <!-- BOOTSTRAP & FONTAWESOME -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- CSS PERSONALIZADO -->
+    <link rel="stylesheet" href="{% static 'css/control.css' %}?v=2.0">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
 
-    <!-- CSS EMBEBIDO PARA EL MODAL Y EL PANEL DE CONFIGURACIÓN -->
     <style>
-        /* ===== ESTILOS MEJORADOS PARA EL MODAL ===== */
-        /* Modal mejorado */
-.modal {
-    position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(6px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1100;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s;
-}
+        /* === ESTILOS BASE DEL DASHBOARD === */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            display: flex;
+            min-height: 100vh;
+        }
 
-.modal.show {
-    opacity: 1;
-    visibility: visible;
-}
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(180deg, #008037, #00a84f);
+            padding: 1rem 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 12px rgba(0,0,0,0.2);
+            position: fixed;
+            top: 0; bottom: 0; left: 0;
+        }
+        .sidebar .brand {
+            text-align: center;
+            color: #fff;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+        .sidebar nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+        .sidebar nav a:hover,
+        .sidebar nav a.active {
+            background: rgba(255,255,255,0.15);
+        }
 
-.modal-content {
-    background-color: #fff;
-    border-radius: 20px;
-    width: 90%;
-    max-width: 480px;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-    transform: translateY(40px);
-    opacity: 0;
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s;
-    outline: none;
-    padding: 32px 32px 24px;
-}
+        /* === MAIN CONTENT === */
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
 
-.modal.show .modal-content {
-    transform: translateY(0);
-    opacity: 1;
-}
+        /* === HEADER === */
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .main-header h2 {
+            color: #008037;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        .main-header .user-info {
+            font-size: 0.95rem;
+            color: #555;
+        }
 
-.modal-header {
-    text-align: center;
-    margin-bottom: 24px;
-}
+        /* === BOTONES DE ACCIÓN === */
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .btn-create, .btn-disabled {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all .3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-create {
+            background: linear-gradient(90deg, #008037, #00a84f);
+            color: #fff;
+        }
+        .btn-create:hover {
+            background: linear-gradient(90deg, #006629, #008037);
+            transform: translateY(-2px);
+        }
+        .btn-disabled {
+            background: #6c757d;
+            color: #fff;
+        }
+        .btn-disabled:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
 
-.modal-icon {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 16px;
-    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
-    font-size: 40px;
-    color: white;
-}
+        /* === TABLA DE AMBIENTES === */
+        .table-container {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .ambientes-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .ambientes-table th {
+            background: linear-gradient(90deg, #008037, #00a84f);
+            color: #fff;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        .ambientes-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        .ambientes-table tr:hover {
+            background: #f8f9fa;
+        }
 
-.modal-title-text {
-    font-size: 26px;
-    font-weight: 700;
-    color: #2c3e50;
-    margin: 0;
-}
+        /* === BADGES === */
+        .badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .badge.activo, .badge.disponible {
+            background: #d4edda;
+            color: #155724;
+        }
+        .badge.inactivo, .badge.mantenimiento {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .badge.ocupado {
+            background: #fff3cd;
+            color: #856404;
+        }
 
-.modal-ip-badge {
-    display: inline-block;
-    margin-top: 8px;
-    padding: 6px 16px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #e74c3c;
-    background: rgba(255, 107, 107, 0.15);
-    border-radius: 24px;
-}
+        /* === BOTONES DE ACCIÓN EN TABLA === */
+        .action-links {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .btn-edit, .btn-disable {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all .3s ease;
+        }
+        .btn-edit {
+            background: #17a2b8;
+            color: #fff;
+        }
+        .btn-edit:hover {
+            background: #138496;
+            transform: translateY(-1px);
+        }
+        .btn-disable {
+            background: #dc3545;
+            color: #fff;
+        }
+        .btn-disable:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
 
-.modal-body {
-    font-size: 17px;
-    color: #4a5568;
-    line-height: 1.5;
-    text-align: center;
-}
+        /* === MENSAJES === */
+        .messages-container {
+            margin-bottom: 1.5rem;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
 
-.modal-message-text strong#ambiente-nombre {
-    color: #ff6b6b;
-    background: rgba(255, 107, 107, 0.1);
-    padding: 3px 10px;
-    border-radius: 6px;
-}
+        /* === MODAL (Mantenemos tu código mejorado) === */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(6px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s;
+        }
 
-.warning-badge {
-    margin: 24px 0;
-    background: #fff3cd;
-    color: #856404;
-    border-left: 5px solid #ffc107;
-    padding: 14px 20px;
-    border-radius: 12px;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    justify-content: center;
-}
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
 
-.warning-badge i {
-    font-size: 20px;
-    color: #ffc107;
-}
+        .modal-content {
+            background-color: #fff;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 480px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            transform: translateY(40px);
+            opacity: 0;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s;
+            outline: none;
+            padding: 32px 32px 24px;
+        }
 
-.close {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 28px;
-    color: #999;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    transition: color 0.3s ease, transform 0.3s ease;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+        .modal.show .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
 
-.close:hover,
-.close:focus {
-    color: #ff6b6b;
-    transform: rotate(90deg);
-    outline: none;
-}
+        .modal-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
 
-.modal-actions {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    margin-top: 12px;
-}
+        .modal-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+            font-size: 40px;
+            color: white;
+        }
 
-.btn-secondary,
-.btn-danger {
-    flex: 1;
-    padding: 14px 0;
-    font-weight: 700;
-    font-size: 16px;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
-}
+        .modal-title-text {
+            font-size: 26px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0;
+        }
 
-.btn-secondary {
-    background-color: #e2e8f0;
-    color: #2d3748;
-}
+        .modal-ip-badge {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 6px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #e74c3c;
+            background: rgba(255, 107, 107, 0.15);
+            border-radius: 24px;
+        }
 
-.btn-secondary:hover,
-.btn-secondary:focus {
-    background-color: #cbd5e0;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    outline: none;
-    transform: translateY(-2px);
-}
+        .modal-body {
+            font-size: 17px;
+            color: #4a5568;
+            line-height: 1.5;
+            text-align: center;
+        }
 
-.btn-danger {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-    color: white;
-    box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
-}
+        .modal-message-text strong#ambiente-nombre {
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            padding: 3px 10px;
+            border-radius: 6px;
+        }
 
-.btn-danger:hover,
-.btn-danger:focus {
-    box-shadow: 0 8px 20px rgba(255, 107, 107, 0.6);
-    outline: none;
-    transform: translateY(-2px);
-}
+        .warning-badge {
+            margin: 24px 0;
+            background: #fff3cd;
+            color: #856404;
+            border-left: 5px solid #ffc107;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+        }
 
-/* Dark mode */
-body.dark-mode .modal-content {
-    background-color: #1a202c;
-    color: #e2e8f0;
-}
+        .warning-badge i {
+            font-size: 20px;
+            color: #ffc107;
+        }
 
-body.dark-mode .modal-header {
-    background: none;
-}
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 28px;
+            color: #999;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.3s ease;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-body.dark-mode .modal-title-text {
-    color: #e2e8f0;
-}
+        .close:hover,
+        .close:focus {
+            color: #ff6b6b;
+            transform: rotate(90deg);
+            outline: none;
+        }
 
-body.dark-mode .modal-ip-badge {
-    color: #fc8181;
-    background: rgba(252, 129, 129, 0.15);
-}
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 12px;
+        }
 
-body.dark-mode .modal-message-text {
-    color: #cbd5e0;
-}
+        .btn-secondary,
+        .btn-danger {
+            flex: 1;
+            padding: 14px 0;
+            font-weight: 700;
+            font-size: 16px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
 
-body.dark-mode .warning-badge {
-    background: rgba(255, 193, 7, 0.15);
-    color: #ffd54f;
-    border-left-color: #ffc107;
-}
+        .btn-secondary {
+            background-color: #e2e8f0;
+            color: #2d3748;
+        }
 
-body.dark-mode .btn-secondary {
-    background-color: #4a5568;
-    color: #e2e8f0;
-}
+        .btn-secondary:hover,
+        .btn-secondary:focus {
+            background-color: #cbd5e0;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            outline: none;
+            transform: translateY(-2px);
+        }
 
-body.dark-mode .btn-secondary:hover,
-body.dark-mode .btn-secondary:focus {
-    background-color: #5a6575;
-}
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
+        }
 
-body.dark-mode .close {
-    color: #a0aec0;
-}
+        .btn-danger:hover,
+        .btn-danger:focus {
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.6);
+            outline: none;
+            transform: translateY(-2px);
+        }
 
-body.dark-mode .close:hover,
-body.dark-mode .close:focus {
-    color: #ff6b6b;
-    background: rgba(255, 255, 255, 0.1);
-}
-
-/* Responsive */
-@media (max-width: 480px) {
-    .modal-content {
-        width: 95%;
-        padding: 24px 20px 20px;
-    }
-
-    .modal-icon {
-        width: 64px;
-        height: 64px;
-        font-size: 32px;
-    }
-
-    .modal-title-text {
-        font-size: 22px;
-    }
-
-    .modal-actions {
-        flex-direction: column-reverse;
-        gap: 12px;
-    }
-
-    .btn-secondary,
-    .btn-danger {
-        width: 100%;
-    }
-}
-
+        /* === RESPONSIVE === */
+        @media (max-width: 992px) {
+            .sidebar { width: 200px; }
+            .main-content { margin-left: 200px; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .header-actions { flex-direction: column; }
+            .action-links { flex-direction: column; }
+            .ambientes-table { font-size: 0.9rem; }
+            .modal-content {
+                width: 95%;
+                padding: 24px 20px 20px;
+            }
+            .modal-icon {
+                width: 64px;
+                height: 64px;
+                font-size: 32px;
+            }
+            .modal-title-text {
+                font-size: 22px;
+            }
+            .modal-actions {
+                flex-direction: column-reverse;
+                gap: 12px;
+            }
+            .btn-secondary,
+            .btn-danger {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Elemento oculto para pasar la URL de Django al JavaScript -->
-    <div id="urlPatterns" data-deshabilitar-url="{% url 'ambientes:deshabilitar_ambiente' pk=0 %}" style="display: none;"></div>
 
-    <header class="top-header">
-        <div class="logo">
-            <div class="icon">🏫</div>
-            <div class="brand">
-                <h1>Control de Ambientes</h1>
-                <span>SENA - Centro de Formación</span>
-            </div>
-        </div>
-        <nav class="nav-bar">
-            <a href="{% url 'accesos:control_acceso' %}" class="nav-link">Inicio</a>
-            <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link">Usuarios</a>
-            <a href="{% url 'ambientes:listar_ambientes' %}" class="nav-link active">Ambientes</a>
-            <a href="#" id="configLink" class="nav-link">
-                <i class="bi bi-gear"></i> Configuración
-            </a>
+    <!-- SIDEBAR DEL DASHBOARD -->
+    <aside class="sidebar">
+        <div class="brand"><i class="fas fa-tachometer-alt"></i> SENA</div>
+        <nav>
+            <a href="{% url 'accesos:control_acceso' %}"><i class="fas fa-home"></i> Inicio</a>
+            <a href="{% url 'usuarios:listar_usuarios' %}"><i class="fas fa-users"></i> Usuarios</a>
+            <a href="{% url 'ambientes:listar_ambientes' %}" class="active"><i class="fas fa-building"></i> Ambientes</a>
+            <a href="{% url 'reportes:reporte_accesos_pdf' %}"><i class="fas fa-chart-bar"></i> Reportes</a>
+            {% if user.is_superuser %}
+            <a href="{% url 'cuentas:register' %}"><i class="fas fa-user-plus"></i> Registrar</a>
+            {% endif %}
+            <a href="{% url 'cuentas:logout' %}"><i class="fas fa-sign-out-alt"></i> Salir</a>
         </nav>
-    </header>
+    </aside>
 
-    <main class="main-container">
-        <div class="page-header">
-            <h2 class="page-title" id="pageTitleText">🏫 Lista de Ambientes</h2>
-            <div class="header-actions">
-                <a href="{% url 'ambientes:crear_ambiente' %}" class="btn-create" id="createBtn">
-                    <i class="bi bi-plus-circle-fill"></i> + Crear Ambiente
-                </a>
-                <a href="{% url 'ambientes:listar_ambientes_deshabilitados' %}" class="btn-disabled" id="btnViewDisabled">
-                    <i class="bi bi-eye-slash-fill"></i> Ver Deshabilitados
-                </a>
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- HEADER -->
+        <header class="main-header">
+            <h2>Gestión de Ambientes</h2>
+            <div class="user-info">
+                Bienvenido, <strong>{{ user.username }}</strong>
             </div>
+        </header>
+
+        <!-- BOTONES DE ACCIÓN -->
+        <div class="header-actions">
+            <a href="{% url 'ambientes:crear_ambiente' %}" class="btn-create">
+                <i class="fas fa-plus-circle"></i> Crear Ambiente
+            </a>
+            <a href="{% url 'ambientes:listar_ambientes_deshabilitados' %}" class="btn-disabled">
+                <i class="fas fa-eye-slash"></i> Ver Deshabilitados
+            </a>
         </div>
 
+        <!-- MENSAJES -->
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- TABLA DE AMBIENTES -->
         <div class="table-container">
             <table class="ambientes-table">
                 <thead>
                     <tr>
-                        <th id="thNombre">Nombre</th>
-                        <th id="thCodigo">Código</th>
-                        <th id="thEstado">Estado</th>
-                        <th id="thCapacidad">Capacidad</th>
-                        <th id="thAcciones">Acciones</th>
+                        <th>Nombre</th>
+                        <th>Código</th>
+                        <th>Estado</th>
+                        <th>Capacidad</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -326,117 +496,75 @@ body.dark-mode .close:focus {
                         <td>{{ ambiente.codigo }}</td>
                         <td>
                             <span class="badge {{ ambiente.estado|lower }}">
-                            {{ ambiente.estado }}
+                                {{ ambiente.estado }}
                             </span>
                         </td>
                         <td>{{ ambiente.capacidad }}</td>
                         <td class="action-links">
-                            <a href="{% url 'ambientes:editar_ambiente' ambiente.pk %}" class="btn-edit edit">
-                                <i class="bi bi-pencil-square"></i>
+                            <a href="{% url 'ambientes:editar_ambiente' ambiente.pk %}" class="btn-edit">
+                                <i class="fas fa-edit"></i>
                                 <span class="action-text">Editar</span>
                             </a>
-                            <!-- Botón actualizado para usar data-* attributes en lugar de onclick -->
-                            <form action="{% url 'ambientes:deshabilitar_ambiente' ambiente.pk %}" method="post" style="display:inline;">
-                                {% csrf_token %}
-                                    <button type="button" class="btn-disable">
-                                    <i class="bi bi-slash-circle-fill"></i>
+                            
+                            <button type="button" class="btn-disable" 
+                                    data-id="{{ ambiente.pk }}" 
+                                    data-nombre="{{ ambiente.nombre }}">
+                                <i class="fas fa-slash-circle"></i>
                                 <span class="action-text">Deshabilitar</span>
-                        </button>
-                    </form>
+                            </button>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
                         <td colspan="5" class="empty-state">
-                            <i class="bi bi-door-closed"></i>
-                            <p id="emptyStateText">No hay ambientes registrados en el sistema.</p>
+                            <i class="fas fa-door-closed"></i>
+                            <p>No hay ambientes registrados en el sistema.</p>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-    </main>
-
-    <footer class="footer">
-        <p id="footerText1">Sistema de Control de Ambientes - SENA</p>
-        <p id="footerText2">Todos los derechos reservados © 2025</p>
-    </footer>
-
-    <!-- =================================== -->
-    <!-- PANEL DE CONFIGURACIÓN (Off-Canvas) -->
-    <!-- =================================== -->
-    <div id="configOverlay" class="config-overlay"></div>
-    <div id="configPanel" class="config-panel">
-        <button id="closeConfig" class="close-btn"><i class="bi bi-x-lg"></i></button> 
-        <h3>⚙️ Configuración</h3>
-        
-        <label for="theme">Tema:</label>
-        <select id="theme">
-            <option value="light">Claro</option>
-            <option value="dark">Oscuro</option>
-        </select>
-
-        <label for="notifications">Notificaciones:</label>
-        <select id="notifications">
-            <option value="enabled">Activadas</option>
-            <option value="disabled">Desactivadas</option>
-        </select>
-
-        <label for="language">Idioma:</label>
-        <select id="language">
-            <option value="es">Español</option>
-            <option value="en">English</option>
-        </select>
-
-        <label for="resultsPerPage">Resultados por página:</label>
-        <input type="number" id="resultsPerPage" min="5" max="50" value="10">
-
-        <div class="config-actions">
-            <button id="saveConfig">Guardar</button>
-            <button id="cancelConfig">Cancelar</button>
-        </div>
-        
-        <div id="configMessage" class="config-message">
-            <!-- Este mensaje es actualizado por JS -->
-            ¡Configuración guardada!
-        </div>
     </div>
-    
-    <!-- ================================ -->
-    <!-- MODAL DE CONFIRMACIÓN MEJORADO -->
-    <!-- ================================ -->
+
+    <!-- URL oculta para JS -->
+    <div id="urlPatterns" data-deshabilitar-url="{% url 'ambientes:deshabilitar_ambiente' pk=0 %}" style="display:none;"></div>
+
+    <!-- MODAL DESHABILITAR (Tu código mejorado) -->
     <div id="modal-deshabilitar" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc" tabindex="-1">
-    <div class="modal-content" role="document">
-        <button id="closeModalBtn" class="close" aria-label="Cerrar modal">&times;</button>
-        <header class="modal-header">
-            <div class="modal-icon" aria-hidden="true">
-                <i class="bi bi-exclamation-triangle-fill"></i>
-            </div>
-            <h3 id="modalTitle" class="modal-title-text">Deshabilitar Ambiente</h3>
-            <span class="modal-ip-badge">Sistema SENA</span>
-        </header>
-        <section class="modal-body" id="modalDesc">
-            <p class="modal-message-text">
-                ¿Está seguro que desea deshabilitar el ambiente <strong id="ambiente-nombre"></strong>? Esta acción impedirá que se realicen reservas hasta que sea habilitado nuevamente.
-            </p>
-            <div class="warning-badge" role="alert">
-                <i class="bi bi-info-circle-fill"></i>
-                <span>Esta acción es reversible</span>
-            </div>
-            <form id="form-deshabilitar" method="POST">
-                {% csrf_token %}
-                <div class="modal-actions">
-                    <button type="button" id="modalCancelBtn" class="btn-secondary">Cancelar</button>
-                    <button type="submit" id="modalConfirmBtn" class="btn-danger">Deshabilitar</button>
+        <div class="modal-content" role="document">
+            <button id="closeModalBtn" class="close" aria-label="Cerrar modal">&times;</button>
+            <header class="modal-header">
+                <div class="modal-icon" aria-hidden="true">
+                    <i class="fas fa-exclamation-triangle"></i>
                 </div>
-            </form>
-        </section>
+                <h3 id="modalTitle" class="modal-title-text">Deshabilitar Ambiente</h3>
+                <span class="modal-ip-badge">Sistema SENA</span>
+            </header>
+            <section class="modal-body" id="modalDesc">
+                <p class="modal-message-text">
+                    ¿Está seguro que desea deshabilitar el ambiente <strong id="ambiente-nombre"></strong>? Esta acción impedirá que se realicen reservas hasta que sea habilitado nuevamente.
+                </p>
+                <div class="warning-badge" role="alert">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Esta acción es reversible</span>
+                </div>
+                <form id="form-deshabilitar" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-actions">
+                        <button type="button" id="modalCancelBtn" class="btn-secondary">Cancelar</button>
+                        <button type="submit" id="modalConfirmBtn" class="btn-danger">Deshabilitar</button>
+                    </div>
+                </form>
+            </section>
+        </div>
     </div>
-</div>
 
+    {% include 'cuentas/footer.html' %}
 
-    <!-- Cargar JavaScript -->
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'js/listar_ambientes.js' %}?v=3.2"></script>
+
 </body>
 </html>

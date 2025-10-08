@@ -4,18 +4,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">👥 Lista de Usuarios - Sistema SENA</title>
-    <link rel="icon" href="https://www.sena.edu.co/favicon.ico" type="image/x-icon">
+    <title>Gestión de Usuarios - Sistema de Control SENA</title>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="{% static 'css/listar_usuarios.css' %}?v=3.2">
+    <!-- BOOTSTRAP & FONTAWESOME -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <!-- Fuentes y Bootstrap Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- CSS PERSONALIZADO -->
+    <link rel="stylesheet" href="{% static 'css/control.css' %}?v=2.0">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
 
-    <!-- ====== CSS EMBEBIDO PARA EL MODAL ====== -->
     <style>
+        /* === ESTILOS BASE DEL DASHBOARD === */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(180deg, #008037, #00a84f);
+            padding: 1rem 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 12px rgba(0,0,0,0.2);
+            position: fixed;
+            top: 0; bottom: 0; left: 0;
+        }
+        .sidebar .brand {
+            text-align: center;
+            color: #fff;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+        .sidebar nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+        .sidebar nav a:hover,
+        .sidebar nav a.active {
+            background: rgba(255,255,255,0.15);
+        }
+
+        /* === MAIN CONTENT === */
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* === HEADER === */
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .main-header h2 {
+            color: #008037;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        .main-header .user-info {
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        /* === BOTONES DE ACCIÓN === */
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .btn-create, .btn-disabled {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all .3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-create {
+            background: linear-gradient(90deg, #008037, #00a84f);
+            color: #fff;
+        }
+        .btn-create:hover {
+            background: linear-gradient(90deg, #006629, #008037);
+            transform: translateY(-2px);
+        }
+        .btn-disabled {
+            background: #6c757d;
+            color: #fff;
+        }
+        .btn-disabled:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        /* === TABLA DE USUARIOS === */
+        .table-container {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .usuarios-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .usuarios-table th {
+            background: linear-gradient(90deg, #008037, #00a84f);
+            color: #fff;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        .usuarios-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        .usuarios-table tr:hover {
+            background: #f8f9fa;
+        }
+        .usuarios-table tr.inactivo {
+            background: #fff5f5;
+        }
+
+        /* === BADGES === */
+        .badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .badge.activo {
+            background: #d4edda;
+            color: #155724;
+        }
+        .badge.inactivo {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* === BOTONES DE ACCIÓN EN TABLA === */
+        .action-links {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .btn-edit, .btn-disable, .btn-reactivate {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all .3s ease;
+        }
+        .btn-edit {
+            background: #17a2b8;
+            color: #fff;
+        }
+        .btn-edit:hover {
+            background: #138496;
+            transform: translateY(-1px);
+        }
+        .btn-disable {
+            background: #dc3545;
+            color: #fff;
+        }
+        .btn-disable:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+        .btn-reactivate {
+            background: #28a745;
+            color: #fff;
+        }
+        .btn-reactivate:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        /* === MENSAJES === */
+        .messages-container {
+            margin-bottom: 1.5rem;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* === MODAL (Mantenemos tu código existente) === */
         .modal {
             position: fixed;
             inset: 0;
@@ -121,49 +332,52 @@
         }
         .close:hover { color: #ff6b6b; }
 
-        @media (max-width:480px) {
-            .modal-content { padding: 24px 20px; }
-            .modal-actions { flex-direction: column-reverse; }
-            .btn-secondary, .btn-danger { width: 100%; }
+        /* === RESPONSIVE === */
+        @media (max-width: 992px) {
+            .sidebar { width: 200px; }
+            .main-content { margin-left: 200px; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .header-actions { flex-direction: column; }
+            .action-links { flex-direction: column; }
+            .usuarios-table { font-size: 0.9rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- URL oculta para JS -->
-    <div id="urlPatterns" data-deshabilitar-url="{% url 'usuarios:deshabilitar_usuario' pk=0 %}" style="display:none;"></div>
-
-    <!-- ===== HEADER ===== -->
-    <header class="top-header">
-        <div class="logo">
-            <div class="icon">👥</div>
-            <div class="brand">
-                <h1>Control de Usuarios</h1>
-                <span>SENA - Centro de Formación</span>
-            </div>
-        </div>
-        <nav class="nav-bar">
-            <a href="{% url 'accesos:control_acceso' %}" class="nav-link">Inicio</a>
-            <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-link active">Usuarios</a>
-            <a href="{% url 'ambientes:listar_ambientes' %}" class="nav-link">Ambientes</a>
-            <a href="#" id="configLink" class="nav-link">
-                <i class="bi bi-gear"></i> Configuración
-            </a>
+    <!-- SIDEBAR DEL DASHBOARD -->
+    <aside class="sidebar">
+        <div class="brand"><i class="fas fa-tachometer-alt"></i> SENA</div>
+        <nav>
+            <a href="{% url 'accesos:control_acceso' %}"><i class="fas fa-home"></i> Inicio</a>
+            <a href="{% url 'usuarios:listar_usuarios' %}" class="active"><i class="fas fa-users"></i> Usuarios</a>
+            <a href="{% url 'ambientes:listar_ambientes' %}"><i class="fas fa-building"></i> Ambientes</a>
+            <a href="{% url 'reportes:reporte_accesos_pdf' %}"><i class="fas fa-chart-bar"></i> Reportes</a>
+            <a href="{% url 'cuentas:logout' %}"><i class="fas fa-sign-out-alt"></i> Salir</a>
         </nav>
-    </header>
+    </aside>
 
-    <!-- ===== CONTENIDO ===== -->
-    <main class="main-container">
-        <div class="page-header">
-            <h2 class="page-title">👥 Lista de Usuarios</h2>
-            <div class="header-actions">
-                <a href="{% url 'usuarios:crear_usuario' %}" class="btn-create">
-                    <i class="bi bi-person-plus-fill"></i> + Crear Usuario
-                </a>
-                <a href="{% url 'usuarios:listar_usuarios_deshabilitados' %}" class="btn-disabled">
-                    <i class="bi bi-eye-slash-fill"></i> Ver Deshabilitados
-                </a>
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- HEADER -->
+        <header class="main-header">
+            <h2>Gestión de Usuarios</h2>
+            <div class="user-info">
+                Bienvenido, <strong>{{ user.username }}</strong>
             </div>
+        </header>
+
+        <!-- BOTONES DE ACCIÓN -->
+        <div class="header-actions">
+            <a href="{% url 'usuarios:crear_usuario' %}" class="btn-create">
+                <i class="fas fa-user-plus"></i> Crear Usuario
+            </a>
+            <a href="{% url 'usuarios:listar_usuarios_deshabilitados' %}" class="btn-disabled">
+                <i class="fas fa-eye-slash"></i> Ver Deshabilitados
+            </a>
         </div>
 
         <!-- MENSAJES -->
@@ -175,7 +389,7 @@
         </div>
         {% endif %}
 
-        <!-- TABLA -->
+        <!-- TABLA DE USUARIOS -->
         <div class="table-container">
             <table class="usuarios-table">
                 <thead>
@@ -202,7 +416,7 @@
                         </td>
                         <td class="action-links">
                             <a href="{% url 'usuarios:editar_usuario' usuario.pk %}" class="btn-edit">
-                                <i class="bi bi-pencil-square"></i>
+                                <i class="fas fa-edit"></i>
                                 <span class="action-text">Editar</span>
                             </a>
 
@@ -211,14 +425,14 @@
                             <button type="button" class="btn-disable" 
                                     data-id="{{ usuario.pk }}" 
                                     data-nombre="{{ usuario.nombre }}">
-                                <i class="bi bi-person-dash-fill"></i>
+                                <i class="fas fa-user-slash"></i>
                                 <span class="action-text">Deshabilitar</span>
                             </button>
                             {% else %}
                             <form action="{% url 'usuarios:reactivar_usuario' usuario.pk %}" method="post" style="display:inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="btn-reactivate">
-                                    <i class="bi bi-person-check-fill"></i>
+                                    <i class="fas fa-user-check"></i>
                                     <span class="action-text">Reactivar</span>
                                 </button>
                             </form>
@@ -228,7 +442,7 @@
                     {% empty %}
                     <tr>
                         <td colspan="6" class="empty-state">
-                            <i class="bi bi-person-x"></i>
+                            <i class="fas fa-users"></i>
                             <p>No hay usuarios registrados en el sistema.</p>
                         </td>
                     </tr>
@@ -236,54 +450,22 @@
                 </tbody>
             </table>
         </div>
-    </main>
-
-    <!-- FOOTER -->
-    <footer class="footer">
-        <p>Sistema de Control de Usuarios - SENA</p>
-        <p>Todos los derechos reservados © 2025</p>
-    </footer>
-
-    <!-- PANEL CONFIGURACIÓN -->
-    <div id="configOverlay" class="config-overlay"></div>
-    <div id="configPanel" class="config-panel">
-        <button id="closeConfig" class="close-btn"><i class="bi bi-x-lg"></i></button>
-        <h3>⚙️ Configuración</h3>
-        <label for="theme">Tema:</label>
-        <select id="theme">
-            <option value="light">Claro</option>
-            <option value="dark">Oscuro</option>
-        </select>
-        <label for="notifications">Notificaciones:</label>
-        <select id="notifications">
-            <option value="enabled">Activadas</option>
-            <option value="disabled">Desactivadas</option>
-        </select>
-        <label for="language">Idioma:</label>
-        <select id="language">
-            <option value="es">Español</option>
-            <option value="en">English</option>
-        </select>
-        <label for="resultsPerPage">Resultados por página:</label>
-        <input type="number" id="resultsPerPage" min="5" max="50" value="10">
-        <div class="config-actions">
-            <button id="saveConfig">Guardar</button>
-            <button id="cancelConfig">Cancelar</button>
-        </div>
-        <div id="configMessage" class="config-message"></div>
     </div>
 
-    <!-- MODAL DESHABILITAR -->
+    <!-- URL oculta para JS -->
+    <div id="urlPatterns" data-deshabilitar-url="{% url 'usuarios:deshabilitar_usuario' pk=0 %}" style="display:none;"></div>
+
+    <!-- MODAL DESHABILITAR (Mantenemos tu código) -->
     <div id="modal-deshabilitar" class="modal" role="dialog" aria-modal="true">
         <div class="modal-content">
             <button id="closeModalBtn" class="close" aria-label="Cerrar">&times;</button>
             <header class="modal-header">
-                <div class="modal-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+                <div class="modal-icon"><i class="fas fa-exclamation-triangle"></i></div>
                 <h3 class="modal-title-text">Deshabilitar Usuario</h3>
             </header>
             <section class="modal-body">
                 <p>¿Está seguro de deshabilitar al usuario <strong id="usuario-nombre"></strong>?
-                   Esta acción impedirá su acceso al sistema.</p>
+                Esta acción impedirá su acceso al sistema.</p>
                 <form id="form-deshabilitar" method="POST">
                     {% csrf_token %}
                     <div class="modal-actions">
@@ -295,7 +477,10 @@
         </div>
     </div>
 
-    <!-- JS -->
+    {% include 'cuentas/footer.html' %}
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'js/listar_usuarios.js' %}?v=6.0"></script>
 
 </body>
