@@ -140,7 +140,7 @@
 
         /* ===== Footer ===== */
         .footer {
-            background:linear-gradient(135deg, var(--sena-blue), var(--sena-blue-dark));
+            background:#168A31;
             color:#fff; text-align:center;
             padding:20px; margin-top:40px;
             position:relative;
