@@ -109,3 +109,32 @@
         flex-wrap: wrap;
     }
 }
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* 👈 cambia center por flex-start */
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+/* Ajustes para coherencia vertical */
+.footer-left, .footer-right {
+    flex: 1;
+    min-width: 300px;
+}
+
+/* Reduce un poco los iconos y mejora balance */
+.social-icons a {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* Añade un margen superior para separar secciones derechas */
+.footer-right {
+    margin-top: 0.3rem; /* 👈 ayuda al alineado visual */
+}

@@ -82,3 +82,7 @@ def custom_logout(request):
         return redirect('accesos:control_acceso')
 
     return render(request, 'cuentas/logout.html')
+
+def accesibilidad(request):
+    return render(request, 'cuentas/accesibilidad.html')
+

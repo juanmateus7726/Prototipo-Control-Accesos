@@ -5,64 +5,54 @@ document.addEventListener('DOMContentLoaded', () => {
     const ambienteNombreSpan = document.getElementById('ambiente-nombre');
     const formDeshabilitar = document.getElementById('form-deshabilitar');
 
-    // Función para abrir el modal con datos dinámicos
-    function openModal(nombreAmbiente, urlAction) {
+    // 📦 URL base desde el HTML oculto
+    const baseUrl = document
+        .getElementById('urlPatterns')
+        .getAttribute('data-deshabilitar-url')
+        .replace(/0\/?$/, ''); // elimina el "0" final
+
+    // === ABRIR MODAL ===
+    function openModal(nombreAmbiente, ambienteId) {
         ambienteNombreSpan.textContent = nombreAmbiente;
-        formDeshabilitar.action = urlAction;
+        formDeshabilitar.action = `${baseUrl}${ambienteId}/`;
         modal.classList.add('show');
         modal.setAttribute('aria-hidden', 'false');
         modal.focus();
-        document.body.style.overflow = 'hidden'; // Evitar scroll en background
+        document.body.style.overflow = 'hidden';
     }
 
-    // Función para cerrar el modal
+    // === CERRAR MODAL ===
     function closeModal() {
         modal.classList.remove('show');
         modal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = ''; // Restaurar scroll
+        document.body.style.overflow = '';
     }
 
-    // Cerrar modal con botón cerrar
+    // === EVENTOS DE CIERRE ===
     closeModalBtn.addEventListener('click', closeModal);
-
-    // Cerrar modal con botón cancelar
     cancelBtn.addEventListener('click', closeModal);
-
-    // Cerrar modal al hacer click fuera del contenido
     modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            closeModal();
-        }
+        if (e.target === modal) closeModal();
     });
-
-    // Cerrar modal con tecla ESC
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && modal.classList.contains('show')) {
             closeModal();
         }
     });
 
-    // Seleccionamos todos los botones "Deshabilitar" con clase .btn-disable
+    // === BOTONES DE DESHABILITAR ===
     const disableButtons = document.querySelectorAll('.btn-disable');
 
     disableButtons.forEach(button => {
         button.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevenir submit inmediato
-
-            // Obtener el nombre del ambiente (primer td de la fila)
-            const row = button.closest('tr');
-            const nombreAmbiente = row.querySelector('td:first-child').textContent.trim();
-
-            // Obtener la URL del formulario padre
-            const form = button.closest('form');
-            const urlAction = form.action;
-
-            // Abrir modal con datos dinámicos
-            openModal(nombreAmbiente, urlAction);
+            e.preventDefault();
+            const ambienteId = button.getAttribute('data-id');
+            const nombreAmbiente = button.getAttribute('data-nombre');
+            openModal(nombreAmbiente, ambienteId);
         });
     });
 
-    // Opcional: cerrar modal al enviar formulario
+    // === OPCIONAL: cerrar modal tras submit ===
     formDeshabilitar.addEventListener('submit', () => {
         closeModal();
     });

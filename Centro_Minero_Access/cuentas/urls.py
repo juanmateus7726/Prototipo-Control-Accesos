@@ -22,4 +22,6 @@ urlpatterns = [
 
     # === Dashboard protegido ===
     path('dashboard/', views.dashboard, name='dashboard'),
+
+    path('accesibilidad/', views.accesibilidad, name='accesibilidad'),
 ]
