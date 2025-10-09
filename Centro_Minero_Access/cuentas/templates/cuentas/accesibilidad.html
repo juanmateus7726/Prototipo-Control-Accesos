@@ -6,11 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Accesibilidad - Sistema de Control SENA</title>
 
-  <!-- Bootstrap y FontAwesome -->
+  <!-- Bootstrap & FontAwesome -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://kit.fontawesome.com/5a6f6b2a5a.js" crossorigin="anonymous"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/opendyslexic" rel="stylesheet">
 
   <style>
+    /* ======= ESTILO GENERAL ======= */
     body {
       background-color: #f8f9fa;
       color: #212529;
@@ -18,85 +21,126 @@
       transition: background-color 0.3s, color 0.3s, font-size 0.3s;
     }
 
-    /* Modo contraste alto */
+    /* 🔹 Contraste alto */
     .high-contrast {
       background-color: #000 !important;
       color: #fff !important;
     }
     .high-contrast a { color: #ffeb3b !important; }
 
-    /* Texto grande */
+    /* 🔹 Texto grande */
     .large-text { font-size: 1.3rem !important; }
 
-    /* Modo dislexia */
-    @import url('https://fonts.cdnfonts.com/css/opendyslexic');
+    /* 🔹 Fuente dislexia */
     .modo-dislexia * {
       font-family: 'OpenDyslexic', Arial, sans-serif !important;
       letter-spacing: 0.05em;
       line-height: 1.6em;
     }
 
-    /* Reducir animaciones */
+    /* 🔹 Sin animaciones */
     .sin-animaciones * {
       transition: none !important;
       animation: none !important;
     }
 
-    /* Cursor grande */
+    /* 🔹 Cursor grande */
     .cursor-grande * {
       cursor: url('https://cdn-icons-png.flaticon.com/512/32/32363.png'), auto !important;
     }
 
-    /* Botón flotante */
+    /* ======= BOTÓN FLOTANTE ======= */
     .accessibility-btn {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
+      bottom: 25px;
+      right: 25px;
       z-index: 9999;
-      background-color: #0d6efd;
+      background-color: #198754;
       color: white;
       border: none;
       border-radius: 50%;
-      width: 55px;
-      height: 55px;
+      width: 70px;
+      height: 70px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+      transition: all 0.3s ease-in-out;
+    }
+    .accessibility-btn:hover {
+      transform: scale(1.12);
+      background-color: #157347;
+    }
+    .accessibility-btn .material-icons-round {
+      font-size: 36px;
     }
 
-    /* Panel */
+    /* ======= PANEL ======= */
     .accessibility-panel {
       position: fixed;
-      bottom: 90px;
-      right: 20px;
+      bottom: 105px;
+      right: 25px;
       background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      padding: 15px;
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      padding: 20px;
       display: none;
-      width: 260px;
+      width: 280px;
       z-index: 9998;
+      border-top: 5px solid #198754;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .accessibility-panel h5 {
+      font-weight: 700;
+      color: #198754;
+      margin-bottom: 15px;
+      text-align: center;
     }
 
     .accessibility-panel button {
       width: 100%;
       margin-bottom: 10px;
       text-align: left;
+      font-weight: 500;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ======= RESPONSIVIDAD ======= */
+    @media (max-width: 768px) {
+      .accessibility-btn {
+        bottom: 15px;
+        right: 15px;
+        width: 60px;
+        height: 60px;
+      }
+      .accessibility-panel {
+        bottom: 85px;
+        right: 15px;
+        width: 90%;
+        max-width: 320px;
+      }
     }
   </style>
 </head>
 
 <body>
-  <!-- NAVBAR -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <!-- 🔹 NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-success">
     <div class="container-fluid">
       <a class="navbar-brand fw-bold" href="#">Sistema de Control SENA</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
-
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item"><a href="{% url 'cuentas:dashboard' %}" class="nav-link">Inicio</a></li>
@@ -106,112 +150,87 @@
     </div>
   </nav>
 
-  <!-- CONTENIDO -->
+  <!-- 🔹 CONTENIDO -->
   <main class="container py-5">
-    <h1 class="mb-4 text-primary fw-bold">Centro de Accesibilidad</h1>
+    <h1 class="mb-4 text-success fw-bold">Centro de Accesibilidad</h1>
     <p>
       Este módulo permite mejorar la experiencia de usuarios con diferentes necesidades de accesibilidad. 
-      Aquí puedes activar opciones de lectura, contraste alto, texto grande y más.
+      Puedes activar opciones de lectura, contraste alto, texto grande y más.
     </p>
-
-    <section aria-labelledby="seccion-accesibilidad" class="mt-5">
-      <h2 id="seccion-accesibilidad" class="text-secondary">Opciones Disponibles</h2>
-      <ul>
-        <li>Modo de alto contraste</li>
-        <li>Aumento o disminución del tamaño de texto</li>
-        <li>Lectura automática del contenido</li>
-        <li>Modo dislexia</li>
-        <li>Reducción de animaciones</li>
-        <li>Cursor grande para visibilidad</li>
-        <li>Navegación por teclado (Tab + Enter)</li>
-      </ul>
-    </section>
   </main>
 
-  <!-- BOTÓN DE ACCESIBILIDAD -->
-  <button class="accessibility-btn" id="togglePanel" aria-label="Abrir opciones de accesibilidad">
-    <i class="fas fa-universal-access fs-4"></i>
+  <!-- 🔹 BOTÓN FLOTANTE -->
+  <button class="accessibility-btn" id="togglePanel" aria-label="Abrir menú de accesibilidad">
+    <span class="material-icons-round">accessibility_new</span>
   </button>
 
-  <!-- PANEL DE OPCIONES -->
+  <!-- 🔹 PANEL DE OPCIONES -->
   <div class="accessibility-panel" id="accessibilityPanel" role="dialog" aria-modal="true">
-    <button id="toggleContrast" class="btn btn-dark"><i class="fas fa-adjust me-2"></i> Contraste Alto</button>
-    <button id="increaseText" class="btn btn-secondary"><i class="fas fa-plus me-2"></i> Aumentar Texto</button>
-    <button id="decreaseText" class="btn btn-secondary"><i class="fas fa-minus me-2"></i> Disminuir Texto</button>
-    <button id="toggleDislexia" class="btn btn-warning"><i class="fas fa-font me-2"></i> Modo Dislexia</button>
-    <button id="toggleAnimaciones" class="btn btn-info"><i class="fas fa-wave-square me-2"></i> Reducir Animaciones</button>
-    <button id="toggleCursor" class="btn btn-outline-primary"><i class="fas fa-mouse-pointer me-2"></i> Cursor Grande</button>
-    <button id="readContent" class="btn btn-success"><i class="fas fa-volume-up me-2"></i> Leer Página</button>
+    <h5>Centro de Accesibilidad</h5>
+    <button id="toggleContrast" class="btn btn-dark"><i class="fas fa-adjust"></i> Alto Contraste</button>
+    <button id="increaseText" class="btn btn-outline-success"><i class="fas fa-plus"></i> Aumentar Texto</button>
+    <button id="decreaseText" class="btn btn-outline-success"><i class="fas fa-minus"></i> Disminuir Texto</button>
+    <button id="toggleDislexia" class="btn btn-warning text-dark"><i class="fas fa-font"></i> Modo Dislexia</button>
+    <button id="toggleAnimaciones" class="btn btn-info text-white"><i class="fas fa-wave-square"></i> Reducir Animaciones</button>
+    <button id="toggleCursor" class="btn btn-outline-primary"><i class="fas fa-mouse-pointer"></i> Cursor Grande</button>
+    <button id="readContent" class="btn btn-success"><i class="fas fa-volume-up"></i> Leer Página</button>
   </div>
 
-  <!-- JS FUNCIONAL -->
+  <!-- 🔹 SCRIPT FUNCIONALIDAD -->
   <script>
     const panel = document.getElementById('accessibilityPanel');
     const body = document.body;
 
-    const togglePanel = document.getElementById('togglePanel');
-    const toggleContrast = document.getElementById('toggleContrast');
-    const increaseText = document.getElementById('increaseText');
-    const decreaseText = document.getElementById('decreaseText');
-    const toggleDislexia = document.getElementById('toggleDislexia');
-    const toggleAnimaciones = document.getElementById('toggleAnimaciones');
-    const toggleCursor = document.getElementById('toggleCursor');
-    const readContent = document.getElementById('readContent');
-
-    // Mostrar/ocultar panel
-    togglePanel.addEventListener('click', () => {
-      panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+    // Mostrar/Ocultar panel
+    document.getElementById('togglePanel').addEventListener('click', () => {
+      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
     });
 
-    // Modo contraste
-    toggleContrast.addEventListener('click', () => {
-      body.classList.toggle('high-contrast');
-      localStorage.setItem('highContrast', body.classList.contains('high-contrast'));
-    });
+    // Función toggle general con persistencia
+    const toggle = (id, clase, key) => {
+      document.getElementById(id).addEventListener('click', () => {
+        body.classList.toggle(clase);
+        localStorage.setItem(key, body.classList.contains(clase));
+      });
+    };
 
-    // Texto grande
-    increaseText.addEventListener('click', () => {
+    toggle('toggleContrast', 'high-contrast', 'highContrast');
+    toggle('toggleDislexia', 'modo-dislexia', 'modoDislexia');
+    toggle('toggleAnimaciones', 'sin-animaciones', 'sinAnimaciones');
+    toggle('toggleCursor', 'cursor-grande', 'cursorGrande');
+
+    // Tamaño de texto
+    document.getElementById('increaseText').addEventListener('click', () => {
       body.classList.add('large-text');
       localStorage.setItem('largeText', true);
     });
-    decreaseText.addEventListener('click', () => {
+    document.getElementById('decreaseText').addEventListener('click', () => {
       body.classList.remove('large-text');
       localStorage.setItem('largeText', false);
     });
 
-    // Dislexia
-    toggleDislexia.addEventListener('click', () => {
-      body.classList.toggle('modo-dislexia');
-      localStorage.setItem('modoDislexia', body.classList.contains('modo-dislexia'));
-    });
-
-    // Reducir animaciones
-    toggleAnimaciones.addEventListener('click', () => {
-      body.classList.toggle('sin-animaciones');
-      localStorage.setItem('sinAnimaciones', body.classList.contains('sin-animaciones'));
-    });
-
-    // Cursor grande
-    toggleCursor.addEventListener('click', () => {
-      body.classList.toggle('cursor-grande');
-      localStorage.setItem('cursorGrande', body.classList.contains('cursor-grande'));
-    });
-
-    // Lectura automática
-    readContent.addEventListener('click', () => {
+    // Lectura de contenido
+    document.getElementById('readContent').addEventListener('click', () => {
       const texto = document.body.innerText;
       const utterance = new SpeechSynthesisUtterance(texto);
       utterance.lang = 'es-ES';
+      utterance.rate = 1;
+      utterance.pitch = 1;
       speechSynthesis.speak(utterance);
     });
 
     // Aplicar preferencias guardadas
     window.addEventListener('load', () => {
-      if (localStorage.getItem('highContrast') === 'true') body.classList.add('high-contrast');
-      if (localStorage.getItem('largeText') === 'true') body.classList.add('large-text');
-      if (localStorage.getItem('modoDislexia') === 'true') body.classList.add('modo-dislexia');
-      if (localStorage.getItem('sinAnimaciones') === 'true') body.classList.add('sin-animaciones');
-      if (localStorage.getItem('cursorGrande') === 'true') body.classList.add('cursor-grande');
+      const mappings = {
+        highContrast: 'high-contrast',
+        largeText: 'large-text',
+        modoDislexia: 'modo-dislexia',
+        sinAnimaciones: 'sin-animaciones',
+        cursorGrande: 'cursor-grande'
+      };
+      Object.entries(mappings).forEach(([key, clase]) => {
+        if (localStorage.getItem(key) === 'true') body.classList.add(clase);
+      });
     });
   </script>
 
