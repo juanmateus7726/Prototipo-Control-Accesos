@@ -227,7 +227,7 @@ a {
 /* ===== AMBIENTE INFO ===== */
 .ambiente-info {
     background: linear-gradient(135deg, #008037, #00a84f);
-    color: white;
+    color: black;
     padding: 18px;
     border-radius: 8px;
     margin-bottom: 25px;
