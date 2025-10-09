@@ -173,6 +173,199 @@
     .method-selector-buttons .btn {
         width: 200px;
     }
+
+    /* Estilos para Modal de Acceso Denegado - Colores SENA */
+    .modal-denegado {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        animation: fadeIn 0.3s ease;
+    }
+
+    .modal-denegado-content {
+        background: white;
+        margin: 5% auto;
+        width: 90%;
+        max-width: 600px;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        animation: slideDown 0.4s ease;
+    }
+
+    .modal-denegado-header {
+        background: linear-gradient(135deg, #39A900, #2d8000);
+        color: white;
+        padding: 30px;
+        text-align: center;
+        position: relative;
+    }
+
+    .modal-denegado-icon {
+        font-size: 4rem;
+        display: block;
+        margin-bottom: 10px;
+        animation: shake 0.5s ease;
+    }
+
+    .modal-denegado-header h3 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+    }
+
+    .modal-denegado-body {
+        padding: 30px;
+        background: #f8f9fa;
+    }
+
+    .usuario-info-denegado {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .avatar-denegado {
+        font-size: 3rem;
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+    }
+
+    .info-denegado h4 {
+        margin: 0;
+        color: #2c3e50;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .info-denegado p {
+        margin: 5px 0 0 0;
+        color: #6c757d;
+        font-size: 1rem;
+    }
+
+    .mensaje-denegado {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+    }
+
+    .mensaje-denegado p {
+        margin: 0;
+        color: #856404;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .ambiente-denegado {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .ambiente-icon {
+        font-size: 1.5rem;
+    }
+
+    .ambiente-denegado span:last-child {
+        font-weight: bold;
+        color: #2c3e50;
+        font-size: 1.1rem;
+    }
+
+    .confianza-denegado {
+        text-align: center;
+        padding: 10px;
+        color: #6c757d;
+    }
+
+    .badge-confianza {
+        background: linear-gradient(135deg, #39A900, #2d8000);
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        margin-left: 5px;
+    }
+
+    .modal-denegado-footer {
+        background: white;
+        padding: 20px 30px;
+        text-align: center;
+        border-top: 2px solid #e9ecef;
+    }
+
+    .footer-text {
+        color: #6c757d;
+        margin-bottom: 15px;
+        font-size: 0.95rem;
+    }
+
+    .btn-cerrar-denegado {
+        background: linear-gradient(135deg, #39A900, #2d8000);
+        color: white;
+        border: none;
+        padding: 12px 40px;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(57, 169, 0, 0.3);
+    }
+
+    .btn-cerrar-denegado:hover {
+        background: linear-gradient(135deg, #2d8000, #1e5600);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(57, 169, 0, 0.4);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideDown {
+        from {
+            transform: translateY(-50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(-10deg); }
+        75% { transform: rotate(10deg); }
+    }
     </style>
 </head>
 <body>
@@ -307,44 +500,9 @@
                 </div>
             </div>
 
+            <!-- Sección manual oculta - solo se usa el modal -->
             <div id="seccion-manual" style="display: none;">
-                <div class="manual-access">
-                    <h4 style="margin-bottom:15px; color:#2c3e50;">🎫 Acceso Manual por Carnet</h4>
-                    <form method="post" id="manualForm" action="{% url 'accesos:control_acceso' %}">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label class="form-label">👤 Ingrese su Numero de Identificacion:</label>
-                            <input type="text" 
-                                   name="numero_identificacion" 
-                                   id="numeroIdInput" 
-                                   class="form-control" 
-                                   placeholder="Ej: 123456789" 
-                                   maxlength="10" 
-                                   required 
-                                   autocomplete="off"
-                                   style="font-size: 1.1rem; padding: 12px; border: 2px solid #3498db;">
-                            <small class="form-text text-muted">Escriba su ID y presione Enter o "Acceder".</small>
-                        </div>
-                        <input type="hidden" name="ambiente_id" id="ambienteManualHiddenInput">
-                        <button type="submit" class="btn btn-primary w-100">
-                            ✅ Acceder al Ambiente
-                        </button>
-                    </form>
-                    <div id="manualResultado" class="reconocimiento-resultado" style="display:none; margin-top:15px;">
-                        <div class="usuario-reconocido">
-                            <div class="avatar-usuario" id="avatarManual">👤</div>
-                            <div class="info-usuario">
-                                <h3 id="nombreManual">Usuario Desconocido</h3>
-                                <p id="idManual">ID: ----</p>
-                                <p id="tipoManual">Tipo: ----</p>
-                                <p id="bienvenidaManual" style="color: #27ae60; font-weight: bold;"></p>
-                            </div>
-                            <div class="acceso-status" id="accesoStatusManual">
-                                <span class="status-badge status-denied">❌ DENEGADO</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- Contenido oculto, se usa el modal para acceso manual -->
             </div>
 
             <div style="margin-top:20px;">
@@ -426,8 +584,78 @@
 
 <div id="notification" class="notification"></div>
 
+<!-- Modal de Acceso Denegado -->
+<div id="modalAccesoDenegado" class="modal-denegado">
+    <div class="modal-denegado-content">
+        <div class="modal-denegado-header">
+            <span class="modal-denegado-icon">🚫</span>
+            <h3>ACCESO DENEGADO</h3>
+        </div>
+        <div class="modal-denegado-body">
+            <div class="usuario-info-denegado">
+                <div class="avatar-denegado" id="avatarDenegado">👤</div>
+                <div class="info-denegado">
+                    <h4 id="nombreUsuarioDenegado">Usuario</h4>
+                    <p id="idUsuarioDenegado">ID: ----</p>
+                </div>
+            </div>
+            <div class="mensaje-denegado">
+                <p id="mensajeDenegado">No tienes permiso para acceder a este ambiente</p>
+            </div>
+            <div class="ambiente-denegado">
+                <span class="ambiente-icon">🏭</span>
+                <span id="ambienteDenegado">Ambiente no especificado</span>
+            </div>
+            <div class="confianza-denegado">
+                <span>Confianza de reconocimiento: </span>
+                <span id="confianzaDenegado" class="badge-confianza">--%</span>
+            </div>
+        </div>
+        <div class="modal-denegado-footer">
+            <p class="footer-text">Si necesitas acceso a este ambiente, contacta al administrador del sistema.</p>
+            <button class="btn-cerrar-denegado" onclick="cerrarModalDenegado()">
+                Entendido
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Acceso Manual -->
+<div id="modalAccesoManual" class="custom-modal">
+    <div class="custom-modal-content">
+        <span class="custom-close">&times;</span>
+        <div class="manual-access-modal">
+            <h4 style="margin-bottom:15px; color:#2c3e50;">🎫 Acceso Manual por Carnet</h4>
+            <form method="post" id="modalManualForm" action="{% url 'accesos:control_acceso' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">👤 Ingrese su Número de Identificación:</label>
+                    <input type="text"
+                           name="numero_identificacion"
+                           id="modalNumeroIdInput"
+                           class="form-control"
+                           placeholder="Ej: 123456789"
+                           maxlength="10"
+                           required
+                           autocomplete="off"
+                           style="font-size: 1.1rem; padding: 12px; border: 2px solid #3498db;">
+                    <small class="form-text text-muted">Escriba su ID y presione Enter o "Acceder". El ambiente se toma del selector superior.</small>
+                </div>
+                <input type="hidden" name="ambiente_id" id="modalAmbienteManualHiddenInput">
+                <button type="submit" class="btn btn-primary w-100">
+                    ✅ Acceder al Ambiente
+                </button>
+            </form>
+            <div id="modalManualResultado" class="reconocimiento-resultado" style="display:none; margin-top:15px;">
+                <!-- Aquí se mostrará el resultado -->
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://website-widgets.pages.dev/dist/sienna.min.js" defer></script>
 
 <script>
 // ========================================
@@ -462,8 +690,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btnManual.addEventListener('click', () => {
         detenerReconocimiento();
-        seccionFacial.style.display = 'none';
-        seccionManual.style.display = 'block';
+        
+        // Abrir modal directamente
+        const ambienteSelect = document.getElementById('ambienteSelect');
+        
+        if (!ambienteSelect.value) {
+            mostrarNotificacion('⚠️ Por favor selecciona un ambiente primero', 'warning');
+            btnManual.classList.remove('btn-info', 'active');
+            btnManual.classList.add('btn-secondary');
+            btnFacial.classList.add('btn-info', 'active');
+            btnFacial.classList.remove('btn-secondary');
+            return;
+        }
+        
+        abrirModalAccesoManual();
+        
+        // Cambiar estilos de botones
         btnManual.classList.add('btn-info', 'active');
         btnManual.classList.remove('btn-secondary');
         btnFacial.classList.remove('btn-info', 'active');
@@ -481,7 +723,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const btn = manualForm.querySelector('button[type="submit"]');
             if (!input.value.trim()) {
                 e.preventDefault();
-                alert('⚠️ Ingrese su número de identificación.');
+                mostrarNotificacion('⚠️ Ingrese su número de identificación.', 'warning');
                 return;
             }
             btn.innerHTML = '⏳ Verificando...';
@@ -565,7 +807,7 @@ async function capturarRostro() {
         canvas.height = video.videoHeight;
         ctx.drawImage(video, 0, 0);
         
-        const imageData = canvas.toDataURL('image/jpeg', 0.9);
+        const imageData = canvas.toDataURL('image/jpeg', 0.95);
         const ambienteNombre = ambienteSelect.options[ambienteSelect.selectedIndex].text;
 
         console.log('📤 Enviando a:', RECONOCER_URL);
@@ -588,6 +830,19 @@ async function capturarRostro() {
         const data = await response.json();
         console.log('📦 Datos:', data);
         
+        // VALIDACIÓN ESTRICTA: Solo aceptar si la confianza es >= 70%
+        if (data.success && data.confianza && parseFloat(data.confianza) < 70) {
+            mostrarNotificacion('⚠️ Rostro no reconocido con suficiente confianza. Intenta de nuevo.', 'error');
+            agregarLog(`❌ RECHAZADO: Confianza muy baja (${data.confianza}%)`);
+            actualizarEstadoSistema('denied');
+            mostrarResultadoReconocimiento({
+                success: false,
+                message: 'Confianza insuficiente'
+            });
+            isProcessing = false;
+            return;
+        }
+        
         mostrarResultadoReconocimiento(data);
         
         if (data.success && data.acceso_autorizado) {
@@ -600,14 +855,9 @@ async function capturarRostro() {
             
             // Mensaje específico según el tipo de denegación
             if (data.razon === 'sin_permiso' && data.usuario) {
-                const mensajePermiso = `🚫 ${data.usuario.nombre}, NO TIENES PERMISO para ingresar al ambiente "${ambienteNombre}"`;
-                mostrarNotificacion(mensajePermiso, 'error');
+                // Mostrar modal de acceso denegado
+                mostrarModalDenegado(data.usuario, ambienteNombre, data.confianza);
                 agregarLog(`🚫 ACCESO DENEGADO: ${data.usuario.nombre} - Sin permiso para ${ambienteNombre}`);
-                
-                // Alerta adicional más visible
-                setTimeout(() => {
-                    alert(`⛔ ACCESO DENEGADO\n\n${data.usuario.nombre}, no tienes autorización para acceder a:\n"${ambienteNombre}"\n\nContacta al administrador si necesitas acceso.`);
-                }, 500);
             } else {
                 mostrarNotificacion(data.message || 'Acceso denegado - Rostro no reconocido', 'error');
                 agregarLog('❌ DENEGADO: ' + (data.message || 'No reconocido'));
@@ -752,7 +1002,7 @@ function cambiarAmbiente() {
     const opcionSeleccionada = select.options[select.selectedIndex];
 
     if (opcionSeleccionada.value === "") {
-        infoDiv.innerHTML = "<p style='color: black;'>Seleccione un ambiente</p>";
+        infoDiv.innerHTML = "<p class='text-secondary'>Seleccione un ambiente</p>";
         return;
     }
 
@@ -783,6 +1033,99 @@ function cambiarAmbiente() {
 function cerrarProtocolo() {
     document.getElementById('protocolModal').style.display = 'none';
 }
+
+// ========================================
+// MODAL DE ACCESO DENEGADO
+// ========================================
+function mostrarModalDenegado(usuario, ambiente, confianza) {
+    const modal = document.getElementById('modalAccesoDenegado');
+    const avatarDenegado = document.getElementById('avatarDenegado');
+    const nombreUsuarioDenegado = document.getElementById('nombreUsuarioDenegado');
+    const idUsuarioDenegado = document.getElementById('idUsuarioDenegado');
+    const mensajeDenegado = document.getElementById('mensajeDenegado');
+    const ambienteDenegado = document.getElementById('ambienteDenegado');
+    const confianzaDenegado = document.getElementById('confianzaDenegado');
+    
+    // Llenar información
+    avatarDenegado.textContent = usuario.nombre.charAt(0).toUpperCase();
+    nombreUsuarioDenegado.textContent = usuario.nombre;
+    idUsuarioDenegado.textContent = `ID: ${usuario.numero_identificacion}`;
+    mensajeDenegado.textContent = `No tienes permiso para acceder a este ambiente`;
+    ambienteDenegado.textContent = ambiente;
+    confianzaDenegado.textContent = `${confianza}%`;
+    
+    // Mostrar modal
+    modal.style.display = 'block';
+}
+
+function cerrarModalDenegado() {
+    const modal = document.getElementById('modalAccesoDenegado');
+    modal.style.display = 'none';
+}
+
+// Cerrar modal al hacer clic fuera
+window.addEventListener('click', (event) => {
+    const modal = document.getElementById('modalAccesoDenegado');
+    if (event.target === modal) {
+        cerrarModalDenegado();
+    }
+});
+
+// Cerrar modal con ESC
+document.addEventListener('keydown', (event) => {
+    const modal = document.getElementById('modalAccesoDenegado');
+    if (event.key === 'Escape' && modal.style.display === 'block') {
+        cerrarModalDenegado();
+    }
+});
+
+// ========================================
+// CONTROL DEL MODAL DE ACCESO MANUAL
+// ========================================
+const modalAccesoManual = document.getElementById('modalAccesoManual');
+const btnCerrarModal = document.querySelector('.custom-close');
+
+// Función para abrir el modal
+function abrirModalAccesoManual() {
+    const ambienteSelect = document.getElementById('ambienteSelect');
+    
+    if (!ambienteSelect.value) {
+        mostrarNotificacion('⚠️ Por favor selecciona un ambiente primero', 'warning');
+        return;
+    }
+    
+    modalAccesoManual.style.display = 'block';
+    document.getElementById('modalAmbienteManualHiddenInput').value = ambienteSelect.value;
+    
+    // Limpiar el input del modal
+    const modalInput = document.getElementById('modalNumeroIdInput');
+    if (modalInput) {
+        modalInput.value = '';
+        modalInput.focus();
+    }
+}
+
+// Cerrar modal con la X
+if (btnCerrarModal) {
+    btnCerrarModal.addEventListener('click', () => {
+        modalAccesoManual.style.display = 'none';
+    });
+}
+
+// Cerrar modal al hacer clic fuera de él
+window.addEventListener('click', (event) => {
+    if (event.target === modalAccesoManual) {
+        modalAccesoManual.style.display = 'none';
+    }
+});
+
+// Cerrar modal con tecla ESC
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && modalAccesoManual.style.display === 'block') {
+        modalAccesoManual.style.display = 'none';
+    }
+});
+
 </script>
 </body>
 </html>
