@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'ambientes',
     'reportes',
     'cuentas',
+    'backup',
 ]
 
 MIDDLEWARE = [
