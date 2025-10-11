@@ -1,6 +1,6 @@
 # forms.py - ACTUALIZADO
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, PasswordResetForm
 from django.contrib.auth.models import User
 
 
@@ -50,3 +50,29 @@ class CustomUserCreationForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+class CustomPasswordResetForm(PasswordResetForm):
+    """
+    Formulario personalizado para solicitar restablecimiento de contraseña.
+    """
+    email = forms.EmailField(
+        label='Correo Electrónico',
+        max_length=254,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'correo@ejemplo.com',
+            'autocomplete': 'email'
+        })
+    )
+
+    def clean_email(self):
+        """
+        Valida que el email exista en la base de datos.
+        """
+        email = self.cleaned_data.get('email')
+        if not User.objects.filter(email=email).exists():
+            raise forms.ValidationError(
+                'No existe ninguna cuenta asociada a este correo electrónico.'
+            )
+        return email

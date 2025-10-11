@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth import login, logout
+from django.contrib.auth import logout
 from django.contrib import messages
 from django.contrib.auth.models import Group
 from django.views.decorators.csrf import csrf_protect
@@ -21,11 +21,9 @@ def dashboard(request):
     """
     # Totales
     total_usuarios = Usuario.objects.count()
-
-    # Contar solo ambientes activos
     total_ambientes = Ambiente.objects.filter(activo=True).count()
-
-    # Accesos de hoy (usamos __date porque fecha_hora es DateTimeField)
+    
+    # Accesos de hoy
     hoy = now().date()
     accesos_hoy = Acceso.objects.filter(fecha_hora__date=hoy).count()
 
@@ -52,18 +50,18 @@ def register(request):
             user = form.save(commit=False)
             user.save()
 
-            # Asignar grupo por defecto al usuario nuevo
+            # Asignar grupo por defecto
             group, created = Group.objects.get_or_create(name='Instructores')
             user.groups.add(group)
 
             username = form.cleaned_data.get('username')
             messages.success(
                 request,
-                f'✅ ¡Usuario "{username}" creado exitosamente y asignado al grupo "{group.name}"!'
+                f'✅ Usuario "{username}" creado exitosamente!'
             )
             return redirect('cuentas:dashboard')
         else:
-            messages.error(request, '❌ Error en el formulario. Revisa los campos.')
+            messages.error(request, '❌ Error en el formulario.')
     else:
         form = CustomUserCreationForm()
 
@@ -76,6 +74,9 @@ def register(request):
 @csrf_protect
 @login_required
 def custom_logout(request):
+    """
+    Cierra la sesión del usuario con confirmación.
+    """
     if request.method == 'POST':
         logout(request)
         messages.info(request, "Has cerrado sesión correctamente.")
@@ -83,6 +84,12 @@ def custom_logout(request):
 
     return render(request, 'cuentas/logout.html')
 
-def accesibilidad(request):
-    return render(request, 'cuentas/accesibilidad.html')
 
+# =========================
+# ACCESIBILIDAD
+# =========================
+def accesibilidad(request):
+    """
+    Muestra la página de información sobre accesibilidad.
+    """
+    return render(request, 'cuentas/accesibilidad.html')

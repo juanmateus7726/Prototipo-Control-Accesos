@@ -11,10 +11,29 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
 from pathlib import Path
+import ssl
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+# ============================================
+# CONFIGURACIÓN DE EMAIL CON GMAIL
+# ============================================
 
+# Usar backend personalizado para resolver problemas de SSL
+EMAIL_BACKEND = 'cuentas.email_backend.CustomEmailBackend'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+
+EMAIL_HOST_USER = 'tatisalexa16@gmail.com'
+EMAIL_HOST_PASSWORD = 'owrqgfiqiycumgwz'  # Sin espacios
+
+DEFAULT_FROM_EMAIL = 'tatisalexa16@gmail.com'
+
+# Timeout para conexiones (opcional)
+EMAIL_TIMEOUT = 10
 
 # Para imagenes de rostros
 MEDIA_URL = '/media/'
