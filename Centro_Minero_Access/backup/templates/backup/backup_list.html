@@ -157,6 +157,18 @@
             box-shadow: 0 4px 10px rgba(23,162,184,0.3);
         }
         
+        .btn-restore {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-restore:hover {
+            background-color: #218838;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(40,167,69,0.3);
+        }
+        
         .btn-delete {
             background-color: #dc3545;
             color: white;
@@ -240,8 +252,8 @@
         }
         
         .badge-file {
-            background-color: #e8f5e9;
-            color: #00854a;
+            background-color: #e3f2fd;
+            color: #1976d2;
             padding: 5px 12px;
             border-radius: 15px;
             font-weight: 600;
@@ -325,6 +337,18 @@
             box-shadow: 0 4px 10px rgba(255,193,7,0.3);
         }
         
+        .modal-icon-restore {
+            background: #d4edda;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 4px 10px rgba(40,167,69,0.3);
+        }
+        
         .modal-message {
             font-size: 1.1rem;
             color: #495057;
@@ -393,6 +417,27 @@
             box-shadow: 0 4px 10px rgba(220,53,69,0.3);
             color: white;
         }
+        
+        .btn-modal-restore {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-modal-restore:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(40,167,69,0.3);
+            color: white;
+        }
+        
+        .zip-icon {
+            color: #1976d2;
+        }
     </style>
 </head>
 <body>
@@ -429,7 +474,7 @@
                     <i class="fas fa-database"></i>
                     Copias de Seguridad
                 </h1>
-                <p>Gestiona y protege las copias de seguridad de tu base de datos</p>
+                <p>Gestiona y protege las copias de seguridad de tu base de datos (Formato ZIP Comprimido)</p>
                 <div class="mt-4">
                     <a href="/" class="btn-crear-backup me-3 btn-volver">
                         <i class="fas fa-arrow-left"></i>
@@ -460,7 +505,7 @@
                             {% for backup in backups %}
                                 <tr>
                                     <td>
-                                        <i class="fas fa-database text-success me-2"></i>
+                                        <i class="fas fa-file-archive zip-icon me-2"></i>
                                         <span class="file-name">{{ backup.nombre }}</span>
                                     </td>
                                     <td>
@@ -469,36 +514,93 @@
                                     </td>
                                     <td>
                                         <span class="badge-file">
-                                            <i class="fas fa-file me-1"></i>
+                                            <i class="fas fa-file-zipper me-1"></i>
                                             {{ backup.tamaño }}
                                         </span>
                                     </td>
                                     <td class="text-center">
+                                        <!-- Botón Descargar -->
                                         <a href="{% url 'backup:descargar_backup' backup.nombre %}" 
                                            class="btn btn-sm btn-download btn-action" 
-                                           title="Descargar backup">
+                                           title="Descargar backup ZIP">
                                             <i class="fas fa-download me-1"></i>
                                             Descargar
                                         </a>
                                         
+                                        <!-- Botón Restaurar (NUEVO) -->
+                                        <button type="button" 
+                                                class="btn btn-sm btn-restore btn-action btn-restaurar-custom" 
+                                                data-backup-name="{{ backup.nombre }}"
+                                                data-modal-id="restoreModal{{ forloop.counter }}"
+                                                title="Restaurar backup">
+                                            <i class="fas fa-undo-alt me-1"></i>
+                                            Restaurar
+                                        </button>
+                                        
+                                        <!-- Botón Eliminar -->
                                         <button type="button" 
                                                 class="btn btn-sm btn-delete btn-action btn-eliminar-custom" 
                                                 data-backup-name="{{ backup.nombre }}"
-                                                data-modal-id="customModal{{ forloop.counter }}"
+                                                data-modal-id="deleteModal{{ forloop.counter }}"
                                                 title="Eliminar backup">
                                             <i class="fas fa-trash-alt me-1"></i>
                                             Eliminar
                                         </button>
 
-                                        <!-- Modal personalizado -->
-                                        <div class="custom-modal-overlay" id="customModal{{ forloop.counter }}">
+                                        <!-- Modal Restaurar (NUEVO) -->
+                                        <div class="custom-modal-overlay" id="restoreModal{{ forloop.counter }}">
+                                            <div class="custom-modal-content">
+                                                <div class="modal-header-sena">
+                                                    <h5 class="modal-title">
+                                                        <i class="fas fa-undo-alt me-2"></i>
+                                                        Confirmar Restauración
+                                                    </h5>
+                                                    <button type="button" class="btn-close btn-close-white btn-close-custom" data-modal-id="restoreModal{{ forloop.counter }}"></button>
+                                                </div>
+                                                <div class="modal-body-custom text-center">
+                                                    <div class="modal-icon-restore">
+                                                        <i class="fas fa-database fa-2x text-success"></i>
+                                                    </div>
+                                                    <p class="modal-message">
+                                                        <strong>¿Estás seguro de restaurar este backup?</strong>
+                                                    </p>
+                                                    <p class="text-muted">Se restaurará la base de datos desde:</p>
+                                                    <div class="modal-filename">
+                                                        <strong>{{ backup.nombre }}</strong>
+                                                    </div>
+                                                    <div class="alert alert-warning mt-3 mb-0" style="border-radius: 10px; font-size: 0.9rem; text-align: left;">
+                                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                                        <strong>¡ADVERTENCIA!</strong><br>
+                                                        • Se creará un respaldo de la BD actual<br>
+                                                        • Se reemplazarán todos los datos actuales<br>
+                                                        • Deberás cerrar sesión después de restaurar
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer-custom">
+                                                    <button type="button" class="btn-modal-cancel btn-close-custom" data-modal-id="restoreModal{{ forloop.counter }}">
+                                                        <i class="fas fa-times me-2"></i>
+                                                        Cancelar
+                                                    </button>
+                                                    <form method="post" action="{% url 'backup:restaurar_backup' backup.nombre %}" style="display: inline;">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn-modal-restore">
+                                                            <i class="fas fa-undo me-2"></i>
+                                                            Confirmar Restauración
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Modal Eliminar -->
+                                        <div class="custom-modal-overlay" id="deleteModal{{ forloop.counter }}">
                                             <div class="custom-modal-content">
                                                 <div class="modal-header-sena">
                                                     <h5 class="modal-title">
                                                         <i class="fas fa-exclamation-triangle me-2"></i>
                                                         Confirmar Eliminación
                                                     </h5>
-                                                    <button type="button" class="btn-close btn-close-white btn-close-custom" data-modal-id="customModal{{ forloop.counter }}"></button>
+                                                    <button type="button" class="btn-close btn-close-white btn-close-custom" data-modal-id="deleteModal{{ forloop.counter }}"></button>
                                                 </div>
                                                 <div class="modal-body-custom text-center">
                                                     <div class="modal-icon-warning">
@@ -507,7 +609,7 @@
                                                     <p class="modal-message">
                                                         <strong>¿Estás seguro de eliminar este backup?</strong>
                                                     </p>
-                                                    <p class="text-muted">Se eliminará el archivo:</p>
+                                                    <p class="text-muted">Se eliminará el archivo ZIP:</p>
                                                     <div class="modal-filename">
                                                         <strong>{{ backup.nombre }}</strong>
                                                     </div>
@@ -517,7 +619,7 @@
                                                     </p>
                                                 </div>
                                                 <div class="modal-footer-custom">
-                                                    <button type="button" class="btn-modal-cancel btn-close-custom" data-modal-id="customModal{{ forloop.counter }}">
+                                                    <button type="button" class="btn-modal-cancel btn-close-custom" data-modal-id="deleteModal{{ forloop.counter }}">
                                                         <i class="fas fa-times me-2"></i>
                                                         Cancelar
                                                     </button>
@@ -541,7 +643,7 @@
                 <div class="empty-state">
                     <i class="fas fa-folder-open fa-5x"></i>
                     <h4 class="mt-4">No hay copias de seguridad disponibles</h4>
-                    <p>Crea tu primera copia de seguridad para proteger tus datos</p>
+                    <p>Crea tu primera copia de seguridad comprimida para proteger tus datos</p>
                     <a href="{% url 'backup:crear_backup' %}" class="btn-crear-backup mt-3">
                         <i class="fas fa-plus-circle"></i>
                         Crear Primera Copia
@@ -554,6 +656,7 @@
         <div class="info-alert">
             <i class="fas fa-info-circle me-2"></i>
             <strong>Información importante:</strong> 
+            Los backups se crean en formato ZIP comprimido para ahorrar espacio (~70% menos). 
             El sistema mantiene automáticamente los últimos 10 backups. 
             Los backups más antiguos se eliminan automáticamente. 
             Te recomendamos descargar y guardar las copias importantes en un lugar seguro externo.
@@ -566,9 +669,9 @@
     <script>
         // Modal personalizado - JavaScript puro
         document.addEventListener('DOMContentLoaded', function() {
-            // Abrir modal
-            const botonesEliminar = document.querySelectorAll('.btn-eliminar-custom');
-            botonesEliminar.forEach(function(boton) {
+            // Abrir modal (tanto eliminar como restaurar)
+            const botonesModal = document.querySelectorAll('.btn-eliminar-custom, .btn-restaurar-custom');
+            botonesModal.forEach(function(boton) {
                 boton.addEventListener('click', function(e) {
                     e.preventDefault();
                     const modalId = this.getAttribute('data-modal-id');
