@@ -27,10 +27,10 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
-EMAIL_HOST_USER = 'tatisalexa16@gmail.com'
-EMAIL_HOST_PASSWORD = 'owrqgfiqiycumgwz'  # Sin espacios
+EMAIL_HOST_USER = 'sistemaaccesosambientessena@gmail.com'
+EMAIL_HOST_PASSWORD = 'rbywdngxibfivxoy'  # Sin espacios
 
-DEFAULT_FROM_EMAIL = 'tatisalexa16@gmail.com'
+DEFAULT_FROM_EMAIL = 'sistemaaccesosambientessena@gmail.com'
 
 # Timeout para conexiones (opcional)
 EMAIL_TIMEOUT = 10
