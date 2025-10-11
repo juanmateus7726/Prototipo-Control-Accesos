@@ -236,15 +236,6 @@
                 <h3>Reportes</h3>
                 <p>Genera reportes y estadísticas de accesos</p>
                 <a href="{% url 'reportes:reporte_accesos_pdf' %}" class="btn-card">Acceder</a>
-            </div>
-            {% if user.is_superuser %}
-            <div class="card-module">
-                <i class="fas fa-user-plus"></i>
-                <h3>Registrar Usuarios</h3>
-                <p>Crear nuevos usuarios del sistema (Solo Admin)</p>
-                <a href="{% url 'cuentas:register' %}" class="btn-card">Acceder</a>
-            </div>
-            {% endif %}
         </section>
     </div>
 
