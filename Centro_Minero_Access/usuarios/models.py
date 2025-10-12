@@ -33,7 +33,7 @@ class Usuario(models.Model):
     )
 
     numero_identificacion = models.CharField(
-        max_length=20,
+        max_length=10,
         unique=True,
         verbose_name="Número de Identificación"
     )

@@ -1,0 +1,275 @@
+/* responsive_global.css - CSS que funciona SIN modificar HTML */
+/* ===== OVERRIDE GLOBAL PARA SIDEBARS ===== */
+
+/* Detectar móvil y aplicar estilos automáticamente */
+@media (max-width: 767px) {
+    /* Sidebar se convierte en drawer móvil */
+    .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: -280px !important;
+        width: 280px !important;
+        height: 100vh !important;
+        z-index: 1001 !important;
+        transition: left 0.3s ease !important;
+        background: linear-gradient(180deg, #008037, #00a84f) !important;
+        padding: 1rem 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        box-shadow: 4px 0 12px rgba(0,0,0,0.2) !important;
+        overflow-y: auto !important;
+    }
+    
+    .sidebar.active {
+        left: 0 !important;
+    }
+    
+    /* Asegurar que el contenido del sidebar sea visible */
+    .sidebar .brand {
+        text-align: center !important;
+        color: #fff !important;
+        font-size: 1.6rem !important;
+        font-weight: 700 !important;
+        margin-bottom: 2rem !important;
+        padding: 0 1rem !important;
+        display: block !important;
+    }
+    
+    .sidebar nav {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    
+    .sidebar nav a {
+        color: #fff !important;
+        text-decoration: none !important;
+        padding: 0.8rem 1.5rem !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.8rem !important;
+        font-weight: 500 !important;
+        transition: background 0.3s ease !important;
+        border-left: 4px solid transparent !important;
+    }
+    
+    .sidebar nav a:hover,
+    .sidebar nav a.active {
+        background: rgba(255,255,255,0.15) !important;
+        border-left-color: #fff !important;
+    }
+    
+    /* Botón hamburguesa - posicionamiento (JS lo creará) */
+    .mobile-menu-toggle {
+        position: fixed !important;
+        top: 1rem !important;
+        left: 1rem !important;
+        z-index: 1002 !important;
+        background: #008037 !important;
+        color: white !important;
+        border: none !important;
+        padding: 0.7rem !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        font-size: 1.3rem !important;
+        width: 45px !important;
+        height: 45px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2) !important;
+    }
+    
+    /* Overlay */
+    .mobile-sidebar-overlay {
+        display: none;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: rgba(0,0,0,0.5) !important;
+        z-index: 1000 !important;
+        backdrop-filter: blur(3px) !important;
+    }
+    
+    .mobile-sidebar-overlay.active {
+        display: block !important;
+    }
+    
+    /* Ajustar contenido principal */
+    .main-content {
+        margin-left: 0 !important;
+        padding: 1rem !important;
+        width: 100% !important;
+        transition: margin-left 0.3s ease !important;
+    }
+    
+    /* Header responsivo */
+    .main-header {
+        flex-direction: column !important;
+        gap: 1rem !important;
+        text-align: center !important;
+        margin-bottom: 1.5rem !important;
+        margin-top: 4rem !important;
+    }
+    
+    .main-header h2 {
+        font-size: 1.5rem !important;
+    }
+    
+    /* Tablas scrollables */
+    .table-container {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    .usuarios-table,
+    .ambientes-table,
+    table {
+        min-width: 800px !important;
+        font-size: 0.9rem !important;
+    }
+    
+    /* Botones de acción compactos */
+    .action-links .action-text {
+        display: none !important;
+    }
+    
+    .action-links {
+        gap: 0.3rem !important;
+        flex-wrap: wrap !important;
+    }
+    
+    .btn-edit, .btn-disable, .btn-reactivate {
+        padding: 0.6rem !important;
+        border-radius: 8px !important;
+        min-width: 40px !important;
+        min-height: 40px !important;
+        justify-content: center !important;
+    }
+    
+    /* Botones de acción general */
+    .header-actions {
+        flex-direction: column !important;
+        gap: 0.8rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .btn-create, .btn-disabled {
+        width: 100% !important;
+        justify-content: center !important;
+        padding: 1rem !important;
+    }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .sidebar {
+        width: 200px !important;
+    }
+    
+    .main-content {
+        margin-left: 200px !important;
+        padding: 1.5rem !important;
+    }
+}
+
+/* Desktop - Todo normal */
+@media (min-width: 1024px) {
+    .sidebar {
+        position: fixed !important;
+        left: 0 !important;
+        width: 250px !important;
+    }
+    
+    .main-content {
+        margin-left: 250px !important;
+    }
+    
+    /* Ocultar elementos móviles en desktop */
+    .mobile-menu-toggle,
+    .mobile-sidebar-overlay {
+        display: none !important;
+    }
+}
+
+
+
+
+
+
+
+
+
+/* ===== CONVERSIÓN AUTOMÁTICA DE HEADER A SIDEBAR ===== */
+@media (max-width: 767px) {
+    /* Convertir header horizontal en sidebar móvil */
+    .top-header {
+        display: none !important; /* Ocultar header original */
+    }
+    
+    /* Crear sidebar a partir del header */
+    .header-converted-sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: -280px !important;
+        width: 280px !important;
+        height: 100vh !important;
+        z-index: 1001 !important;
+        transition: left 0.3s ease !important;
+        background: linear-gradient(180deg, #008037, #00a84f) !important;
+        padding: 1rem 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        box-shadow: 4px 0 12px rgba(0,0,0,0.2) !important;
+        overflow-y: auto !important;
+    }
+    
+    .header-converted-sidebar.active {
+        left: 0 !important;
+    }
+    
+    /* Logo en el sidebar convertido */
+    .header-converted-sidebar .converted-logo {
+        text-align: center !important;
+        color: #fff !important;
+        font-size: 1.4rem !important;
+        font-weight: 700 !important;
+        margin-bottom: 2rem !important;
+        padding: 0 1rem !important;
+        border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+        padding-bottom: 1rem !important;
+    }
+    
+    /* Navegación en sidebar convertido */
+    .header-converted-sidebar .converted-nav {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0 !important;
+    }
+    
+    .header-converted-sidebar .converted-nav a {
+        color: #fff !important;
+        text-decoration: none !important;
+        padding: 1rem 1.5rem !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.8rem !important;
+        font-weight: 500 !important;
+        transition: background 0.3s ease !important;
+        border-left: 4px solid transparent !important;
+    }
+    
+    .header-converted-sidebar .converted-nav a:hover,
+    .header-converted-sidebar .converted-nav a.active {
+        background: rgba(255,255,255,0.15) !important;
+        border-left-color: #fff !important;
+    }
+    
+    /* Ajustar contenido principal cuando hay sidebar convertido */
+    body.has-converted-sidebar .main-container {
+        margin-left: 0 !important;
+        padding: 1rem !important;
+        padding-top: 4rem !important; /* Espacio para botón hamburguesa */
+    }
+}

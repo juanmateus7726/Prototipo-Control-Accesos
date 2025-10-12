@@ -163,13 +163,14 @@ STATIC_URL = '/static/'
 
 # Carpetas donde buscar archivos estáticos durante el desarrollo
 STATICFILES_DIRS = [
-    BASE_DIR / "Centro_Minero_Access" / "static",
+    os.path.join(BASE_DIR, 'static'),
     BASE_DIR / "accesos" / "static",              
     BASE_DIR / "usuarios" / "static",
+    BASE_DIR / "ambientes" / "static",
 ]
 
 # (Opcional) Carpeta donde Django recopila los archivos cuando usas collectstatic
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

@@ -1,0 +1,335 @@
+/* responsive.css - Diseño Mobile First para todos los HTML */
+/* ===== VARIABLES Y RESET ===== */
+:root {
+    --primary-color: #008037;
+    --primary-dark: #006627;
+    --secondary-color: #00a84f;
+    --danger-color: #e74c3c;
+    --success-color: #28a745;
+    --text-color: #333;
+    --bg-color: #f6f8fa;
+    --card-bg: #ffffff;
+    --border-color: #dee2e6;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ===== BASE RESPONSIVE ===== */
+body {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    background: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== HEADER RESPONSIVE ===== */
+.top-header {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+    text-align: center;
+}
+
+.nav-bar {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8rem;
+}
+
+.nav-bar a {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.8rem;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+}
+
+.user-name {
+    display: none;
+}
+
+/* ===== CONTENEDOR PRINCIPAL ===== */
+.container {
+    width: 100%;
+    max-width: 100%;
+    padding: 1rem;
+    margin: 0 auto;
+    flex: 1;
+}
+
+/* ===== GRID RESPONSIVO ===== */
+.main-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* ===== CARDS RESPONSIVAS ===== */
+.card {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.card-title {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+/* ===== CÁMARA RESPONSIVA ===== */
+.camera-container {
+    min-height: 250px;
+    padding: 1rem;
+}
+
+.camera-view {
+    height: 200px;
+    max-width: 100%;
+}
+
+.camera-controls {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.8rem;
+}
+
+.camera-controls .btn {
+    width: 100%;
+    justify-content: center;
+}
+
+/* ===== BOTONES RESPONSIVOS ===== */
+.btn {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 1.2rem;
+}
+
+.method-selector-buttons {
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.method-selector-buttons .btn {
+    width: 100%;
+}
+
+/* ===== TABLAS RESPONSIVAS ===== */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive table {
+    min-width: 600px;
+    width: 100%;
+}
+
+/* ===== MODALES RESPONSIVOS ===== */
+.custom-modal-content,
+.modal-denegado-content {
+    width: 95%;
+    margin: 5% auto;
+    max-width: 95%;
+}
+
+.modal-denegado-body {
+    padding: 1.5rem;
+}
+
+.usuario-info-denegado,
+.usuario-reconocido {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+}
+
+/* ===== FOOTER RESPONSIVO ===== */
+.footer {
+    padding: 1.5rem 1rem;
+    text-align: center;
+}
+
+.footer-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+/* ===== MEDIA QUERIES ===== */
+
+/* Tablet (768px+) */
+@media (min-width: 768px) {
+    body {
+        font-size: 15px;
+    }
+    
+    .top-header {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left;
+        padding: 1rem 2rem;
+    }
+    
+    .nav-bar {
+        flex-wrap: nowrap;
+        gap: 1.5rem;
+    }
+    
+    .container {
+        padding: 1.5rem;
+        max-width: 1200px;
+    }
+    
+    .card {
+        padding: 2rem;
+    }
+    
+    .card-title {
+        font-size: 1.4rem;
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .camera-container {
+        min-height: 300px;
+    }
+    
+    .camera-view {
+        height: 250px;
+    }
+    
+    .camera-controls {
+        flex-direction: row;
+        width: auto;
+    }
+    
+    .camera-controls .btn {
+        width: auto;
+    }
+    
+    .method-selector-buttons {
+        flex-direction: row;
+    }
+    
+    .method-selector-buttons .btn {
+        width: 200px;
+    }
+    
+    .user-name {
+        display: inline;
+    }
+    
+    .main-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+    body {
+        font-size: 16px;
+    }
+    
+    .container {
+        padding: 2rem;
+        max-width: 1400px;
+    }
+    
+    .main-grid {
+        grid-template-columns: 1fr 400px;
+    }
+    
+    .camera-view {
+        height: 280px;
+        max-width: 500px;
+    }
+    
+    .usuario-info-denegado,
+    .usuario-reconocido {
+        flex-direction: row;
+        text-align: left;
+    }
+    
+    .custom-modal-content {
+        width: 450px;
+    }
+    
+    .modal-denegado-content {
+        width: 90%;
+        max-width: 600px;
+    }
+}
+
+/* Large Desktop (1200px+) */
+@media (min-width: 1200px) {
+    .main-grid {
+        grid-template-columns: 1fr 450px;
+    }
+    
+    .camera-view {
+        height: 320px;
+        max-width: 600px;
+    }
+}
+
+/* Landscape móvil */
+@media (max-height: 500px) and (orientation: landscape) {
+    .top-header {
+        padding: 0.5rem 1rem;
+    }
+    
+    .container {
+        padding: 0.5rem;
+    }
+    
+    .card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .camera-container {
+        min-height: 180px;
+        padding: 0.8rem;
+    }
+    
+    .camera-view {
+        height: 150px;
+    }
+}
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Inputs para móviles */
+@media (max-width: 768px) {
+    input, select, textarea {
+        font-size: 16px !important; /* Previene zoom en iOS */
+    }
+}
