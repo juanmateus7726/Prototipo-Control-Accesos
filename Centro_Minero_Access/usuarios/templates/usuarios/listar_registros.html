@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Registros - Sistema SENA</title>
     <link rel="stylesheet" href="{% static 'css/listar_registros.css' %}?v=1.1">
+    <link rel="stylesheet" href="{% static 'css/accesibilidad.css' %}">
     <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
 </head>
 <body>
@@ -70,6 +71,9 @@
             <a href="#">Soporte Técnico</a>
         </div>
     </div>
+    {% include 'accesibilidad_panel.html' %}
+
+<script src="{% static 'js/accesibilidad.js' %}?v=2.1"></script>
 <script src="{% static 'js/listar_registros.js' %}"></script> 
 </body>
 </html>

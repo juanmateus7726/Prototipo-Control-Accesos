@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
     <link rel="stylesheet" href="{% static 'css/accesibilidad.css' %}">
     <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive_global.css' %}?v=1.0">
 
     <style>
         /* === RESET === */
@@ -241,27 +242,10 @@
     </div>
 
     {% include 'cuentas/footer.html' %}
-
-    <!-- ============================= -->
-    <!-- 🔹 PANEL DE ACCESIBILIDAD -->
-    <!-- ============================= -->
-    <div id="accesibilidad-panel" class="position-fixed bottom-0 end-0 m-4 z-50">
-        <button id="btnAccesibilidad" class="btn btn-success rounded-circle p-3 shadow" title="Opciones de accesibilidad">♿</button>
-
-        <div id="menuAccesibilidad" class="card shadow-lg p-3" style="display:none; width: 280px;">
-            <h6 class="text-center mb-3">Accesibilidad</h6>
-            <button id="contraste" class="btn btn-outline-dark w-100 mb-2">🌗 Alto Contraste</button>
-            <button id="aumentarTexto" class="btn btn-outline-primary w-100 mb-2">🔠 Aumentar Texto</button>
-            <button id="disminuirTexto" class="btn btn-outline-secondary w-100 mb-2">🔡 Disminuir Texto</button>
-            <button id="lectura" class="btn btn-outline-success w-100 mb-2">🔊 Leer Página</button>
-            <button id="cursorGrande" class="btn btn-outline-warning w-100 mb-2">🖱️ Cursor Grande</button>
-            <button id="modoDislexia" class="btn btn-outline-info w-100 mb-2">📘 Fuente Dislexia</button>
-            <button id="resetAccesibilidad" class="btn btn-outline-secondary w-100 mb-2">♻️ Restablecer Todo</button>
-            <button id="cerrarAccesibilidad" class="btn btn-outline-danger w-100">Cerrar</button>
-        </div>
-    </div>
+    {% include 'accesibilidad_panel.html' %}
 
     <!-- JS -->
+    <script src="{% static 'js/responsive_global.js' %}?v=1.0"></script>
     <script src="{% static 'js/accesibilidad.js' %}?v=2.1"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 

@@ -1,0 +1,194 @@
+/* =============================
+   🎯 MÓDULO DE ACCESIBILIDAD SENA
+   ============================= */
+
+/* 🔹 Menú flotante */
+#menuAccesibilidad {
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    width: 260px;
+    display: none;
+    z-index: 9999;
+    transition: all 0.3s ease-in-out;
+    overflow: hidden;
+}
+
+#menuAccesibilidad h6 {
+    background: #006633;
+    color: #fff;
+    text-align: center;
+    padding: 12px 0;
+    font-size: 16px;
+    margin: 0;
+    border-bottom: 2px solid #004d26;
+}
+
+#menuAccesibilidad button {
+    width: 100%;
+    background: #f9f9f9;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    padding: 12px;
+    font-size: 15px;
+    cursor: pointer;
+    text-align: left;
+    transition: 0.25s;
+}
+
+#menuAccesibilidad button:hover {
+    background: #e8f5e9;
+}
+
+#cerrarAccesibilidad {
+    color: #c82333;
+    font-weight: bold;
+    background: #fff3f3;
+}
+
+#cerrarAccesibilidad:hover {
+    background: #ffc9c9;
+}
+
+/* 🔹 Botón flotante principal */
+#btnAccesibilidad {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background: #00923F;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 65px;
+    height: 65px;
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+    cursor: pointer;
+    z-index: 10000;
+    transition: all 0.3s ease-in-out;
+}
+
+#btnAccesibilidad:hover {
+    background: #00b94b;
+    transform: scale(1.1);
+}
+
+#btnAccesibilidad:focus {
+    outline: 3px solid #ffffff;
+    outline-offset: 4px;
+}
+
+/* =============================
+   🌓 MODOS DE ACCESIBILIDAD
+   ============================= */
+
+/* Alto Contraste */
+.high-contrast {
+    background: #000000 !important;
+    color: #ffffff !important;
+}
+
+.high-contrast * {
+    background: #000000 !important;
+    color: #ffffff !important;
+    border-color: #ffffff !important;
+}
+
+.high-contrast .btn {
+    border: 2px solid #ffffff !important;
+}
+
+.high-contrast .btn-success {
+    background: #00ff00 !important;
+    color: #000000 !important;
+}
+
+.high-contrast a {
+    color: #ffff00 !important;
+    text-decoration: underline !important;
+}
+
+/* Cursor Grande */
+.cursor-grande * {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="%23007bff" opacity="0.7" stroke="%23ffffff" stroke-width="2"/><circle cx="16" cy="16" r="2" fill="%23ffffff"/></svg>') 16 16, pointer !important;
+}
+
+.cursor-grande button,
+.cursor-grande a,
+.cursor-grande [onclick],
+.cursor-grande [role="button"] {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="18" r="16" fill="%2300ff00" opacity="0.8" stroke="%23ffffff" stroke-width="2"/><circle cx="18" cy="18" r="3" fill="%23ffffff"/></svg>') 18 18, pointer !important;
+}
+
+/* Modo Dislexia */
+.modo-dislexia {
+    font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', Arial, sans-serif !important;
+    letter-spacing: 0.08em !important;
+    line-height: 1.8 !important;
+}
+
+.modo-dislexia * {
+    font-family: inherit !important;
+    letter-spacing: inherit !important;
+    line-height: inherit !important;
+}
+
+/* =============================
+   🎨 ANIMACIONES Y UTILIDADES
+   ============================= */
+
+@keyframes popIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#menuAccesibilidad.show {
+    display: block;
+    animation: slideUp 0.3s ease-out;
+}
+
+button:focus, a:focus {
+    outline: 3px solid #00923F;
+    outline-offset: 2px;
+}
+
+body {
+    transition: font-size 0.3s ease;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+}
+
+/* =============================
+   🚫 ELIMINAR MODAL DE LECTURA
+   ============================= */
+
+#control-lectura {
+    display: none !important;
+}
+
+.position-fixed.top-0.start-50.translate-middle-x.mt-3.z-9999 {
+    display: none !important;
+}
+
+.card.shadow-lg.border-0[style*="linear-gradient"] {
+    display: none !important;
+}
+
+[class*="lectura-control"],
+[class*="reading-control"] {
+    display: none !important;
+}

@@ -549,3 +549,32 @@ body.dark-mode .close-btn {
 body.dark-mode .close-btn:hover {
     color: #eaeaea;
 }
+
+
+
+
+
+
+
+
+.btn-sena {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 1rem; /* Más pequeño */
+    background: linear-gradient(90deg, #008037, #00a84f);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.85rem;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-sena:hover {
+    background: linear-gradient(90deg, #006b2e, #008037);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.25);
+}

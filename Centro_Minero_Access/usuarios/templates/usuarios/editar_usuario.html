@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Editar Usuario - Sistema SENA</title>
     <link rel="icon" href="https://www.sena.edu.co/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/accesibilidad.css' %}">
     <link rel="stylesheet" href="{% static 'css/editar_usuario.css' %}?v=1.1">
     <link rel="stylesheet" href="{% static 'css/responsive_global.css' %}?v=1.0">
     <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
@@ -103,6 +104,10 @@
             <a href="#" id="linkSupport">Soporte Técnico</a>
         </div>
     </div>
+    {% include 'accesibilidad_panel.html' %}
+
+
+    <script src="{% static 'js/accesibilidad.js' %}?v=2.1"></script>
 <script src="{% static 'js/editar_usuario.js' %}"></script>
 <script src="{% static 'js/responsive_global.js' %}?v=1.0"></script>
 </body>

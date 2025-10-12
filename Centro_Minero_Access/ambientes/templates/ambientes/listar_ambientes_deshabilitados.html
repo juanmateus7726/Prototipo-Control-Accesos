@@ -6,10 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="pageTitle">🚫 Ambientes Deshabilitados - Sistema SENA</title>
     <link rel="icon" href="https://www.sena.edu.co/favicon.ico" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- CSS -->
     <link rel="stylesheet" href="{% static 'css/listar_ambiente.css' %}?v=3.1">
     <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive_global.css' %}?v=1.0">
+    <link rel="stylesheet" href="{% static 'css/accesibilidad.css' %}">
 
     <!-- Fuente y Bootstrap Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -38,13 +41,13 @@
     <!-- ===== CONTENIDO PRINCIPAL ===== -->
     <main class="main-container">
         <div class="page-header">
-            <h2 class="page-title" id="pageTitleText">🚫 Ambientes Deshabilitados</h2>
-            <div class="header-actions">
-                <a href="{% url 'ambientes:listar_ambientes' %}" class="btn-create" id="createBtn">
-                    <i class="bi bi-eye-fill"></i> Ver Activos
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="page-title m-0" id="pageTitleText">🚫 Ambientes Deshabilitados</h2>
+                <a href="{% url 'ambientes:listar_ambientes' %}" class="btn-sena" id="createBtn">
+                    <i class="bi bi-eye-fill me-2"></i> Ver Activos
                 </a>
             </div>
-        </div>
+    </div>
 
         <!-- ===== TABLA ===== -->
         <div class="table-container">
@@ -129,7 +132,11 @@
         <div id="configMessage" class="config-message"></div>
     </div>
 
+    {% include 'accesibilidad_panel.html' %}
+
     <!-- JS -->
     <script src="{% static 'js/listar_ambientes.js' %}?v=3.0"></script>
+    <script src="{% static 'js/accesibilidad.js' %}?v=2.1"></script>
+    <script src="{% static 'js/responsive_global.js' %}?v=1.0"></script>
 </body>
 </html>

@@ -7,6 +7,7 @@
     <title>Registrar Rostro - Sistema SENA</title>
     <link rel="stylesheet" href="{% static 'css/registrar_rostro.css' %}">
     <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+    <link rel="stylesheet" href="{% static 'css/accesibilidad.css' %}">
 </head>
 <body>
     <div class="container">
@@ -61,7 +62,9 @@
             <a href="{% url 'usuarios:listar_usuarios' %}" class="back-link">← Volver a la lista de usuarios (Usuario quedara inactivo si no registra su rostro)</a>
         </div>
     </div>
+    {% include 'accesibilidad_panel.html' %}
 
+    <script src="{% static 'js/accesibilidad.js' %}?v=2.1"></script>
     <script>
         const procesarRostroUrl = "{% url 'usuarios:procesar_rostro' %}";
         const listarUsuariosUrl = "{% url 'usuarios:listar_usuarios' %}";
