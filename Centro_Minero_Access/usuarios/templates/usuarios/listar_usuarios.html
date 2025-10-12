@@ -122,6 +122,128 @@
             transform: translateY(-2px);
         }
 
+        /* === MÓDULO DE FILTROS Y BÚSQUEDA === */
+        .filters-module {
+            background: #fff;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .filters-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .filters-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #008037;
+            margin: 0;
+        }
+
+        .filters-toggle {
+            background: none;
+            border: none;
+            color: #008037;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filters-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .filter-input, .filter-select {
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: #008037;
+            box-shadow: 0 0 0 2px rgba(0, 128, 55, 0.1);
+        }
+
+        .filters-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .btn-filter {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-apply {
+            background: linear-gradient(90deg, #008037, #00a84f);
+            color: white;
+        }
+
+        .btn-apply:hover {
+            background: linear-gradient(90deg, #006629, #008037);
+            transform: translateY(-1px);
+        }
+
+        .btn-clear {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-clear:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        .search-box {
+            position: relative;
+            grid-column: 1 / -1;
+        }
+
+        .search-input {
+            padding-left: 2.5rem;
+            width: 100%;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+
         /* === TABLA DE USUARIOS === */
         .table-container {
             background: #fff;
@@ -352,6 +474,21 @@
                 width: calc(100% - 250px);
             }
         }
+
+        /* Responsive para filtros */
+        @media (max-width: 768px) {
+            .filters-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters-actions {
+                flex-direction: column;
+            }
+            
+            .btn-filter {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -406,9 +543,75 @@
         </div>
         {% endif %}
 
+        <!-- 🆕 MÓDULO DE FILTROS Y BÚSQUEDA -->
+        <div class="filters-module">
+            <div class="filters-header">
+                <h3 class="filters-title">Filtros y Búsqueda</h3>
+                <button class="filters-toggle" id="filtersToggle">
+                    <i class="fas fa-filter"></i> Mostrar/Ocultar Filtros
+                </button>
+            </div>
+            
+            <div class="filters-content" id="filtersContent">
+                <!-- Búsqueda general -->
+                <div class="filter-group search-box">
+                    <label class="filter-label">Buscar</label>
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" 
+                           class="filter-input search-input" 
+                           id="searchInput" 
+                           placeholder="Buscar por nombre, documento, email...">
+                </div>
+
+                <!-- Filtro por estado -->
+                <div class="filter-group">
+                    <label class="filter-label">Estado</label>
+                    <select class="filter-select" id="filterEstado">
+                        <option value="">Todos los estados</option>
+                        <option value="activo">Activo</option>
+                        <option value="inactivo">Inactivo</option>
+                    </select>
+                </div>
+
+                <!-- Filtro por tipo de usuario -->
+                <div class="filter-group">
+                    <label class="filter-label">Tipo de Usuario</label>
+                    <select class="filter-select" id="filterTipo">
+                        <option value="">Todos los tipos</option>
+                        <option value="instructor">Instructor</option>
+                        <option value="aprendiz">Aprendiz</option>
+                        <option value="administrativo">Administrativo</option>
+                        <option value="visitante">Visitante</option>
+                    </select>
+                </div>
+
+                <!-- Filtro por tipo de identificación -->
+                <div class="filter-group">
+                    <label class="filter-label">Tipo de Identificación</label>
+                    <select class="filter-select" id="filterTipoIdentificacion">
+                        <option value="">Todos</option>
+                        <option value="CC">Cédula de Ciudadanía</option>
+                        <option value="CE">Cédula de Extranjería</option>
+                        <option value="TI">Tarjeta de Identidad</option>
+                        <option value="PA">Pasaporte</option>
+                    </select>
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="filters-actions">
+                    <button class="btn-filter btn-clear" id="clearFilters">
+                        <i class="fas fa-times"></i> Limpiar Filtros
+                    </button>
+                    <button class="btn-filter btn-apply" id="applyFilters">
+                        <i class="fas fa-check"></i> Aplicar Filtros
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- TABLA DE USUARIOS -->
         <div class="table-container">
-            <table class="usuarios-table">
+            <table class="usuarios-table" id="usuariosTable">
                 <thead>
                     <tr>
                         <th>Nombre</th>
@@ -419,9 +622,14 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="usuariosTableBody">
                     {% for usuario in usuarios %}
-                    <tr class="{% if not usuario.activo %}inactivo{% endif %}">
+                    <tr class="{% if not usuario.activo %}inactivo{% endif %}" 
+                        data-nombre="{{ usuario.nombre|lower }}"
+                        data-tipo="{{ usuario.tipo|lower }}"
+                        data-estado="{% if usuario.activo %}activo{% else %}inactivo{% endif %}"
+                        data-tipo-identificacion="{{ usuario.tipo_identificacion|lower }}"
+                        data-documento="{{ usuario.numero_identificacion|lower }}">
                         <td>{{ usuario.nombre }}</td>
                         <td>{{ usuario.get_tipo_identificacion_display }}</td>
                         <td>{{ usuario.numero_identificacion }}</td>
@@ -502,9 +710,90 @@
     <script src="{% static 'js/listar_usuarios.js' %}?v=6.0"></script>
     <script src="{% static 'js/accesibilidad.js' %}?v=2.1"></script>
 
-    <!-- 🆕 JS PARA MENÚ MÓVIL -->
+    <!-- 🆕 JS PARA FILTROS Y BÚSQUEDA -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const filtersToggle = document.getElementById('filtersToggle');
+        const filtersContent = document.getElementById('filtersContent');
+        const searchInput = document.getElementById('searchInput');
+        const filterEstado = document.getElementById('filterEstado');
+        const filterTipo = document.getElementById('filterTipo');
+        const filterTipoIdentificacion = document.getElementById('filterTipoIdentificacion');
+        const applyFilters = document.getElementById('applyFilters');
+        const clearFilters = document.getElementById('clearFilters');
+        const usuariosTableBody = document.getElementById('usuariosTableBody');
+        const usuariosRows = usuariosTableBody.querySelectorAll('tr');
+
+        // Toggle de filtros
+        filtersToggle.addEventListener('click', function() {
+            filtersContent.style.display = filtersContent.style.display === 'none' ? 'grid' : 'none';
+            filtersToggle.innerHTML = filtersContent.style.display === 'none' 
+                ? '<i class="fas fa-filter"></i> Mostrar Filtros' 
+                : '<i class="fas fa-filter"></i> Ocultar Filtros';
+        });
+
+        // Función para aplicar filtros
+        function aplicarFiltros() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const estadoValue = filterEstado.value;
+            const tipoValue = filterTipo.value;
+            const tipoIdentificacionValue = filterTipoIdentificacion.value;
+
+            let visibleRows = 0;
+
+            usuariosRows.forEach(row => {
+                if (row.classList.contains('empty-state')) return;
+
+                const nombre = row.getAttribute('data-nombre') || '';
+                const documento = row.getAttribute('data-documento') || '';
+                const estado = row.getAttribute('data-estado') || '';
+                const tipo = row.getAttribute('data-tipo') || '';
+                const tipoIdentificacion = row.getAttribute('data-tipo-identificacion') || '';
+
+                const matchSearch = !searchTerm || 
+                    nombre.includes(searchTerm) || 
+                    documento.includes(searchTerm);
+                
+                const matchEstado = !estadoValue || estado === estadoValue;
+                const matchTipo = !tipoValue || tipo === tipoValue;
+                const matchTipoIdentificacion = !tipoIdentificacionValue || 
+                    tipoIdentificacion === tipoIdentificacionValue;
+
+                if (matchSearch && matchEstado && matchTipo && matchTipoIdentificacion) {
+                    row.style.display = '';
+                    visibleRows++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Mostrar mensaje si no hay resultados
+            const emptyState = usuariosTableBody.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.style.display = visibleRows === 0 ? '' : 'none';
+            }
+        }
+
+        // Event listeners para filtros
+        searchInput.addEventListener('input', aplicarFiltros);
+        filterEstado.addEventListener('change', aplicarFiltros);
+        filterTipo.addEventListener('change', aplicarFiltros);
+        filterTipoIdentificacion.addEventListener('change', aplicarFiltros);
+        applyFilters.addEventListener('click', aplicarFiltros);
+
+        // Limpiar filtros
+        clearFilters.addEventListener('click', function() {
+            searchInput.value = '';
+            filterEstado.value = '';
+            filterTipo.value = '';
+            filterTipoIdentificacion.value = '';
+            aplicarFiltros();
+        });
+
+        // Aplicar filtros al cargar la página
+        aplicarFiltros();
+
+        // 🆕 JS PARA MENÚ MÓVIL
         const menuToggle = document.getElementById('menuToggle');
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.getElementById('sidebarOverlay');
@@ -533,7 +822,6 @@
         }
     });
     </script>
-
 
 </body>
 </html>

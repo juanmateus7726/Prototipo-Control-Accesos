@@ -122,6 +122,128 @@
         transform: translateY(-2px);
     }
 
+    /* === MÓDULO DE FILTROS Y BÚSQUEDA === */
+    .filters-module {
+        background: #fff;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .filters-header {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .filters-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #008037;
+        margin: 0;
+    }
+
+    .filters-toggle {
+        background: none;
+        border: none;
+        color: #008037;
+        cursor: pointer;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .filters-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .filter-label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: #555;
+        font-size: 0.9rem;
+    }
+
+    .filter-input, .filter-select {
+        padding: 0.6rem 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        transition: border-color 0.3s ease;
+    }
+
+    .filter-input:focus, .filter-select:focus {
+        outline: none;
+        border-color: #008037;
+        box-shadow: 0 0 0 2px rgba(0, 128, 55, 0.1);
+    }
+
+    .filters-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+    }
+
+    .btn-filter {
+        padding: 0.6rem 1.2rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-apply {
+        background: linear-gradient(90deg, #008037, #00a84f);
+        color: white;
+    }
+
+    .btn-apply:hover {
+        background: linear-gradient(90deg, #006629, #008037);
+        transform: translateY(-1px);
+    }
+
+    .btn-clear {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-clear:hover {
+        background: #5a6268;
+        transform: translateY(-1px);
+    }
+
+    .search-box {
+        position: relative;
+        grid-column: 1 / -1;
+    }
+
+    .search-input {
+        padding-left: 2.5rem;
+        width: 100%;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 0.8rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+    }
+
     /* === TABLA DE AMBIENTES === */
     .table-container {
         background: #fff;
@@ -284,7 +406,6 @@
         display: inline-block;
         padding: 6px 16px;
         margin-bottom: 20px;
-        font-weight: 600;
     }
     .modal-body {
         font-size: 17px;
@@ -394,6 +515,19 @@
         .btn-danger {
             width: 100%;
         }
+        
+        /* Responsive para filtros */
+        .filters-content {
+            grid-template-columns: 1fr;
+        }
+        
+        .filters-actions {
+            flex-direction: column;
+        }
+        
+        .btn-filter {
+            width: 100%;
+        }
     }
 </style>
 
@@ -441,9 +575,71 @@
         </div>
         {% endif %}
 
+        <!-- 🆕 MÓDULO DE FILTROS Y BÚSQUEDA -->
+        <div class="filters-module">
+            <div class="filters-header">
+                <h3 class="filters-title">Filtros y Búsqueda</h3>
+                <button class="filters-toggle" id="filtersToggle">
+                    <i class="fas fa-filter"></i> Mostrar/Ocultar Filtros
+                </button>
+            </div>
+            
+            <div class="filters-content" id="filtersContent">
+                <!-- Búsqueda general -->
+                <div class="filter-group search-box">
+                    <label class="filter-label">Buscar</label>
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" 
+                           class="filter-input search-input" 
+                           id="searchInput" 
+                           placeholder="Buscar por nombre, código...">
+                </div>
+
+                <!-- Filtro por estado -->
+                <div class="filter-group">
+                    <label class="filter-label">Estado</label>
+                    <select class="filter-select" id="filterEstado">
+                        <option value="">Todos los estados</option>
+                        <option value="disponible">Disponible</option>
+                        <option value="ocupado">Ocupado</option>
+                        <option value="mantenimiento">Mantenimiento</option>
+                    </select>
+                </div>
+
+                <!-- Filtro por capacidad -->
+                <div class="filter-group">
+                    <label class="filter-label">Capacidad mínima</label>
+                    <input type="number" 
+                           class="filter-input" 
+                           id="filterCapacidad" 
+                           placeholder="Ej: 10"
+                           min="1">
+                </div>
+
+                <!-- Filtro por código -->
+                <div class="filter-group">
+                    <label class="filter-label">Código</label>
+                    <input type="text" 
+                           class="filter-input" 
+                           id="filterCodigo" 
+                           placeholder="Buscar por código">
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="filters-actions">
+                    <button class="btn-filter btn-clear" id="clearFilters">
+                        <i class="fas fa-times"></i> Limpiar Filtros
+                    </button>
+                    <button class="btn-filter btn-apply" id="applyFilters">
+                        <i class="fas fa-check"></i> Aplicar Filtros
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- TABLA DE AMBIENTES -->
         <div class="table-container">
-            <table class="ambientes-table">
+            <table class="ambientes-table" id="ambientesTable">
                 <thead>
                     <tr>
                         <th>Nombre</th>
@@ -453,9 +649,12 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="ambientesTableBody">
                     {% for ambiente in ambientes %}
-                    <tr>
+                    <tr data-nombre="{{ ambiente.nombre|lower }}"
+                        data-codigo="{{ ambiente.codigo|lower }}"
+                        data-estado="{{ ambiente.estado|lower }}"
+                        data-capacidad="{{ ambiente.capacidad }}">
                         <td>{{ ambiente.nombre }}</td>
                         <td>{{ ambiente.codigo }}</td>
                         <td>
@@ -532,89 +731,172 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'js/accesibilidad.js' %}?v=2.1"></script>
     <script src="{% static 'js/listar_ambientes.js' %}?v=3.2"></script>
-<script>
-(function(){
-document.addEventListener('DOMContentLoaded', function(){
-    console.clear();
-    console.log('[debug] iniciar listar_ambientes debugging');
 
-    const modal = document.getElementById('modal-deshabilitar');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const cancelBtn = document.getElementById('modalCancelBtn');
-    const ambienteNombreSpan = document.getElementById('ambiente-nombre');
-    const formDeshabilitar = document.getElementById('form-deshabilitar');
-    const urlPatternsEl = document.getElementById('urlPatterns');
+    <!-- 🆕 JS PARA FILTROS Y BÚSQUEDA -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filtersToggle = document.getElementById('filtersToggle');
+        const filtersContent = document.getElementById('filtersContent');
+        const searchInput = document.getElementById('searchInput');
+        const filterEstado = document.getElementById('filterEstado');
+        const filterCapacidad = document.getElementById('filterCapacidad');
+        const filterCodigo = document.getElementById('filterCodigo');
+        const applyFilters = document.getElementById('applyFilters');
+        const clearFilters = document.getElementById('clearFilters');
+        const ambientesTableBody = document.getElementById('ambientesTableBody');
+        const ambientesRows = ambientesTableBody.querySelectorAll('tr');
 
-    if (!modal) { console.error('[debug] NO se encontró #modal-deshabilitar'); return; }
-    if (!formDeshabilitar) { console.error('[debug] NO se encontró #form-deshabilitar'); /* no return, puede fallar al submit */ }
-
-    const urlTemplate = urlPatternsEl ? urlPatternsEl.dataset.deshabilitarUrl : null;
-    console.log('[debug] urlTemplate:', urlTemplate);
-
-    const disableButtons = document.querySelectorAll('.btn-disable');
-    console.log('[debug] botones .btn-disable encontrados: ', disableButtons.length);
-
-    if (disableButtons.length === 0) {
-        console.warn('[debug] No hay botones .btn-disable. Verifica la plantilla: la clase debe ser EXACTA ".btn-disable" y el template debe renderizar filas.');
-    }
-
-    function openModal(nombre, id) {
-        console.log('[debug] openModal -> id:', id, 'nombre:', nombre);
-        if (ambienteNombreSpan) ambienteNombreSpan.textContent = nombre || 'este ambiente';
-
-    let action = '';
-    if (urlTemplate) {
-        // reemplaza "0" justo antes del final opcional "/"
-        action = urlTemplate.replace(/0(?=\/?$)/, id);
-    } else {
-        action = '/ambientes/deshabilitar/' + id + '/';
-    }
-        if (formDeshabilitar) {
-        formDeshabilitar.action = action;
-        console.log('[debug] form action seteada a:', action);
-    } else {
-        console.warn('[debug] formDeshabilitar no existe; no se setea action');
-    }
-
-        modal.classList.add('show');
-        modal.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeModal() {
-        modal.classList.remove('show');
-        modal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-    }
-
-    disableButtons.forEach(btn => {
-        btn.addEventListener('click', function(e){
-        e.preventDefault();
-        const id = this.getAttribute('data-id') || this.dataset.id;
-        const nombre = this.getAttribute('data-nombre') || this.dataset.nombre ||
-                    (this.closest('tr') && this.closest('tr').querySelector('td') ? this.closest('tr').querySelector('td').textContent.trim() : '');
-        console.log('[debug] click detectado -> id:', id, 'nombre:', nombre);
-        if (!id) {
-        console.error('[debug] El botón no tiene data-id. Asegúrate data-id="{{ ambiente.pk }}"');
-        return;
-        }
-        openModal(nombre, id);
+        // Toggle de filtros
+        filtersToggle.addEventListener('click', function() {
+            filtersContent.style.display = filtersContent.style.display === 'none' ? 'grid' : 'none';
+            filtersToggle.innerHTML = filtersContent.style.display === 'none' 
+                ? '<i class="fas fa-filter"></i> Mostrar Filtros' 
+                : '<i class="fas fa-filter"></i> Ocultar Filtros';
         });
+
+        // Función para aplicar filtros
+        function aplicarFiltros() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const estadoValue = filterEstado.value;
+            const capacidadValue = parseInt(filterCapacidad.value) || 0;
+            const codigoValue = filterCodigo.value.toLowerCase();
+
+            let visibleRows = 0;
+
+            ambientesRows.forEach(row => {
+                if (row.classList.contains('empty-state')) return;
+
+                const nombre = row.getAttribute('data-nombre') || '';
+                const codigo = row.getAttribute('data-codigo') || '';
+                const estado = row.getAttribute('data-estado') || '';
+                const capacidad = parseInt(row.getAttribute('data-capacidad')) || 0;
+
+                const matchSearch = !searchTerm || 
+                    nombre.includes(searchTerm) || 
+                    codigo.includes(searchTerm);
+                
+                const matchEstado = !estadoValue || estado === estadoValue;
+                const matchCapacidad = !capacidadValue || capacidad >= capacidadValue;
+                const matchCodigo = !codigoValue || codigo.includes(codigoValue);
+
+                if (matchSearch && matchEstado && matchCapacidad && matchCodigo) {
+                    row.style.display = '';
+                    visibleRows++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Mostrar mensaje si no hay resultados
+            const emptyState = ambientesTableBody.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.style.display = visibleRows === 0 ? '' : 'none';
+            }
+        }
+
+        // Event listeners para filtros
+        searchInput.addEventListener('input', aplicarFiltros);
+        filterEstado.addEventListener('change', aplicarFiltros);
+        filterCapacidad.addEventListener('input', aplicarFiltros);
+        filterCodigo.addEventListener('input', aplicarFiltros);
+        applyFilters.addEventListener('click', aplicarFiltros);
+
+        // Limpiar filtros
+        clearFilters.addEventListener('click', function() {
+            searchInput.value = '';
+            filterEstado.value = '';
+            filterCapacidad.value = '';
+            filterCodigo.value = '';
+            aplicarFiltros();
+        });
+
+        // Aplicar filtros al cargar la página
+        aplicarFiltros();
     });
 
-    if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
-    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-    modal.addEventListener('click', function(e){ if (e.target === modal) closeModal(); });
-    document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && modal.classList.contains('show')) closeModal(); });
+    // Tu código existente para el modal
+    (function(){
+        document.addEventListener('DOMContentLoaded', function(){
+            console.clear();
+            console.log('[debug] iniciar listar_ambientes debugging');
 
-    // marcar que el script corrió
-    window.__listarAmbientes_debug = true;
-    console.log('[debug] listar_ambientes script cargado OK');
-    });
-})();
-</script>
+            const modal = document.getElementById('modal-deshabilitar');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const cancelBtn = document.getElementById('modalCancelBtn');
+            const ambienteNombreSpan = document.getElementById('ambiente-nombre');
+            const formDeshabilitar = document.getElementById('form-deshabilitar');
+            const urlPatternsEl = document.getElementById('urlPatterns');
 
-<script src="{% static 'js/responsive_global.js' %}?v=1.0"></script>
+            if (!modal) { console.error('[debug] NO se encontró #modal-deshabilitar'); return; }
+            if (!formDeshabilitar) { console.error('[debug] NO se encontró #form-deshabilitar'); /* no return, puede fallar al submit */ }
+
+            const urlTemplate = urlPatternsEl ? urlPatternsEl.dataset.deshabilitarUrl : null;
+            console.log('[debug] urlTemplate:', urlTemplate);
+
+            const disableButtons = document.querySelectorAll('.btn-disable');
+            console.log('[debug] botones .btn-disable encontrados: ', disableButtons.length);
+
+            if (disableButtons.length === 0) {
+                console.warn('[debug] No hay botones .btn-disable. Verifica la plantilla: la clase debe ser EXACTA ".btn-disable" y el template debe renderizar filas.');
+            }
+
+            function openModal(nombre, id) {
+                console.log('[debug] openModal -> id:', id, 'nombre:', nombre);
+                if (ambienteNombreSpan) ambienteNombreSpan.textContent = nombre || 'este ambiente';
+
+            let action = '';
+            if (urlTemplate) {
+                // reemplaza "0" justo antes del final opcional "/"
+                action = urlTemplate.replace(/0(?=\/?$)/, id);
+            } else {
+                action = '/ambientes/deshabilitar/' + id + '/';
+            }
+                if (formDeshabilitar) {
+                formDeshabilitar.action = action;
+                console.log('[debug] form action seteada a:', action);
+            } else {
+                console.warn('[debug] formDeshabilitar no existe; no se setea action');
+            }
+
+                modal.classList.add('show');
+                modal.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeModal() {
+                modal.classList.remove('show');
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            }
+
+            disableButtons.forEach(btn => {
+                btn.addEventListener('click', function(e){
+                e.preventDefault();
+                const id = this.getAttribute('data-id') || this.dataset.id;
+                const nombre = this.getAttribute('data-nombre') || this.dataset.nombre ||
+                            (this.closest('tr') && this.closest('tr').querySelector('td') ? this.closest('tr').querySelector('td').textContent.trim() : '');
+                console.log('[debug] click detectado -> id:', id, 'nombre:', nombre);
+                if (!id) {
+                console.error('[debug] El botón no tiene data-id. Asegúrate data-id="{{ ambiente.pk }}"');
+                return;
+                }
+                openModal(nombre, id);
+                });
+            });
+
+            if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+            if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', function(e){ if (e.target === modal) closeModal(); });
+            document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && modal.classList.contains('show')) closeModal(); });
+
+            // marcar que el script corrió
+            window.__listarAmbientes_debug = true;
+            console.log('[debug] listar_ambientes script cargado OK');
+        });
+    })();
+    </script>
+
+    <script src="{% static 'js/responsive_global.js' %}?v=1.0"></script>
 
 </body>
 </html>
