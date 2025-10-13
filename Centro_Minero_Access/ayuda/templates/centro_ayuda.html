@@ -1,0 +1,195 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Ayuda - SENA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/control.css' %}">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .help-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        
+        .help-header {
+            background: linear-gradient(135deg, #008037, #00a84f);
+            color: white;
+            padding: 40px;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .help-header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .help-content {
+            background: white;
+            padding: 40px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .resource-card {
+            background: #f8f9fa;
+            border-left: 5px solid #008037;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .resource-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(0, 128, 55, 0.2);
+        }
+        
+        .resource-card i {
+            font-size: 2.5rem;
+            color: #008037;
+            margin-bottom: 15px;
+        }
+        
+        .resource-card h3 {
+            color: #005DA8;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .btn-download {
+            background: linear-gradient(135deg, #008037, #00a84f);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+        }
+        
+        .btn-download:hover {
+            background: linear-gradient(135deg, #006629, #008037);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 128, 55, 0.3);
+            color: white;
+        }
+        
+        .btn-back {
+            background: #6c757d;
+            color: white;
+            padding: 10px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-back:hover {
+            background: #5a6268;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .download-section {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 30px 0;
+            border: 3px solid #008037;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="help-container">
+        <div class="help-header">
+            <i class="fas fa-question-circle" style="font-size: 4rem; margin-bottom: 20px;"></i>
+            <h1>Centro de Ayuda</h1>
+            <p style="font-size: 1.1rem;">Sistema de Control de Acceso - Centro Minero SENA</p>
+        </div>
+        
+        <div class="help-content">
+            <div class="text-end mb-3">
+                <a href="{% url 'cuentas:dashboard' %}" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Volver al Dashboard
+                </a>
+            </div>
+            
+            <div class="download-section">
+                <i class="fas fa-file-pdf" style="font-size: 5rem; color: #d32f2f; margin-bottom: 20px;"></i>
+                <h2 style="color: #008037; margin-bottom: 20px;">Manual de Usuario</h2>
+                <p style="font-size: 1.1rem; color: #555; margin-bottom: 30px;">
+                    Descarga la guía completa del sistema con instrucciones detalladas sobre todas las funcionalidades.
+                </p>
+                <a href="{% url 'ayuda:manual_usuario' %}" class="btn-download" target="_blank">
+                    <i class="fas fa-download"></i> Descargar Manual PDF
+                </a>
+            </div>
+            
+            <h2 style="color: #008037; margin: 40px 0 30px 0; text-align: center;">
+                <i class="fas fa-info-circle"></i> Recursos Adicionales
+            </h2>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="resource-card">
+                        <i class="fas fa-book"></i>
+                        <h3>Guía Rápida</h3>
+                        <p>Aprende lo básico del sistema en 5 minutos. Incluye los pasos esenciales para comenzar a usar el control de acceso.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="resource-card">
+                        <i class="fas fa-video"></i>
+                        <h3>Video Tutoriales</h3>
+                        <p>Próximamente: Videos demostrativos sobre cómo usar el reconocimiento facial y otras funcionalidades.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="resource-card">
+                        <i class="fas fa-headset"></i>
+                        <h3>Soporte Técnico</h3>
+                        <p>¿Tienes problemas? Contacta a nuestro equipo de soporte: <br>
+                        <strong>soporte@centrominero.edu.co</strong><br>
+                        <strong>Tel: (+57) 300 123 4567</strong></p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="resource-card">
+                        <i class="fas fa-question"></i>
+                        <h3>Preguntas Frecuentes</h3>
+                        <p>Encuentra respuestas a las dudas más comunes sobre el sistema de control de acceso en el manual de usuario.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-info mt-4" role="alert">
+                <i class="fas fa-lightbulb"></i> <strong>Consejo:</strong> 
+                Te recomendamos descargar el manual PDF para tenerlo disponible offline en tu dispositivo.
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -32,6 +32,7 @@ urlpatterns = [
     path('cuentas/', include('cuentas.urls')),
     path('reportes/', include(('reportes.urls', 'reportes'), namespace='reportes')),
     path('backup/', include(('backup.urls', 'backup'), namespace='backup')),
+    path('ayuda/', include(('ayuda.urls', 'ayuda'), namespace='ayuda')), # URLs de ayuda
     ]
 
 if settings.DEBUG:

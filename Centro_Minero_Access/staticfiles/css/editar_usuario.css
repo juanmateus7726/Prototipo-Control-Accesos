@@ -459,7 +459,7 @@
 
         /* ===== FOOTER ===== */
         .footer {
-            background: linear-gradient(135deg, var(--sena-blue), var(--sena-blue-dark));
+            background:#168A31;
             color: white;
             text-align: center;
             padding: 25px 20px;
@@ -539,3 +539,11 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+
+
+
+
+
+
+

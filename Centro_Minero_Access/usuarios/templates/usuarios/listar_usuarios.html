@@ -5,28 +5,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Usuarios - Sistema de Control SENA</title>
-
     <!-- BOOTSTRAP & FONTAWESOME -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
     <!-- CSS PERSONALIZADO -->
     <link rel="stylesheet" href="{% static 'css/control.css' %}?v=2.0">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive_global.css' %}?v=1.0">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
     <link rel="stylesheet" href="{% static 'css/accesibilidad.css' %}">
-    <link rel="stylesheet" href="{% static 'css/responsive_dashboard.css' %}?v=1.0">
-
     <style>
         /* === ESTILOS BASE DEL DASHBOARD === */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: "Segoe UI", Tahoma, sans-serif;
             background: #f5f7fa;
             color: #333;
+            display: flex;
             min-height: 100vh;
         }
 
-        /* === SIDEBAR - SOLO ESTILOS VISUALES === */
+        /* === SIDEBAR === */
         .sidebar {
             width: 250px;
             background: linear-gradient(180deg, #008037, #00a84f);
@@ -34,16 +38,20 @@
             display: flex;
             flex-direction: column;
             box-shadow: 4px 0 12px rgba(0,0,0,0.2);
-            /* ⚠️ NO position fixed aquí - Lo maneja el CSS responsivo */
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
         }
+
         .sidebar .brand {
             text-align: center;
             color: #fff;
             font-size: 1.6rem;
             font-weight: 700;
             margin-bottom: 2rem;
-            padding: 0 1rem;
         }
+
         .sidebar nav a {
             color: #fff;
             text-decoration: none;
@@ -53,21 +61,20 @@
             gap: 0.8rem;
             font-weight: 500;
             transition: background 0.3s ease;
-            border-left: 4px solid transparent;
         }
+
         .sidebar nav a:hover,
         .sidebar nav a.active {
             background: rgba(255,255,255,0.15);
-            border-left-color: #fff;
         }
 
         /* === MAIN CONTENT === */
         .main-content {
+            margin-left: 250px;
             padding: 2rem;
             flex: 1;
             display: flex;
             flex-direction: column;
-            width: 100%;
         }
 
         /* === HEADER === */
@@ -77,11 +84,13 @@
             align-items: center;
             margin-bottom: 2rem;
         }
+
         .main-header h2 {
             color: #008037;
             font-size: 2rem;
             font-weight: 700;
         }
+
         .main-header .user-info {
             font-size: 0.95rem;
             color: #555;
@@ -93,7 +102,9 @@
             gap: 1rem;
             margin-bottom: 2rem;
         }
-        .btn-create, .btn-disabled {
+
+        .btn-create,
+        .btn-disabled {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
@@ -105,18 +116,22 @@
             border: none;
             cursor: pointer;
         }
+
         .btn-create {
             background: linear-gradient(90deg, #008037, #00a84f);
             color: #fff;
         }
+
         .btn-create:hover {
             background: linear-gradient(90deg, #006629, #008037);
             transform: translateY(-2px);
         }
+
         .btn-disabled {
             background: #6c757d;
             color: #fff;
         }
+
         .btn-disabled:hover {
             background: #5a6268;
             transform: translateY(-2px);
@@ -133,7 +148,7 @@
 
         .filters-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
         }
@@ -174,7 +189,8 @@
             font-size: 0.9rem;
         }
 
-        .filter-input, .filter-select {
+        .filter-input,
+        .filter-select {
             padding: 0.6rem 0.8rem;
             border: 1px solid #ddd;
             border-radius: 8px;
@@ -182,7 +198,8 @@
             transition: border-color 0.3s ease;
         }
 
-        .filter-input:focus, .filter-select:focus {
+        .filter-input:focus,
+        .filter-select:focus {
             outline: none;
             border-color: #008037;
             box-shadow: 0 0 0 2px rgba(0, 128, 55, 0.1);
@@ -251,10 +268,12 @@
             box-shadow: 0 6px 16px rgba(0,0,0,0.1);
             overflow: hidden;
         }
+
         .usuarios-table {
             width: 100%;
             border-collapse: collapse;
         }
+
         .usuarios-table th {
             background: linear-gradient(90deg, #008037, #00a84f);
             color: #fff;
@@ -262,13 +281,16 @@
             text-align: left;
             font-weight: 600;
         }
+
         .usuarios-table td {
             padding: 1rem;
             border-bottom: 1px solid #eee;
         }
+
         .usuarios-table tr:hover {
             background: #f8f9fa;
         }
+
         .usuarios-table tr.inactivo {
             background: #fff5f5;
         }
@@ -280,10 +302,12 @@
             font-size: 0.8rem;
             font-weight: 600;
         }
+
         .badge.activo {
             background: #d4edda;
             color: #155724;
         }
+
         .badge.inactivo {
             background: #f8d7da;
             color: #721c24;
@@ -294,7 +318,10 @@
             display: flex;
             gap: 0.5rem;
         }
-        .btn-edit, .btn-disable, .btn-reactivate {
+
+        .btn-edit,
+        .btn-disable,
+        .btn-reactivate {
             display: inline-flex;
             align-items: center;
             gap: 0.3rem;
@@ -306,26 +333,32 @@
             cursor: pointer;
             transition: all .3s ease;
         }
+
         .btn-edit {
             background: #17a2b8;
             color: #fff;
         }
+
         .btn-edit:hover {
             background: #138496;
             transform: translateY(-1px);
         }
+
         .btn-disable {
             background: #dc3545;
             color: #fff;
         }
+
         .btn-disable:hover {
             background: #c82333;
             transform: translateY(-1px);
         }
+
         .btn-reactivate {
             background: #28a745;
             color: #fff;
         }
+
         .btn-reactivate:hover {
             background: #218838;
             transform: translateY(-1px);
@@ -335,16 +368,19 @@
         .messages-container {
             margin-bottom: 1.5rem;
         }
+
         .alert {
             padding: 1rem;
             border-radius: 10px;
             margin-bottom: 1rem;
         }
+
         .alert.success {
             background: #d4edda;
             color: #155724;
             border: 1px solid #c3e6cb;
         }
+
         .alert.error {
             background: #f8d7da;
             color: #721c24;
@@ -355,136 +391,206 @@
         .modal {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
+            background-color: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(6px);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1100;
             opacity: 0;
             visibility: hidden;
-            transition: opacity .3s ease, visibility .3s ease;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
         }
+
         .modal.show {
             opacity: 1;
             visibility: visible;
         }
+
         .modal-content {
-            background: #fff;
+            background-color: #fff;
             border-radius: 20px;
             width: 90%;
             max-width: 460px;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            padding: 32px;
             transform: translateY(40px);
             opacity: 0;
-            transition: transform .3s ease, opacity .3s ease;
-            padding: 32px 32px 24px;
+            transition: transform 0.35s ease, opacity 0.35s ease;
             position: relative;
+            text-align: center;
         }
+
         .modal.show .modal-content {
             transform: translateY(0);
             opacity: 1;
         }
-        .modal-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+
         .modal-icon {
-            width: 70px;
-            height: 70px;
-            margin: 0 auto 15px;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px;
             background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
             border-radius: 50%;
             display: flex;
-            align-items: center;
             justify-content: center;
-            font-size: 34px;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(255,107,107,0.3);
+            font-size: 40px;
             color: #fff;
         }
+
         .modal-title-text {
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 700;
             color: #2c3e50;
-            margin: 0;
+            margin-bottom: 6px;
         }
+
         .modal-body {
-            text-align: center;
-            font-size: 16px;
+            font-size: 17px;
             color: #4a5568;
+            line-height: 1.5;
+            margin-bottom: 20px;
         }
+
         .modal-body strong#usuario-nombre {
             color: #ff6b6b;
-            background: rgba(255,107,107,.1);
-            padding: 2px 8px;
+            background: rgba(255, 107, 107, 0.1);
+            padding: 3px 10px;
             border-radius: 6px;
         }
-        .modal-actions {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .btn-secondary, .btn-danger {
-            flex: 1;
-            padding: 12px 0;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-secondary {
-            background: #e2e8f0;
-            color: #2d3748;
-        }
-        .btn-secondary:hover { background: #cbd5e0; }
-        .btn-danger {
-            background: linear-gradient(135deg,#ff6b6b,#ee5a6f);
-            color: #fff;
-            box-shadow: 0 6px 16px rgba(255,107,107,.4);
-        }
-        .btn-danger:hover { box-shadow: 0 8px 20px rgba(255,107,107,.6); }
 
         .close {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
+            top: 18px;
+            right: 18px;
             font-size: 26px;
+            color: #aaa;
+            background: transparent;
+            border: none;
             cursor: pointer;
-            color: #777;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
         }
-        .close:hover { color: #ff6b6b; }
 
-        /* 🆕 SOLO para desktop - NO interfiere con móvil */
-        @media (min-width: 769px) {
-            body {
-                display: flex;
-            }
+        .close:hover {
+            color: #ff6b6b;
+            transform: rotate(90deg);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            margin-top: 12px;
+        }
+
+        .btn-secondary,
+        .btn-danger {
+            flex: 1;
+            padding: 14px 0;
+            font-weight: 700;
+            font-size: 16px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary {
+            background-color: #e2e8f0;
+            color: #2d3748;
+        }
+
+        .btn-secondary:hover {
+            background-color: #cbd5e0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            color: #fff;
+            box-shadow: 0 6px 16px rgba(255,107,107,0.4);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255,107,107,0.6);
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 992px) {
             .sidebar {
-                position: fixed;
-                top: 0;
-                bottom: 0;
-                left: 0;
-                height: 100vh;
+                width: 200px;
             }
+
             .main-content {
-                margin-left: 250px;
-                width: calc(100% - 250px);
+                margin-left: 200px;
             }
         }
 
-        /* Responsive para filtros */
         @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .header-actions {
+                flex-direction: column;
+            }
+
+            .action-links {
+                flex-direction: column;
+            }
+
+            .usuarios-table {
+                font-size: 0.9rem;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 24px 20px;
+            }
+
+            .modal-icon {
+                width: 64px;
+                height: 64px;
+                font-size: 32px;
+            }
+
+            .modal-title-text {
+                font-size: 22px;
+            }
+
+            .modal-actions {
+                flex-direction: column-reverse;
+                gap: 12px;
+            }
+
+            .btn-secondary,
+            .btn-danger {
+                width: 100%;
+            }
+
+            /* Responsive para filtros */
             .filters-content {
                 grid-template-columns: 1fr;
             }
-            
+
             .filters-actions {
                 flex-direction: column;
             }
-            
+
             .btn-filter {
                 width: 100%;
             }
@@ -492,15 +598,6 @@
     </style>
 </head>
 <body>
-
-    <!-- 🆕 BOTÓN HAMBURGUESA PARA MÓVIL -->
-    <button class="menu-toggle" id="menuToggle">
-        <i class="fas fa-bars"></i>
-    </button>
-
-    <!-- 🆕 OVERLAY PARA MÓVIL -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
     <!-- SIDEBAR DEL DASHBOARD -->
     <aside class="sidebar">
         <div class="brand"><i class="fas fa-tachometer-alt"></i> SENA</div>
@@ -509,10 +606,11 @@
             <a href="{% url 'usuarios:listar_usuarios' %}" class="active"><i class="fas fa-users"></i> Usuarios</a>
             <a href="{% url 'ambientes:listar_ambientes' %}"><i class="fas fa-building"></i> Ambientes</a>
             <a href="{% url 'reportes:reporte_accesos_pdf' %}"><i class="fas fa-chart-bar"></i> Reportes</a>
+            <a href="{% url 'backup:backup_list' %}"><i class="fas fa-database"></i> Backups</a>
+            <a href="{% url 'ayuda:manual_usuario' %}"><i class="fas fa-file-pdf"></i> Ayuda</a>
             <a href="{% url 'cuentas:logout' %}"><i class="fas fa-sign-out-alt"></i> Salir</a>
         </nav>
     </aside>
-
 
     <!-- MAIN CONTENT -->
     <div class="main-content">
@@ -543,7 +641,7 @@
         </div>
         {% endif %}
 
-        <!-- 🆕 MÓDULO DE FILTROS Y BÚSQUEDA -->
+        <!-- MÓDULO DE FILTROS Y BÚSQUEDA -->
         <div class="filters-module">
             <div class="filters-header">
                 <h3 class="filters-title">Filtros y Búsqueda</h3>
@@ -551,16 +649,12 @@
                     <i class="fas fa-filter"></i> Mostrar/Ocultar Filtros
                 </button>
             </div>
-            
             <div class="filters-content" id="filtersContent">
                 <!-- Búsqueda general -->
                 <div class="filter-group search-box">
                     <label class="filter-label">Buscar</label>
                     <i class="fas fa-search search-icon"></i>
-                    <input type="text" 
-                           class="filter-input search-input" 
-                           id="searchInput" 
-                           placeholder="Buscar por nombre, documento, email...">
+                    <input type="text" class="filter-input search-input" id="searchInput" placeholder="Buscar por nombre, documento, email...">
                 </div>
 
                 <!-- Filtro por estado -->
@@ -590,10 +684,10 @@
                     <label class="filter-label">Tipo de Identificación</label>
                     <select class="filter-select" id="filterTipoIdentificacion">
                         <option value="">Todos</option>
-                        <option value="CC">Cédula de Ciudadanía</option>
-                        <option value="CE">Cédula de Extranjería</option>
-                        <option value="TI">Tarjeta de Identidad</option>
-                        <option value="PA">Pasaporte</option>
+                        <option value="cc">Cédula de Ciudadanía</option>
+                        <option value="ce">Cédula de Extranjería</option>
+                        <option value="ti">Tarjeta de Identidad</option>
+                        <option value="pa">Pasaporte</option>
                     </select>
                 </div>
 
@@ -624,7 +718,7 @@
                 </thead>
                 <tbody id="usuariosTableBody">
                     {% for usuario in usuarios %}
-                    <tr class="{% if not usuario.activo %}inactivo{% endif %}" 
+                    <tr class="{% if not usuario.activo %}inactivo{% endif %}"
                         data-nombre="{{ usuario.nombre|lower }}"
                         data-tipo="{{ usuario.tipo|lower }}"
                         data-estado="{% if usuario.activo %}activo{% else %}inactivo{% endif %}"
@@ -644,11 +738,9 @@
                                 <i class="fas fa-edit"></i>
                                 <span class="action-text">Editar</span>
                             </a>
-
                             {% if usuario.activo %}
-                            <!-- Botón con modal -->
-                            <button type="button" class="btn-disable" 
-                                    data-id="{{ usuario.pk }}" 
+                            <button type="button" class="btn-disable"
+                                    data-id="{{ usuario.pk }}"
                                     data-nombre="{{ usuario.nombre }}">
                                 <i class="fas fa-user-slash"></i>
                                 <span class="action-text">Deshabilitar</span>
@@ -678,24 +770,29 @@
     </div>
 
     <!-- URL oculta para JS -->
-    <div id="urlPatterns" data-deshabilitar-url="{% url 'usuarios:deshabilitar_usuario' pk=0 %}" style="display:none;"></div>
+    <div id="urlPatterns"
+         data-deshabilitar-url="{% url 'usuarios:deshabilitar_usuario' pk=0 %}"
+         style="display:none;"></div>
 
-    <!-- MODAL DESHABILITAR (Mantenemos tu código) -->
-    <div id="modal-deshabilitar" class="modal" role="dialog" aria-modal="true">
-        <div class="modal-content">
-            <button id="closeModalBtn" class="close" aria-label="Cerrar">&times;</button>
+    <!-- MODAL DESHABILITAR -->
+    <div id="modal-deshabilitar" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc" tabindex="-1">
+        <div class="modal-content" role="document">
+            <button id="closeModalBtn" class="close" aria-label="Cerrar modal">&times;</button>
             <header class="modal-header">
-                <div class="modal-icon"><i class="fas fa-exclamation-triangle"></i></div>
-                <h3 class="modal-title-text">Deshabilitar Usuario</h3>
+                <div class="modal-icon" aria-hidden="true">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 id="modalTitle" class="modal-title-text">Deshabilitar Usuario</h3>
             </header>
-            <section class="modal-body">
-                <p>¿Está seguro de deshabilitar al usuario <strong id="usuario-nombre"></strong>?
-                Esta acción impedirá su acceso al sistema.</p>
+            <section class="modal-body" id="modalDesc">
+                <p class="modal-message-text">
+                    ¿Está seguro que desea deshabilitar al usuario <strong id="usuario-nombre"></strong>? Esta acción impedirá su acceso al sistema.
+                </p>
                 <form id="form-deshabilitar" method="POST">
                     {% csrf_token %}
                     <div class="modal-actions">
                         <button type="button" id="modalCancelBtn" class="btn-secondary">Cancelar</button>
-                        <button type="submit" class="btn-danger">Deshabilitar</button>
+                        <button type="submit" id="modalConfirmBtn" class="btn-danger">Deshabilitar</button>
                     </div>
                 </form>
             </section>
@@ -707,10 +804,10 @@
 
     <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'js/listar_usuarios.js' %}?v=6.0"></script>
     <script src="{% static 'js/accesibilidad.js' %}?v=2.1"></script>
+    <script src="{% static 'js/listar_usuarios.js' %}?v=6.0"></script>
 
-    <!-- 🆕 JS PARA FILTROS Y BÚSQUEDA -->
+    <!-- JS PARA FILTROS Y BÚSQUEDA -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const filtersToggle = document.getElementById('filtersToggle');
@@ -738,7 +835,6 @@
             const estadoValue = filterEstado.value;
             const tipoValue = filterTipo.value;
             const tipoIdentificacionValue = filterTipoIdentificacion.value;
-
             let visibleRows = 0;
 
             usuariosRows.forEach(row => {
@@ -750,14 +846,10 @@
                 const tipo = row.getAttribute('data-tipo') || '';
                 const tipoIdentificacion = row.getAttribute('data-tipo-identificacion') || '';
 
-                const matchSearch = !searchTerm || 
-                    nombre.includes(searchTerm) || 
-                    documento.includes(searchTerm);
-                
+                const matchSearch = !searchTerm || nombre.includes(searchTerm) || documento.includes(searchTerm);
                 const matchEstado = !estadoValue || estado === estadoValue;
                 const matchTipo = !tipoValue || tipo === tipoValue;
-                const matchTipoIdentificacion = !tipoIdentificacionValue || 
-                    tipoIdentificacion === tipoIdentificacionValue;
+                const matchTipoIdentificacion = !tipoIdentificacionValue || tipoIdentificacion === tipoIdentificacionValue;
 
                 if (matchSearch && matchEstado && matchTipo && matchTipoIdentificacion) {
                     row.style.display = '';
@@ -792,36 +884,106 @@
 
         // Aplicar filtros al cargar la página
         aplicarFiltros();
-
-        // 🆕 JS PARA MENÚ MÓVIL
-        const menuToggle = document.getElementById('menuToggle');
-        const sidebar = document.querySelector('.sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        
-        if (menuToggle && sidebar) {
-            menuToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('active');
-                if (overlay) overlay.classList.toggle('active');
-            });
-        }
-        
-        // Cerrar menú al hacer clic en un link
-        document.querySelectorAll('.sidebar nav a').forEach(link => {
-            link.addEventListener('click', () => {
-                sidebar.classList.remove('active');
-                if (overlay) overlay.classList.remove('active');
-            });
-        });
-        
-        // Cerrar menú al hacer clic en el overlay
-        if (overlay) {
-            overlay.addEventListener('click', () => {
-                sidebar.classList.remove('active');
-                overlay.classList.remove('active');
-            });
-        }
     });
-    </script>
 
+    // Script para modal de deshabilitar
+    (function(){
+        document.addEventListener('DOMContentLoaded', function(){
+            console.clear();
+            console.log('[debug] iniciar listar_usuarios debugging');
+
+            const modal = document.getElementById('modal-deshabilitar');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const cancelBtn = document.getElementById('modalCancelBtn');
+            const usuarioNombreSpan = document.getElementById('usuario-nombre');
+            const formDeshabilitar = document.getElementById('form-deshabilitar');
+            const urlPatternsEl = document.getElementById('urlPatterns');
+
+            if (!modal) {
+                console.error('[debug] NO se encontró #modal-deshabilitar');
+                return;
+            }
+
+            if (!formDeshabilitar) {
+                console.error('[debug] NO se encontró #form-deshabilitar');
+            }
+
+            const urlTemplate = urlPatternsEl ? urlPatternsEl.dataset.deshabilitarUrl : null;
+            console.log('[debug] urlTemplate:', urlTemplate);
+
+            const disableButtons = document.querySelectorAll('.btn-disable');
+            console.log('[debug] botones .btn-disable encontrados: ', disableButtons.length);
+
+            if (disableButtons.length === 0) {
+                console.warn('[debug] No hay botones .btn-disable. Verifica la plantilla.');
+            }
+
+            function openModal(nombre, id) {
+                console.log('[debug] openModal -> id:', id, 'nombre:', nombre);
+                
+                if (usuarioNombreSpan) usuarioNombreSpan.textContent = nombre || 'este usuario';
+                
+                let action = '';
+                if (urlTemplate) {
+                    action = urlTemplate.replace(/0(?=\/?$)/, id);
+                } else {
+                    action = '/usuarios/deshabilitar/' + id + '/';
+                }
+
+                if (formDeshabilitar) {
+                    formDeshabilitar.action = action;
+                    console.log('[debug] form action seteada a:', action);
+                } else {
+                    console.warn('[debug] formDeshabilitar no existe; no se setea action');
+                }
+
+                modal.classList.add('show');
+                modal.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeModal() {
+                modal.classList.remove('show');
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            }
+
+            disableButtons.forEach(btn => {
+                btn.addEventListener('click', function(e){
+                    e.preventDefault();
+                    
+                    const id = this.getAttribute('data-id') || this.dataset.id;
+                    const nombre = this.getAttribute('data-nombre') || this.dataset.nombre || 
+                                 (this.closest('tr') && this.closest('tr').querySelector('td') ? 
+                                  this.closest('tr').querySelector('td').textContent.trim() : '');
+                    
+                    console.log('[debug] click detectado -> id:', id, 'nombre:', nombre);
+                    
+                    if (!id) {
+                        console.error('[debug] El botón no tiene data-id. Asegúrate data-id="{{ usuario.pk }}"');
+                        return;
+                    }
+                    
+                    openModal(nombre, id);
+                });
+            });
+
+            if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+            if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+
+            modal.addEventListener('click', function(e){
+                if (e.target === modal) closeModal();
+            });
+
+            document.addEventListener('keydown', function(e){
+                if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
+            });
+
+            window.__listarUsuarios_debug = true;
+            console.log('[debug] listar_usuarios script cargado OK');
+        });
+    })();
+    </script>
+    <script src="{% static 'js/responsive_global.js' %}?v=1.0"></script>
 </body>
 </html>

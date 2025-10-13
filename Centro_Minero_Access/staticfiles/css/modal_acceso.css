@@ -1,0 +1,35 @@
+/* Estilos para el modal personalizado */
+.custom-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.custom-modal-content {
+    background-color: #f8f9fa;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #dee2e6;
+    border-radius: 15px;
+    width: 400px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    animation: modalFadeIn 0.3s;
+}
+
+.custom-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}

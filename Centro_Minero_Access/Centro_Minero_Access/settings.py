@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'reportes',
     'cuentas',
     'backup',
+    'ayuda',
 ]
 
 MIDDLEWARE = [
@@ -113,8 +114,12 @@ WSGI_APPLICATION = 'Centro_Minero_Access.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'centro_minero_db',
+        'USER': 'root',
+        'PASSWORD': '1234',  # Si no tienes contraseña, déjalo vacío
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
