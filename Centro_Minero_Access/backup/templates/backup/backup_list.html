@@ -145,42 +145,49 @@
             transition: all 0.3s ease;
             border: none;
             font-size: 0.9rem;
+            color: white !important;
         }
         
         .btn-download {
-            background-color: #17a2b8;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
             color: white;
+            border: 2px solid #007bff;
         }
         
         .btn-download:hover {
-            background-color: #138496;
+            background: linear-gradient(135deg, #0056b3 0%, #003d82 100%);
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(23,162,184,0.3);
+            box-shadow: 0 6px 15px rgba(0,123,255,0.4);
+            border-color: #003d82;
         }
         
         .btn-restore {
-            background-color: #28a745;
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
             color: white;
+            border: 2px solid #28a745;
         }
         
         .btn-restore:hover {
-            background-color: #218838;
+            background: linear-gradient(135deg, #1e7e34 0%, #155724 100%);
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(40,167,69,0.3);
+            box-shadow: 0 6px 15px rgba(40,167,69,0.4);
+            border-color: #155724;
         }
         
         .btn-delete {
-            background-color: #dc3545;
+            background: linear-gradient(135deg, #dc3545 0%, #a71d2a 100%);
             color: white;
+            border: 2px solid #dc3545;
         }
         
         .btn-delete:hover {
-            background-color: #c82333;
+            background: linear-gradient(135deg, #a71d2a 0%, #7a141f 100%);
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(220,53,69,0.3);
+            box-shadow: 0 6px 15px rgba(220,53,69,0.4);
+            border-color: #7a141f;
         }
         
         .empty-state {
@@ -529,7 +536,7 @@
                                             Descargar
                                         </a>
                                         
-                                        <!-- Botón Restaurar (NUEVO) -->
+                                        <!-- Botón Restaurar -->
                                         <button type="button" 
                                                 class="btn btn-sm btn-restore btn-action btn-restaurar-custom" 
                                                 data-backup-name="{{ backup.nombre }}"
@@ -549,7 +556,7 @@
                                             Eliminar
                                         </button>
 
-                                        <!-- Modal Restaurar (NUEVO) -->
+                                        <!-- Modal Restaurar -->
                                         <div class="custom-modal-overlay" id="restoreModal{{ forloop.counter }}">
                                             <div class="custom-modal-content">
                                                 <div class="modal-header-sena">
