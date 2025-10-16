@@ -245,6 +245,62 @@ class OpenCVFaceRecognitionSystem:
             
         except Exception as e:
             return False, f"Error verificando calidad: {str(e)}"
+    
+    # Agregar este método a la clase OpenCVFaceRecognitionSystem
+
+    def check_face_duplicate(self, face_features, existing_users, threshold=50):
+
+        if not self.load_known_faces(existing_users):
+            return False, None, None
+        
+        if not self.trained or len(self.known_faces) == 0:
+            return False, None, None
+        
+        try:
+            # Realizar predicción
+            label, confidence = self.face_recognizer.predict(face_features)
+            
+            # Si la confianza es muy alta (valor bajo), es probable que sea el mismo rostro
+            if confidence < threshold:
+                user_id = self.known_ids.get(label)
+                return True, user_id, confidence
+            
+            return False, None, confidence
+            
+        except Exception as e:
+            print(f"Error verificando duplicado: {e}")
+            return False, None, None
+
+    def get_face_similarity(self, face_features_1, face_features_2):
+        """
+        Calcula la similitud entre dos rostros
+        
+        Args:
+            face_features_1: Características del primer rostro
+            face_features_2: Características del segundo rostro
+            
+        Returns:
+            float: Puntuación de similitud (0-100, mayor = más similar)
+        """
+        try:
+            
+            
+            # Normalizar características
+            feat1_flat = face_features_1.flatten()
+            feat2_flat = face_features_2.flatten()
+            
+            # Calcular distancia euclidiana
+            distance = np.linalg.norm(feat1_flat - feat2_flat)
+            
+            # Convertir a puntuación de similitud (invertida)
+            max_distance = 200  # Ajustar según necesidad
+            similarity = max(0, 100 - (distance / max_distance * 100))
+            
+            return similarity
+            
+        except Exception as e:
+            print(f"Error calculando similitud: {e}")
+            return 0
 
 # Instancia global del sistema
 opencv_face_system = OpenCVFaceRecognitionSystem()
